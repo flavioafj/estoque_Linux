@@ -1,0 +1,2 @@
+src/lib/llist.lo: /var/www/html/xdebug-3.4.6/src/lib/llist.c \
+ /var/www/html/xdebug-3.4.6/src/lib/llist.h

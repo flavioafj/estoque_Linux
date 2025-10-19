@@ -1,0 +1,8 @@
+RewriteEngine On
+# Define a base como /product/
+RewriteBase /product/
+# Não redireciona se for um arquivo ou diretório existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Redireciona todas as requisições para index.php
+RewriteRule ^(.*)$ index.php [L]

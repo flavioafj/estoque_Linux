@@ -1,0 +1,771 @@
+PHPMailer Debug [1]: SMTP ERROR: Failed to connect to server: Uma tentativa de conexão falhou porque o componente conectado não respondeu
+corretamente após um período de tempo ou a conexão estabelecida falhou
+porque o host conectado não respondeu (10060) </br>PHPMailer Debug [2]: SMTP Error: Could not connect to SMTP host. Failed to connect to server </br>Alert::sendAlert: SMTP Error: Could not connect to SMTP host. Failed to connect to serverPHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE4ODIwNDYwNDYuMTc1NzEyMzU5NUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 22:53:14 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <U5mg6lLuNQoF5UlhSkvnP7V71B157sW2tloNG1EBsJs@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto MANTEIGA S/SAL TABL XANDO com estoque baixo: 9.000 <= 10.000.</p><p>Produto: MANTEIGA S/SAL TABL XANDO</p><p>Estoque Atual: 9.000</p><p>Estoque Mínimo: 10.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE1NjkwMTA1MjkuMTc1NzEyMzYwOUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 22:53:27 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <Ze6pc4e2uJtd1GI7reYr2nD7PinpVgraGYz6lFmqWs@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto LEITE A XANDO INTEGRAL com estoque baixo: 1.000 <= 2.000.</p><p>Produto: LEITE A XANDO INTEGRAL</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDEyNjAyMTgyNTYuMTc1NzEyMzYxOEBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 22:53:36 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <OoDIUuv4SG2G9qRy2qxAIMK3MipRgB86IioCgZqXnk@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto CREME DE LEITE PASTEUR com estoque baixo: 1.000 <= 2.000.</p><p>Produto: CREME DE LEITE PASTEUR</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE3OTg1OTA0ODIuMTc1NzEyNjA2MEBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 23:34:19 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <l2tTdgT1RAOCJw80RU4cPqoVQtnERl8GqJvx1GiToxA@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto MANTEIGA S/SAL TABL XANDO com estoque baixo: 2.000 <= 10.000.</p><p>Produto: MANTEIGA S/SAL TABL XANDO</p><p>Estoque Atual: 2.000</p><p>Estoque Mínimo: 10.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDM4MjI1OTU0My4xNzU3MTI2MTQwQHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 23:35:38 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <wPPO6Vs1llFD5nUFmrDSET1Flcf5KPixEVf05YlAw@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto LEITE A XANDO INTEGRAL com estoque baixo: 1.000 <= 2.000.</p><p>Produto: LEITE A XANDO INTEGRAL</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDgzODYzMDI3NS4xNzU3MTI2MTQzQHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Fri, 5 Sep 2025 23:35:41 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <mHBD9y5jbvwzi7qBI17McBNAEP7vfGKfsdc4aUpRM@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto CREME DE LEITE PASTEUR com estoque baixo: 1.000 <= 2.000.</p><p>Produto: CREME DE LEITE PASTEUR</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE4NzgxNzU0OTcuMTc1NzIxNzc3M0BzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sun, 7 Sep 2025 01:02:51 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <t82oV9JiCdAcnhOZDLxPnS6fEt6k1dIblQDMC1p1Vs@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto LEITE A XANDO INTEGRAL com estoque baixo: 1.000 <= 2.000.</p><p>Produto: LEITE A XANDO INTEGRAL</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>navigation.php: Usuário não está logadonavigation.php: Usuário não está logadonavigation.php: Usuário não está logadonavigation.php: Usuário não está logadonavigation.php: Usuário não está logadoPHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDIyNDk1Nzc5Ni4xNzU3Mjg1MDQ1QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<flavioafj@yahoo.com.br>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sun, 7 Sep 2025 19:44:03 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: flavioafj@yahoo.com.br
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <JsvVFUicYutjZflZmNK4ijZhBjdhddEGh9W012b4BBI@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto LEITE A XANDO INTEGRAL com estoque baixo: 0.000 <= 2.000.</p><p>Produto: LEITE A XANDO INTEGRAL</p><p>Estoque Atual: 0.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE5MDc4OTM3My4xNzYwNDgzMzIyQHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Tue, 14 Oct 2025 20:00:52 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <HErotNE8uUlJnME2DDgxunT3ySUBKZMVu1FmVA8Qnis@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto teste com estoque baixo: 1.000 <= 1.000.</p><p>Produto: teste</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDExODQwNDIxNTAuMTc2MDQ4NjYwOEBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Tue, 14 Oct 2025 20:55:37 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <9NIiQS0aMpStITJK1mpVNB6KBlu1oTu2ifUl5UWM6c8@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto ggg com estoque baixo: 1.000 <= 1.000.</p><p>Produto: ggg</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE5Mjc0OTUwNjIuMTc2MDQ4NjYxMUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDk4OTAyNDUxMS4xNzYwNDg2OTA2QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Tue, 14 Oct 2025 21:00:34 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <jEd3INljlli0RjXBT6zJIbwQnwE1JxmjGAr9GxmkY@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto ggg1 com estoque baixo: 1.000 <= 1.000.</p><p>Produto: ggg1</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO localhost
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDUzNjg3NzU0OC4xNzYwNDg3MDg4QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Tue, 14 Oct 2025 21:03:37 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <zpiJvJZA6osBr7EZIjv6052WGRM1awATUuSMJhZMs@localhost>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto Leite A integral bag com estoque baixo: 1.000 <= 1.000.</p><p>Produto: Leite A integral bag</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>ProductController.php: Não encontrou Product.php em /var/www/html/src/Controllers/../Models/Produc2t.phpProductController.php: Não encontrou Product.php em /var/www/html/src/Controllers/../Models/Produc2t.phpProductController.php: Não encontrou Product.php em /var/www/html/src/Controllers/../Models/Produc2t.phpProductController.php: Não encontrou Product.php em /var/www/html/src/Controllers/../Models/Produc2t.phpProductController.php: Não encontrou Product.php em /var/www/html/src/Controllers/../Models/Produc2t.phpnavigation.php: Usuário não está logadoPHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDEzOTkyMjA3MTYuMTc2MDg0MjQyNUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 18 Oct 2025 23:53:43 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <reJa1KryXpJI6Qi7BHkYQB3GKLMQnfITKjnjJD6vZE@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto teste com estoque baixo: 1.000 <= 1.000.</p><p>Produto: teste</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE3NjQxMjY3MDAuMTc2MDg0MjUwNEBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 18 Oct 2025 23:55:02 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <0q95yEnrp0cEQkNTrGSpYr50ZDgC8Y5NbgkG93ZMjh4@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto Leite A integral bag com estoque baixo: 1.000 <= 1.000.</p><p>Produto: Leite A integral bag</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDQyOTY3NzMzNi4xNzYwODQyNTM2QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 18 Oct 2025 23:55:34 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <nkcBd0dNGIict61Y31x1r3ZIxsUKqg5nEbF2X6mTKVs@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto ggg1 com estoque baixo: 1.000 <= 1.000.</p><p>Produto: ggg1</p><p>Estoque Atual: 1.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDg5Njk2NjEwNC4xNzYwODQyNTk4QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 18 Oct 2025 23:56:36 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <CSmMgiWK0pwFFGzLrx94Mnyfa4on6aIVUQe1qYBz4hg@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto CREME DE LEITE PASTEUR com estoque baixo: 2.000 <= 2.000.</p><p>Produto: CREME DE LEITE PASTEUR</p><p>Estoque Atual: 2.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>

@@ -1,0 +1,9 @@
+
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Redirecionar diretamente para login.php se não especificar arquivo
+DirectoryIndex public/login.php

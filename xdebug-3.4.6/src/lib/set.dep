@@ -1,0 +1,2 @@
+src/lib/set.lo: /var/www/html/xdebug-3.4.6/src/lib/set.c \
+ /var/www/html/xdebug-3.4.6/src/lib/set.h
