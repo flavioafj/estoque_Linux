@@ -58,6 +58,13 @@ abstract class BaseModel {
         $sql = "SELECT * FROM {$this->table} WHERE $field $operator :value";
         return $this->db->query($sql, [':value' => $value]);
     }
+
+    // Buscar múltiplos registros por condição e ordenados
+    public function whereby($field, $value, $orderby, $operator = '=') {
+        $sql = "SELECT * FROM {$this->table} WHERE $field $operator :value";
+        $sql .= str_replace("'", "", " ORDER BY $orderby");
+        return $this->db->query($sql, [':value' => $value]);
+    }
     
     // Criar novo registro
     public function create($data) {

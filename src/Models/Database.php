@@ -186,8 +186,11 @@ class Database {
         $sql = "INSERT INTO $table (" . implode(', ', $fields) . ") VALUES (" . implode(', ', $values) . ")";
         
         $this->prepare($sql);
+
+        $teste = $sql;
         
         foreach ($data as $key => $value) {
+            $teste = str_replace(':' . $key, $value, $teste);
             $this->bind(':' . $key, $value);
         }
         

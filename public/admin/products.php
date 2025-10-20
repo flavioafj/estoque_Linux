@@ -58,13 +58,13 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
 ?>
 <main class="container mt-4">
     <h1>Gestão de Produtos</h1>
-    <form action="/product/store" method="POST">
+    <form action="/../product/store" method="POST">
         <div>
             <label for="nome">Nome *</label>
             <input type="text" id="nome" name="nome" placeholder="Nome do produto" required>
         </div>
         <div>
-            <label for="codigo">Código</label>
+            <label for="codigo">Código *</label>
             <input type="text" id="codigo" name="codigo" placeholder="Código único">
         </div>
         <div>
@@ -77,7 +77,7 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
             </select>
         </div>
         <div>
-            <label for="unidade_medida_id">Unidade de Medida</label>
+            <label for="unidade_medida_id">Unidade de Medida *</label>
             <select id="unidade_medida_id" name="unidade_medida_id">
                 <option value="">Selecione uma unidade</option>
                 <?php foreach ($unidades as $unidade): ?>
@@ -86,28 +86,28 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
             </select>
         </div>
         <div>
-            <label for="estoque_atual">Estoque Atual (kg) *</label>
-            <input type="number" id="estoque_atual" name="estoque_atual" step="0.001" min="0" placeholder="0.000" >
+            <label for="estoque_atual">Estoque Atual (kg) </label>
+            <input type="number" id="estoque_atual" name="estoque_atual" step="0.001" min="0" placeholder="0.000" value="0">
         </div>
         <div>
             <label for="estoque_minimo">Estoque Mínimo (kg) *</label>
-            <input type="number" id="estoque_minimo" name="estoque_minimo" step="0.001" min="0" placeholder="0.000">
+            <input type="number" id="estoque_minimo" name="estoque_minimo" step="0.001" min="0" placeholder="0.000" value="1">
         </div>
         <div>
             <label for="estoque_maximo">Estoque Máximo (kg)</label>
-            <input type="number" id="estoque_maximo" name="estoque_maximo" step="0.001" min="0" placeholder="0.000">
+            <input type="number" id="estoque_maximo" name="estoque_maximo" step="0.001" min="0" placeholder="0.000" value="100">
         </div>
         <div>
             <label for="preco_custo">Preço de Custo (R$)</label>
-            <input type="number" id="preco_custo" name="preco_custo" step="0.01" min="0" placeholder="0.00">
+            <input type="number" id="preco_custo" name="preco_custo" step="0.01" min="0" placeholder="0.00" value="0">
         </div>
         <div>
-            <label for="preco_venda">Preço de Venda (R$) *</label>
-            <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" placeholder="0.00" >
+            <label for="preco_venda">Preço de Venda (R$)</label>
+            <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" placeholder="0.00" value="100">
         </div>
         <div>
             <label for="margem_lucro">Margem de Lucro (%)</label>
-            <input type="number" id="margem_lucro" name="margem_lucro" step="0.01" min="0" placeholder="0.00">
+            <input type="number" id="margem_lucro" name="margem_lucro" step="0.01" min="0" placeholder="0.00" value="100">
         </div>
         <div>
             <label for="fornecedor_principal_id">Fornecedor Principal</label>
@@ -173,7 +173,7 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
                 <tr>
                     <td colspan="9">
                         <!-- Formulário de Atualização -->
-                        <form action="/product/update/<?= $prod['id'] ?>" method="POST" style="display:inline;">
+                        <form action="/../product/update/<?= $prod['id'] ?>" method="POST" style="display:inline;">
                             <input type="text" name="nome" value="<?= htmlspecialchars($prod['nome']) ?>" required>
                             <input type="text" name="codigo" value="<?= htmlspecialchars($prod['codigo'] ?? '') ?>">
                             <select name="categoria_id" required>

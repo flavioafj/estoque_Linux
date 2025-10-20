@@ -62,26 +62,26 @@ error_log("product/index.php: Request URI normalizada: $requestUri", 3, __DIR__ 
 if ($requestMethod !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Método não permitido']);
-    header('Location: /estoque-sorveteria/admin/products.php');
+    header('Location: /admin/products.php');
     exit;
 }
 
 // Define as rotas
-if ($requestUri === 'store') {
+if ($requestUri === '/product/store') {
     try {
         $data = [
             'nome' => $_POST['nome'] ?? null,
             'codigo' => $_POST['codigo'] ?? null,
             'categoria_id' => $_POST['categoria_id'] ?? null,
-            'estoque_atual' => $_POST['estoque_atual'] ?? null,
+            'estoque_atual' => $_POST['estoque_atual'] ?? 0,
             'estoque_minimo' => $_POST['estoque_minimo'] ?? null,
             'preco_venda' => $_POST['preco_venda'] ?? null,
             'descricao' => $_POST['descricao'] ?? null,
             'ativo' => isset($_POST['ativo']) ? 1 : 0,
             'unidade_medida_id' => $_POST['unidade_medida_id'] ?? null,
-            'estoque_maximo' => $_POST['estoque_maximo'] ?? null,
-            'preco_custo' => $_POST['preco_custo'] ?? null,
-            'margem_lucro' => $_POST['margem_lucro'] ?? null,
+            'estoque_maximo' => $_POST['estoque_maximo'] ?? 100,
+            'preco_custo' => $_POST['preco_custo'] ?? 0,
+            'margem_lucro' => $_POST['margem_lucro'] ?? 100,
             'fornecedor_principal_id' => $_POST['fornecedor_principal_id'] ?? null
         ];
         
@@ -90,11 +90,11 @@ if ($requestUri === 'store') {
     } catch (Exception $e) {
         error_log("product/index.php: Erro ao criar produto: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         $_SESSION['errors'] = ['general' => ['Erro ao criar produto: ' . $e->getMessage()]];
-        //header('Location: /estoque-sorveteria/admin/products.php');
+        //header('Location: /admin/products.php');
         echo json_encode(['error' => 'Erro ao criar produto: ' . $e->getMessage()]);
         exit;
     }
-} elseif (preg_match('#^update/(\d+)$#', $requestUri, $matches)) {
+} elseif (preg_match('#^/product/update/(\d+)$#', $requestUri, $matches)) {
     $id = (int)$matches[1];
     try {
         $data = [
@@ -116,20 +116,20 @@ if ($requestUri === 'store') {
     } catch (Exception $e) {
         error_log("product/index.php: Erro ao atualizar produto ID $id: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         $_SESSION['errors'] = ['general' => ['Erro ao atualizar produto: ' . $e->getMessage()]];
-        header('Location: /estoque-sorveteria/admin/products.php');
+        header('Location: /admin/products.php');
         exit;
     }
-} elseif (preg_match('#^destroy/(\d+)$#', $requestUri, $matches)) {
+} elseif (preg_match('#^/product/destroy/(\d+)$#', $requestUri, $matches)) {
     $id = (int)$matches[1];
     try {
         $controller->destroy($id);
     } catch (Exception $e) {
         error_log("product/index.php: Erro ao desativar produto ID $id: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         $_SESSION['errors'] = ['general' => ['Erro ao desativar produto: ' . $e->getMessage()]];
-        header('Location: /estoque-sorveteria/admin/products.php');
+        header('Location: /admin/products.php');
         exit;
     }
-} elseif (preg_match('#^reactivate/(\d+)$#', $requestUri, $matches)) {
+} elseif (preg_match('#^/product/reactivate/(\d+)$#', $requestUri, $matches)) {
     $id = (int)$matches[1];
     try {
         $controller->reactivate($id);
@@ -137,13 +137,13 @@ if ($requestUri === 'store') {
         error_log("product/index.php: Erro ao reativar produto ID $id: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         $_SESSION['errors'] = ['general' => ['Erro ao reativar produto: ' . $e->getMessage()]];
         // O controller já faz o redirecionamento, mas por segurança:
-        header('Location: /estoque-sorveteria/admin/products.php?view=inactive');
+        header('Location: /admin/products.php?view=inactive');
         exit;
     }
 } else {
     error_log("product/index.php: Rota não encontrada: $requestUri", 3, __DIR__ . '/../../logs/product.log');
     http_response_code(404);
     echo json_encode(['error' => 'Rota não encontrada']);
-    header('Location: /estoque-sorveteria/admin/products.php');
+    header('Location: /admin/products.php');
     exit;
 }

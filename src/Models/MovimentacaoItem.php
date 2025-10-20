@@ -76,7 +76,7 @@ class MovimentacaoItem extends BaseModel
                     return false;
                 }
 
-                // Insere o item na tabela de movimentação
+                // Insere o item na tabela de movimentação_itens
               
                 $resultadoInsercao = $stmt->execute([$movimentacaoId, $produtoId, $quantidade, $valoresUnitariosf, $valorTotalItem]);
 

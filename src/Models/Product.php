@@ -41,6 +41,10 @@ class Product extends BaseModel {
         return $this->where('ativo', 1);
     }
 
+    public function getAllby($order) {
+        return $this->whereby('ativo', 1, $order);
+    }
+
     public function getAllinativo() {
         return $this->where('ativo', 0);
     }

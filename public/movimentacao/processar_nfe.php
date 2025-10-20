@@ -70,7 +70,7 @@ foreach ($fornecedoresDoBanco as $fornecedorDb) {
 // === ETAPA DE SUGESTÃO DE PRODUTOS ===
 
 $productModel = new Product();
-$produtosDoBanco = $productModel->getAll();
+$produtosDoBanco = $productModel->getAllby("nome");
 
 $produtosSugeridos = [];
 foreach ($nfeData['produtos_xml'] as $produtoXml) {
@@ -96,6 +96,7 @@ foreach ($nfeData['produtos_xml'] as $produtoXml) {
 }
 
 // === ETAPA DE RENDERIZAÇÃO (VIEW) ===
+
 
 $pageTitle = "Verificar e Associar Produtos da NF-e";
 include __DIR__ . '/../../templates/header.php';
@@ -138,6 +139,13 @@ include __DIR__ . '/../../templates/header.php';
                             <div class="form-text text-success">✔ Fornecedor sugerido com base no CNPJ.</div>
                         <?php else: ?>
                              <div class="form-text text-warning">⚠ Nenhum fornecedor encontrado com este CNPJ. Selecione um existente ou cadastre um novo.</div>
+                             
+                            <button type="button" id="btn-cadastrar-fornecedor" class="btn btn-sm btn-primary">
+                                ->Cadastrar Fornecedor
+                            </button>
+
+                            <div id="status-message" style="margin-top: 15px;"></div>
+                                
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6">
@@ -185,11 +193,32 @@ include __DIR__ . '/../../templates/header.php';
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
+                                 <?php if ($produto['sugestao_produto_id'] === null): ?>
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" data-product-name="<?= htmlspecialchars($produto['nome_xml']) ?>">Cadastrar Produto</button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Modal para cadastro de produto -->
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel">Cadastrar Novo Produto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="productFormIframe" src="/admin/products.php" style="width: 100%; height: 500px; border: none;"></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -199,5 +228,75 @@ include __DIR__ . '/../../templates/header.php';
         </div>
     </form>
 </main>
+
+
+<!-- JavaScript para manipulação do modal -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    //modal
+    const productModal = document.getElementById('productModal');
+    productModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Botão que disparou o modal
+        const productName = button.getAttribute('data-product-name');
+        const iframe = document.getElementById('productFormIframe');
+        
+        // Passa o nome do produto como parâmetro para pré-preencher o formulário
+        iframe.src = `/admin/products.php?nome=${encodeURIComponent(productName)}`;
+    });
+
+    productModal.addEventListener('hidden.bs.modal', function () {
+        // Recarrega a página para atualizar a lista de produtos após o cadastro
+        window.location.reload();
+    });
+
+
+    //cadastra fornecedor
+    const btn = document.getElementById('btn-cadastrar-fornecedor');
+    const statusDiv = document.getElementById('status-message');
+
+    if (btn) {
+        btn.addEventListener('click', function() {
+            // 1. Obter dados dos inputs (você deve ter inputs para CNPJ e Razão Social)
+            // Exemplo (adapte isso para seus inputs reais):
+            const cnpj = document.getElementsByName("fornecedor_cnpj")[0].value;
+            const razaoSocial = document.getElementsByName("fornecedor_razao_social")[0].value;
+
+            // 2. Montar o objeto de dados a ser enviado
+            const formData = new FormData();
+            formData.append('cnpj', cnpj);
+            formData.append('razao_social', razaoSocial);
+            
+            // Opcional: Desabilitar o botão enquanto processa
+            btn.disabled = true;
+            statusDiv.innerHTML = '<span style="color: gray;">Processando...</span>';
+
+            // 3. Fazer a requisição AJAX usando Fetch
+            fetch('processa_cadastro.php', {
+                method: 'POST',
+                body: formData // Envia os dados
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // SUCESSO: Exibe a mensagem "Fornecedor cadastrado"
+                    statusDiv.innerHTML = `<span style="color: green; font-weight: bold;">${data.message}</span>`;
+                } else {
+                    // ERRO
+                    statusDiv.innerHTML = `<span style="color: red;">Erro: ${data.message}</span>`;
+                }
+            })
+            .catch(error => {
+                // Erro de rede ou JSON
+                statusDiv.innerHTML = `<span style="color: red;">Erro de comunicação: ${error.message}</span>`;
+            })
+            .finally(() => {
+                // Reabilita o botão
+                btn.disabled = false;
+            });
+        });
+    }
+});
+</script>
+
 
 <?php include __DIR__ . '/../../templates/footer.php'; ?>

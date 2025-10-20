@@ -49,21 +49,25 @@ class ProductController {
     public function store($data) {
         $rules = [
             'nome' => 'required|unique:produtos,nome',
-            'codigo' => 'unique:produtos,codigo',
+            'codigo' => 'required|unique:produtos,codigo',
             'categoria_id' => 'required|exists:categorias,id',
-            'estoque_atual' => 'required|numeric|min:0',
+            'estoque_atual' => 'numeric|min:0',
             'estoque_minimo' => 'required|numeric|min:0',
             'ativo' => 'boolean',
-            'unidade_medida_id' => 'exists:unidades_medida,id',
+            'unidade_medida_id' => 'required|exists:unidades_medida,id',
             'estoque_maximo' => 'numeric|min:0',
             'preco_custo' => 'numeric|min:0',
             'margem_lucro' => 'numeric|min:0',
-            'fornecedor_principal_id' => 'exists:fornecedores,id'
+            'fornecedor_principal_id' => 'fornecedores,id'
         ];
+
+         if($data['fornecedor_principal_id']==''){
+            $data['fornecedor_principal_id']= null;
+        }
 
         $errors = Validator::validate($data, $rules);
 
-        
+       
 
         if (hasErrors($errors)) {
             $_SESSION['errors'] = $errors;

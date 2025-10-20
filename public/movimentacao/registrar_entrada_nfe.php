@@ -86,7 +86,7 @@ try {
         $fornecedorData = [
             'cnpj' => $cnpj,
             'razao_social' => $razaoSocial,
-            'tipo' => 'Juridica',
+            'tipo' => 'PJ',
             'ativo' => 1,
             'criado_por' => $_SESSION['user_id'] ?? null
         ];

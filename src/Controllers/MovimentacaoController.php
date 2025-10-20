@@ -56,13 +56,15 @@ class MovimentacaoController extends BaseController
 
                 // Verifica estoque mínimo para cada item
                 $alertModel = new Alert();
-                foreach ($itens as $item) {
+              
+                foreach ($itens as $id => $qtd) {
 
-                    if (isset($item['id'])) { // Assumindo que adicionarItens retorna IDs
-                        $itemModel->logAudit('INSERT', $item['id'], null, $item);
-                    }
+                   
+                    $alertModel->checkLowStock($id);
 
-                    $alertModel->checkLowStock($item);
+                    //Valor total
+                    $valorTotal += intval($qtd) * floatval($valoresUnitarios[$id]);
+                   
                 }
 
                 $session->setFlash('success', 'Entrada de estoque registrada com sucesso!');
@@ -73,8 +75,7 @@ class MovimentacaoController extends BaseController
             $session->setFlash('error', 'Falha ao criar o registro de movimentação.');
         }
         //adiciona valor total na movimentação
-        $valorTotal = array_sum($valoresUnitarios)? array_sum($valoresUnitarios) : 0;
-        $valorTotal = floatval($valorTotal);
+        
         $movimentacaoModel->atualizarValorTotal($movimentacaoId, $valorTotal);
 
         header('Location: /admin/products.php');
@@ -119,9 +120,7 @@ class MovimentacaoController extends BaseController
 
                 foreach ($itens as $produtoId => $item) {
                     
-                    if (isset($item['id'])) { // Assumindo que adicionarItens retorna IDs
-                        $itemModel->logAudit('INSERT', $item['id'], null, $item);
-                    }
+                    
                     $alertModel->checkLowStock($produtoId);   
                 }
 

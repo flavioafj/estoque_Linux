@@ -51,7 +51,15 @@ $(document).ready(function() {
                     <tr>
                         <td>${item.tipo}</td>
                         <td>${item.documento_numero || '-'}</td>
-                        <td>${new Date(item.data_movimentacao).toLocaleDateString('pt-BR')}</td>
+                        <td>${new Date(item.data_movimentacao).toLocaleDateString('pt-BR', {
+                                day: '2-digit',      // Exibe o dia com 2 dígitos (ex: 01, 15)
+                                month: '2-digit',    // Exibe o mês com 2 dígitos (ex: 01, 12)
+                                year: 'numeric',     // Exibe o ano completo (ex: 2025)
+                                hour: '2-digit',     // Exibe a hora com 2 dígitos (ex: 09, 23)
+                                minute: '2-digit',   // Exibe o minuto com 2 dígitos (ex: 05, 59)
+                                second: '2-digit',   // Exibe o segundo com 2 dígitos (ex: 00, 30)
+                                hour12: false        // Garante o formato de 24 horas (opcional, mas recomendado para pt-BR)
+                            }).replace(', ', ' ')}</td>
                         <td>${item.fornecedor || '-'}</td>
                         <td>${item.usuario}</td>
                         <td>R$ ${parseFloat(item.valor_total || 0).toFixed(2)}</td>
