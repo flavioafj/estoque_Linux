@@ -976,3 +976,8 @@
                 JOIN perfis p ON u.perfil_id = p.id 
                 WHERE (u.usuario = :username OR u.email = :email) 
                 AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found
+[2025-10-20 20:06:23] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found

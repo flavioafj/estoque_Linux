@@ -77448,3 +77448,665 @@ Params:  0
 Params:  0
 
 [2025-10-19 23:01:48] [DATABASE ERROR] Parâmetro associado: :user_id = 1 (tipo: 1)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :username = admin (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :email = admin (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Preparando query: UPDATE usuarios SET ultimo_acesso = NOW() WHERE id = :id com parâmetros: {":id":1}
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :id = 1 (tipo: 1)
+[2025-10-20 20:06:23] [DATABASE ERROR] Debug PDO após binding: SQL: [56] UPDATE usuarios SET ultimo_acesso = NOW() WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :tabela = usuarios (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :registro_id = 1 (tipo: 1)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :acao = LOGIN (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :dados_anteriores = NULL (tipo: 0)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :dados_novos = NULL (tipo: 0)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :usuario_id = NULL (tipo: 0)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :ip_address = 192.168.15.8 (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :user_agent = Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Erro ao executar query: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'acao' at row 1
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :id = 94gh128it8tpm0l6vctd126p4s (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :id = 94gh128it8tpm0l6vctd126p4s (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :usuario_id = 1 (tipo: 1)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :ip_address = 192.168.15.8 (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :user_agent = Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 (tipo: 2)
+[2025-10-20 20:06:23] [DATABASE ERROR] Parâmetro associado: :dados = {"user_id":1,"user_name":"Administrador do Sistema","user_email":"admin@sorveteria.com","user_profile":1,"user_profile_name":"Administrador","logged_in":true,"login_time":1761001583} (tipo: 2)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :usuario_id = 1 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT SUM(estoque_atual) as total_estoque FROM produtos WHERE ativo = TRUE com parâmetros: []
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [75] SELECT SUM(estoque_atual) as total_estoque FROM produtos WHERE ativo = TRUE
+Params:  0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT id FROM produtos WHERE ativo = TRUE com parâmetros: []
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [42] SELECT id FROM produtos WHERE ativo = TRUE
+Params:  0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":2,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 2 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":2}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 2 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":3,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 3 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":3}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 3 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":4,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 4 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":4}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 4 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":5,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 5 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":5}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 5 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":6,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 6 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":6}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 6 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":8,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 8 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":8}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 8 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":9,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 9 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":9}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 9 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":10,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 10 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":10}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 10 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":11,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 11 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":11}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 11 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+         com parâmetros: {":produto_id":12,":data_fim_a":null,":data_fim":null}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :produto_id = 12 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim_a = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :data_fim = NULL (tipo: 0)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [539] 
+            SELECT 
+                mi.valor_unitario,
+                mi.quantidade,
+                m.criado_em,
+                mi.id
+            FROM movimentacao_itens mi
+            JOIN movimentacoes m ON mi.movimentacao_id = m.id
+            JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+            WHERE tm.tipo = 'ENTRADA'
+                AND mi.produto_id = :produto_id
+                AND (:data_fim_a IS NULL OR m.criado_em <= :data_fim)
+            ORDER BY m.criado_em DESC, mi.id ASC;
+        
+Params:  3
+Key: Name: [11] :produto_id
+paramno=0
+name=[11] ":produto_id"
+is_param=1
+param_type=1
+Key: Name: [11] :data_fim_a
+paramno=1
+name=[11] ":data_fim_a"
+is_param=1
+param_type=0
+Key: Name: [9] :data_fim
+paramno=2
+name=[9] ":data_fim"
+is_param=1
+param_type=0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT estoque_atual FROM produtos WHERE id = :id com parâmetros: {":id":12}
+[2025-10-20 20:06:24] [DATABASE ERROR] Parâmetro associado: :id = 12 (tipo: 1)
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [49] SELECT estoque_atual FROM produtos WHERE id = :id
+Params:  1
+Key: Name: [3] :id
+paramno=0
+name=[3] ":id"
+is_param=1
+param_type=1
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT id, tipo, categoria, documento_numero, data_movimentacao, valor_total, fornecedor, usuario 
+                    FROM vw_movimentacoes_recentes 
+                    ORDER BY data_movimentacao DESC 
+                    LIMIT 10 com parâmetros: []
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [235] SELECT id, tipo, categoria, documento_numero, data_movimentacao, valor_total, fornecedor, usuario 
+                    FROM vw_movimentacoes_recentes 
+                    ORDER BY data_movimentacao DESC 
+                    LIMIT 10
+Params:  0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: 
+                SELECT 
+                    DATE_FORMAT(m.data_movimentacao, '%Y-%m') as periodo,
+                    tm.tipo,
+                    SUM(mi.quantidade) as total_quantidade
+                FROM movimentacoes m
+                JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
+                JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+                WHERE m.status = 'PROCESSADO'
+                    AND m.data_movimentacao >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                GROUP BY periodo, tm.tipo
+                ORDER BY periodo ASC com parâmetros: []
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [593] 
+                SELECT 
+                    DATE_FORMAT(m.data_movimentacao, '%Y-%m') as periodo,
+                    tm.tipo,
+                    SUM(mi.quantidade) as total_quantidade
+                FROM movimentacoes m
+                JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
+                JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
+                WHERE m.status = 'PROCESSADO'
+                    AND m.data_movimentacao >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                GROUP BY periodo, tm.tipo
+                ORDER BY periodo ASC
+Params:  0
+
+[2025-10-20 20:06:24] [DATABASE ERROR] Preparando query: SELECT id, codigo, nome, estoque_atual, estoque_minimo, categoria, fornecedor 
+                    FROM vw_produtos_estoque_critico 
+                    ORDER BY estoque_atual ASC 
+                    LIMIT 10 com parâmetros: []
+[2025-10-20 20:06:24] [DATABASE ERROR] Debug PDO após binding: SQL: [212] SELECT id, codigo, nome, estoque_atual, estoque_minimo, categoria, fornecedor 
+                    FROM vw_produtos_estoque_critico 
+                    ORDER BY estoque_atual ASC 
+                    LIMIT 10
+Params:  0
+
