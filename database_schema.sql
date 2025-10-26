@@ -59,6 +59,20 @@ CREATE TABLE IF NOT EXISTS categorias (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================
+-- TABELA: Itens da nota
+-- =============================================
+
+
+CREATE TABLE IF NOT EXISTS itens_nota (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome_xml VARCHAR(200) NOT NULL UNIQUE,
+    produto_id INT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =============================================
 -- TABELA: Unidades de Medida
 -- =============================================
 CREATE TABLE IF NOT EXISTS unidades_medida (

@@ -13,6 +13,7 @@ use Models\Fornecedor;
 use Models\Movimentacao;
 use Models\MovimentacaoItem;
 use Models\TipoMovimentacao;
+use Models\ItensNota;
 
 // Inicia a sessão
 Session::start();
@@ -61,11 +62,19 @@ if ($notaValorTotal <= 0) {
 
 // Verifica se há pelo menos um produto válido
 $itensValidos = [];
+$itensNotaModel = new ItensNota();
+
 foreach ($produtos as $index => $produto) {
     if (!empty($produto['id_produto_sistema']) && is_numeric($produto['id_produto_sistema']) &&
         is_numeric($produto['quantidade']) && floatval($produto['quantidade']) > 0) {
         $itensValidos[$produto['id_produto_sistema']] = floatval($produto['quantidade']);
         $valoresUnitarios[$produto['id_produto_sistema']] = floatval($produto['valor_unitario'] ?? 0);
+    }
+
+      
+    $existing = $itensNotaModel->getByNomeXml($produto['nome_xml']);
+    if (!$existing && !empty($produto['id_produto_sistema'])) {
+        $itensNotaModel->insert($produto['nome_xml'], $produto['id_produto_sistema']);
     }
 }
 if (empty($itensValidos)) {
@@ -75,6 +84,8 @@ if (empty($itensValidos)) {
 }
 
 try {
+
+  
     
 
     // 1. Verificar/Cadastrar Fornecedor

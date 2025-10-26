@@ -3,11 +3,13 @@ use Helpers\Session;
 use Helpers\NFeProcessor;
 //use Models\Product;
 use Models\Fornecedor; // ADICIONADO
+use Models\ItensNota; // NOVO: Model para a tabela itens_nota (assumindo criado)
 
 // Carrega as configurações e dependências
 require_once '../../config/config.php';
 require_once SRC_PATH . '/Helpers/NFeProcessor.php';
 require_once SRC_PATH . '/Models/Product.php';
+require_once SRC_PATH . '/Models/ItensNota.php'; // NOVO: Require para o model de itens_nota
 //require_once SRC_PATH . '/Models/Fornecedor.php'; // ADICIONADO
 
 // Inicia a sessão e verifica se o usuário é administrador
@@ -67,27 +69,20 @@ foreach ($fornecedoresDoBanco as $fornecedorDb) {
     }
 }
 
-// === ETAPA DE SUGESTÃO DE PRODUTOS ===
+// === ETAPA DE SUGESTÃO DE PRODUTOS (ALTERADA: Usar tabela itens_nota em vez de similaridade) ===
 
 $productModel = new Product();
 $produtosDoBanco = $productModel->getAllby("nome");
 
+$itensNotaModel = new ItensNota(); // NOVO: Instância do model para itens_nota
+
 $produtosSugeridos = [];
 foreach ($nfeData['produtos_xml'] as $produtoXml) {
-    $melhorSimilaridade = 0;
-    $idSugerido = null;
+    // Consultar se o nome_xml já existe na tabela itens_nota (case-insensitive)
+    $sugestao = $itensNotaModel->getByNomeXml($produtoXml['nome_xml']); // Assumindo método no model que faz SELECT com UPPER
 
-    foreach ($produtosDoBanco as $produtoDb) {
-        similar_text(strtoupper($produtoXml['nome_xml']), strtoupper($produtoDb['nome']), $percent);
-        
-        if ($percent > $melhorSimilaridade) {
-            $melhorSimilaridade = $percent;
-            $idSugerido = $produtoDb['id'];
-        }
-    }
-
-    if ($melhorSimilaridade > 70) {
-        $produtoXml['sugestao_produto_id'] = $idSugerido;
+    if ($sugestao) {
+        $produtoXml['sugestao_produto_id'] = $sugestao['produto_id'];
     } else {
         $produtoXml['sugestao_produto_id'] = null;
     }
@@ -193,8 +188,11 @@ include __DIR__ . '/../../templates/header.php';
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
-                                 <?php if ($produto['sugestao_produto_id'] === null): ?>
-                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" data-product-name="<?= htmlspecialchars($produto['nome_xml']) ?>">Cadastrar Produto</button>
+                                <?php if ($produto['sugestao_produto_id']): ?>
+                                    <div class="form-text text-success">✔ Associação encontrada na base de itens de nota.</div>
+                                <?php else: ?>
+                                    <div class="form-text text-warning">⚠ Nenhuma associação encontrada. Selecione manualmente.</div>
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" data-product-name="<?= htmlspecialchars($produto['nome_xml']) ?>">Cadastrar Produto</button>
                                 <?php endif; ?>
                             </td>
                         </tr>

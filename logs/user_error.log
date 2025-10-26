@@ -981,3 +981,28 @@
                 JOIN perfis p ON u.perfil_id = p.id 
                 WHERE (u.usuario = :username OR u.email = :email) 
                 AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found
+[2025-10-25 19:18:16] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found
+[2025-10-25 20:27:43] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-10-25 21:03:21] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found
+[2025-10-25 22:08:07] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found
+[2025-10-25 23:58:16] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"admin",":email":"admin"} | Result: Found

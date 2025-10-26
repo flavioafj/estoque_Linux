@@ -2,6 +2,47 @@ body {
     background-color: #f8f9fa;
 }
 
+.fixedTR{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100; /* Ensure it's above other content */
+
+}
+
+.form21 {
+        padding: 20px;
+    }
+
+.form21 div{
+    margin-bottom: 15px
+}
+
+form.form21 > div {
+  display: flex; /* Enables flexbox for horizontal alignment */
+  align-items: center; /* Vertically centers the label and input within the div */
+  justify-content: flex-start; /* Aligns content (label and input) to the left */
+}
+
+/* For the <label> elements */
+form.form21 > div > label {
+  flex-shrink: 0; /* Prevents the label from shrinking if space is tight */
+  width: 200px; /* Assigns a fixed width to all labels for consistent input alignment */
+  margin-right: 10px; /* Adds space between the label and the input field */
+  text-align: left; /* Ensures the label text itself is left-aligned */
+}
+
+/* For all <input>, <select>, and <textarea> elements within the form */
+form.form21 > div > input,
+form.form21 > div > select,
+form.form21 > div > textarea {
+  flex-grow: 1; /* Allows the input to grow and fill available space */
+  max-width: 500px; /* Sets a maximum width for consistency across all inputs */
+  width: 100%; /* Ensures the input takes 100% of its allocated flex space, up to max-width */
+  box-sizing: border-box; /* Includes padding and border in the element's total width */
+}
+
+
 .card {
     border: none;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -94,6 +135,10 @@ h1 {
 
 .table tbody tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+.prod td,.prod th {
+    padding-top: 5px;    /* Add space above content */
+    padding-bottom: 5px; /* Add space below content */
 }
 .prod tr:nth-child(even) {
   border-bottom: 3px solid black;
