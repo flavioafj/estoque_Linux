@@ -5,8 +5,22 @@ namespace App\Controllers;
 use Controllers\BaseController;
 use Models\Movimentacao;
 use Models\MovimentacaoItem;
+//use Models\Estoque;
+//use Models\Product;  
 use Helpers\Session;
 use Models\Alert;
+
+
+$productPath = __DIR__ . '/../Models/Product.php';
+
+
+if (!file_exists($productPath)) {
+    error_log("ProductController.php: Não encontrou Product.php em $productPath", 3, __DIR__ . '/../../logs/error.log');
+    die("Erro: Não foi possível carregar Product.php.");
+}
+
+//require_once $productPath;
+
 
 class MovimentacaoController extends BaseController
 {
@@ -53,6 +67,20 @@ class MovimentacaoController extends BaseController
         if ($movimentacaoId) {
             $itemModel = new MovimentacaoItem();
             if ($itemModel->adicionarItens($movimentacaoId, $itens, $valoresUnitarios)) {
+                $valorTotal = 0;
+                /* // NOVO: Atualizar tabela estoques e estoque_atual
+                $estoqueModel = new Estoque();
+                $produtoModel = new Product();
+                $valorTotal = 0;
+                foreach ($itens as $produtoId => $quantidade) {
+                    $valor = $valoresUnitarios[$produtoId] ?? 0;
+                    for ($i = 0; $i < (int)$quantidade; $i++) {
+                        $estoqueModel->inserirUnidade($produtoId, $valor);
+                    }
+                    // Atualizar estoque_atual em produtos
+                    $produtoModel->atualizarEstoque2($produtoId, (int)$quantidade, 'add');
+                    $valorTotal += (int)$quantidade * (float)$valor;
+                } */
 
                 // Verifica estoque mínimo para cada item
                 $alertModel = new Alert();
@@ -114,6 +142,15 @@ class MovimentacaoController extends BaseController
         if ($movimentacaoId) {
             $itemModel = new MovimentacaoItem();
             if ($itemModel->adicionarItens($movimentacaoId, $itens)) {
+
+               /*  // NOVO: Atualizar tabela estoques e estoque_atual
+                $estoqueModel = new Estoque();
+                $produtoModel = new Product();
+                foreach ($itens as $produtoId => $quantidade) {
+                    $estoqueModel->removerUnidades($produtoId, (int)$quantidade);
+                    // Atualizar estoque_atual em produtos
+                    $produtoModel->atualizarEstoque2($produtoId, (int)$quantidade, 'subtract');
+                } */
 
                 // Verifica estoque mínimo para cada item
                 $alertModel = new Alert();

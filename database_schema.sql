@@ -146,6 +146,19 @@ CREATE TABLE IF NOT EXISTS produtos (
     INDEX idx_fornecedor (fornecedor_principal_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- =============================================
+-- TABELA: Estoques (unidades individuais)
+-- =============================================
+CREATE TABLE IF NOT EXISTS estoques (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    produto_id INT NOT NULL,
+    valor_unitario DECIMAL(10,2) NOT NULL,
+    data_entrada TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
+    INDEX idx_produto (produto_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- =============================================
 -- TABELA: Tipos de Movimentação
 -- =============================================
@@ -326,7 +339,8 @@ CREATE TABLE IF NOT EXISTS sincronizacao (
 -- Inserir perfis padrão
 INSERT INTO perfis (nome, descricao) VALUES
 ('Administrador', 'Acesso total ao sistema'),
-('Operador', 'Acesso limitado para registro de saídas');
+('Operador', 'Acesso limitado para registro de saídas'),
+('Inventariador', 'Acesso ao módulo de inventário');
 
 -- Inserir usuário administrador padrão (senha: admin123)
 INSERT INTO usuarios (nome_completo, email, usuario, senha, perfil_id) VALUES
@@ -376,14 +390,14 @@ SELECT
     p.id,
     p.codigo,
     p.nome,
-    p.estoque_atual,
+    (SELECT COUNT(*) FROM estoques WHERE produto_id = p.id) AS estoque_atual,
     p.estoque_minimo,
     c.nome as categoria,
     f.nome_fantasia as fornecedor
 FROM produtos p
 LEFT JOIN categorias c ON p.categoria_id = c.id
 LEFT JOIN fornecedores f ON p.fornecedor_principal_id = f.id
-WHERE p.estoque_atual <= p.estoque_minimo
+WHERE (SELECT COUNT(*) FROM estoques WHERE produto_id = p.id) <= p.estoque_minimo
     AND p.ativo = TRUE;
 
 -- View de movimentações recentes

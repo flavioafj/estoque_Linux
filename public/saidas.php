@@ -2,10 +2,11 @@
 require_once '../config/config.php';
 //require_once SRC_PATH . 'Helpers/Session.php';
 //require_once SRC_PATH . 'Middleware/Auth.php';
-require_once SRC_PATH . '/Models/Product.php'; 
+//require_once SRC_PATH . '/Models/Product.php'; 
 
 use Helpers\Session;
 use Models\TipoMovimentacao; // NOVO
+use Models\Product;
 
 //Auth::check(['admin', 'operador']);
 

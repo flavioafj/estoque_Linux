@@ -1,5 +1,5 @@
 <?php
-$senhaTexto = '0716';
+$senhaTexto = 'in123';
 $senhaHash = password_hash($senhaTexto, PASSWORD_DEFAULT);
 echo $senhaHash;
 ?>

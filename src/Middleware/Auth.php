@@ -57,4 +57,12 @@ class Auth {
             exit;
         }
     }
+
+    public static function checkProfile(int $requiredProfile): void {  
+        $userProfile = Session::get('user_profile');  
+        if ($userProfile !== $requiredProfile) {  
+            header('Location: /login.php'); // Crie uma página unauthorized.php se necessário  
+            exit;  
+        }  
+    }
 }

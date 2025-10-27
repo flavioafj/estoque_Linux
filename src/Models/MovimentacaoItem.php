@@ -3,8 +3,10 @@
 namespace Models;
 
 use Models\BaseModel;
+use Models\Product;
+use Models\Estoque;
 
-require_once SRC_PATH . '/Models/Product.php'; 
+//require_once SRC_PATH . '/Models/Product.php'; 
 
 class MovimentacaoItem extends BaseModel
 {
@@ -51,9 +53,10 @@ class MovimentacaoItem extends BaseModel
             $this->db->beginTransaction();
          
 
-            
+            // NOVO: Atualizar tabela estoques e estoque_atual
+            $estoqueModel = new Estoque();
 
-            $productModel = new \Product();
+            $productModel = new Product();
 
             foreach ($itens as $produtoId => $quantidade) {
                 // Validações
@@ -86,6 +89,24 @@ class MovimentacaoItem extends BaseModel
                     error_log("Erro ao inserir item - Produto: $produtoId, Erro: " . $errorInfo);
                     throw new \Exception("Erro ao inserir item da movimentação");
                 }
+
+                //Atualiza o estoque atual
+                $valor = $valoresUnitarios[$produtoId] ?? 0;
+                
+                if($tipoMovimentacao=='ENTRADA'){
+
+                    for ($i = 0; $i < (int)$quantidade; $i++) {
+                        $estoqueModel->inserirUnidade($produtoId, $valor);
+
+                    }
+
+                }elseif ($tipoMovimentacao=='SAIDA') {
+                    $estoqueModel->removerUnidades($produtoId, (int)$quantidade);
+                
+                }
+                    
+                
+                
   
                 // Atualiza o estoque do produto usando o tipo correto
                 $resultadoEstoque = $productModel->atualizarEstoque($produtoId, $quantidade, $tipoMovimentacao);

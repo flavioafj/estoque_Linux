@@ -2,11 +2,11 @@
 require_once '../config/config.php';  
 use Middleware\Auth;  
 use Helpers\Session;  
-//use Models\Product;  
+use Models\Product;  
 use Models\Movimentacao;  
 use Models\MovimentacaoItem;  
 
-require_once SRC_PATH . '/Models/Product.php';
+//require_once SRC_PATH . '/Models/Product.php';
   
 Auth::check();  
   

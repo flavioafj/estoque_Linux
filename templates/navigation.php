@@ -46,6 +46,8 @@ $userName = Session::getUserName() ?: 'Usuário';
                 <li class="nav-item">
                     <a class="nav-link" href="/reports.php">Valor do estoque</a>
                 </li>
+                <?php elseif ($userName == 'Inventariante'): ?>  <!-- inventariador -->
+
                 <?php else: ?>  <!-- Operador -->
                 <li class="nav-item">
                     <span class="nav-link">Acesso restrito (não admin)</span>

@@ -72,5 +72,29 @@ class Movimentacao extends BaseModel
         }  
         $this->atualizarValorTotal($movimentacaoId, 0); // Valor total 0 para saídas  
         return true;  
+    } 
+    
+    public function registrarAjusteEntrada(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (+)'): bool {  
+        $tipoId = 3; // ID para Ajuste de Inventário (+)  
+        $movId = $this->criar($tipoId, $usuarioId, $observacao);  
+        if (!$movId) return false;  
+        $item = new MovimentacaoItem();  
+        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => 0])) {  
+            return false;  
+        }  
+        $this->atualizarValorTotal($movId, 0);  
+        return true;  
     }  
+
+    public function registrarAjusteSaida(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (-)'): bool {  
+        $tipoId = 7; // ID para Ajuste de Inventário (-)  
+        $movId = $this->criar($tipoId, $usuarioId, $observacao);  
+        if (!$movId) return false;  
+        $item = new MovimentacaoItem();  
+        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => 0])) {  
+            return false;  
+        }  
+        $this->atualizarValorTotal($movId, 0);  
+        return true;  
+    }
 }

@@ -105,6 +105,10 @@ $pendingCount = count($alertModel->getPendingAlerts());
             </div>
         </div>
     </div>
+<?php elseif(Session::get('user_profile')===3): ?>
+
+    <?php header('Location: /inventory.php'); exit; ?>
+
 <?php else: ?>
 
     <?php header('Location: /produtos.php'); exit; ?>

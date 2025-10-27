@@ -1,14 +1,14 @@
 <?php
 use Helpers\Session;
 use Helpers\NFeProcessor;
-//use Models\Product;
+use Models\Product;
 use Models\Fornecedor; // ADICIONADO
 use Models\ItensNota; // NOVO: Model para a tabela itens_nota (assumindo criado)
 
 // Carrega as configurações e dependências
 require_once '../../config/config.php';
 require_once SRC_PATH . '/Helpers/NFeProcessor.php';
-require_once SRC_PATH . '/Models/Product.php';
+//require_once SRC_PATH . '/Models/Product.php';
 require_once SRC_PATH . '/Models/ItensNota.php'; // NOVO: Require para o model de itens_nota
 //require_once SRC_PATH . '/Models/Fornecedor.php'; // ADICIONADO
 

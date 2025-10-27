@@ -10,6 +10,7 @@ use Controllers\ReportController;
 use Helpers\Session;
 use Controllers\AlertController;
 use Controllers\AuditController;
+use Controllers\ProductController;
 
 // Verifica se os arquivos existem
 if (!file_exists($controllerPath)) {
@@ -25,7 +26,7 @@ if (!file_exists($sessionPath)) {
     exit;
 }
 
-require_once $controllerPath;
+//require_once $controllerPath;
 require_once $sessionPath;
 require_once __DIR__ . '/../../src/Controllers/AlertController.php';
 require_once __DIR__ . '/../../src/Models/Alert.php';

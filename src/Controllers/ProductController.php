@@ -1,16 +1,20 @@
 <?php
+namespace Controllers;
+
 use Helpers\Validator;
 use Models\Category;
 use Models\Fornecedor;
+use Models\Product;  
+use Models\UnidadeDeMedida;
 
-$productPath = __DIR__ . '/../Models/Product.php';
+//$productPath = __DIR__ . '/../Models/Product.php';
 $validatorPath = __DIR__ . '/../Helpers/Validator.php';
 
 
-if (!file_exists($productPath)) {
+/* if (!file_exists($productPath)) {
     error_log("ProductController.php: Não encontrou Product.php em $productPath", 3, __DIR__ . '/../../logs/error.log');
     die("Erro: Não foi possível carregar Product.php.");
-}
+} */
 
 if (!file_exists($validatorPath)) {
     error_log("ProductController.php: Não encontrou Validator.php em $validatorPath", 3, __DIR__ . '/../../logs/error.log');
@@ -19,7 +23,7 @@ if (!file_exists($validatorPath)) {
 
 
 
-require_once $productPath;
+//require_once $productPath;
 
 
 // Função auxiliar para verificar se há erros reais

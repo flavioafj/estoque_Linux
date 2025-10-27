@@ -2,10 +2,11 @@
 // public/admin/product_turnover.php
 
 require_once __DIR__ . '/../../config/config.php';
-require_once SRC_PATH . '/Models/Product.php'; 
+//require_once SRC_PATH . '/Models/Product.php'; 
 
 use Middleware\Auth;
 use Helpers\Session;
+use Models\Product;
 
 // Middleware: Apenas administradores podem acessar
 Auth::checkAdmin();

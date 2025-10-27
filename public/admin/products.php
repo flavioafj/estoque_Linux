@@ -25,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 
-$controller = new ProductController();
+$controller = new \Controllers\ProductController();
 
 
 
