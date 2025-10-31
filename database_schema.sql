@@ -194,6 +194,21 @@ CREATE TABLE IF NOT EXISTS movimentacoes (
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabela para metadados de inventários
+CREATE TABLE IF NOT EXISTS inventarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT NOT NULL,
+    data_inicio DATETIME NOT NULL,
+    data_conclusao DATETIME,
+    status ENUM('CONCLUIDO', 'CANCELADO') DEFAULT 'CONCLUIDO',
+    observacoes TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    INDEX idx_status (status),
+    INDEX idx_data_conclusao (data_conclusao)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- =============================================
 -- TABELA: Itens da Movimentação
 -- =============================================
@@ -418,3 +433,9 @@ JOIN usuarios u ON m.usuario_id = u.id
 WHERE m.status = 'PROCESSADO'
 ORDER BY m.data_movimentacao DESC
 LIMIT 100;
+
+
+ALTER TABLE movimentacoes
+ADD COLUMN inventario_id INT,
+ADD FOREIGN KEY (inventario_id) REFERENCES inventarios(id),
+ADD INDEX idx_inventario (inventario_id);

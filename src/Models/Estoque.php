@@ -26,6 +26,16 @@ class Estoque extends BaseModel
         return $stmt->execute([$produtoId, $quantidade]);
     }
 
+     /**
+     * Remove N unidades mais antigas (LIFO).
+     */
+    public function removerUnidadesLifo(int $produtoId, int $quantidade): bool
+    {
+        $sql = "DELETE FROM estoques WHERE produto_id = ? ORDER BY data_entrada DESC LIMIT ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$produtoId, $quantidade]);
+    }
+
     /**
      * Obtém o estoque atual (contagem de unidades).
      */
@@ -35,5 +45,13 @@ class Estoque extends BaseModel
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$produtoId]);
         return (int) $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
+     public function getValorUltimo(int $produtoId): int
+    {
+        $sql =  "SELECT valor_unitario FROM estoques WHERE produto_id = ? ORDER BY data_entrada DESC LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$produtoId]);
+        return (int) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
     }
 }

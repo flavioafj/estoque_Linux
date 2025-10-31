@@ -61,8 +61,16 @@ class Auth {
     public static function checkProfile(int $requiredProfile): void {  
         $userProfile = Session::get('user_profile');  
         if ($userProfile !== $requiredProfile) {  
-            header('Location: /login.php'); // Crie uma página unauthorized.php se necessário  
+            header('Location: /login.php');  
             exit;  
         }  
     }
+
+    public static function checkProfile2(array $allowedProfiles): void {
+        $userProfile = Session::get('user_profile');
+        if (!in_array($userProfile, $allowedProfiles, true)) {
+            header('Location: /login.php');
+            exit;
+        }
+}
 }

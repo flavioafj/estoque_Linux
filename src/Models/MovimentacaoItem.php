@@ -19,7 +19,7 @@ class MovimentacaoItem extends BaseModel
      * @param array $itens
      * @return bool
      */
-    public function adicionarItens(int $movimentacaoId, array $itens, array $valoresUnitarios = null): bool
+    public function adicionarItens(int $movimentacaoId, array $itens, array $valoresUnitarios = null, int $tipo = 0): bool
     {
         try {
             // Validação básica
@@ -101,8 +101,12 @@ class MovimentacaoItem extends BaseModel
                     }
 
                 }elseif ($tipoMovimentacao=='SAIDA') {
-                    $estoqueModel->removerUnidades($produtoId, (int)$quantidade);
-                
+                    if ($tipo) {
+                        $estoqueModel->removerUnidadesLifo($produtoId, (int)$quantidade);
+                    }else{
+                        $estoqueModel->removerUnidades($produtoId, (int)$quantidade);
+                    }
+                                    
                 }
                     
                 

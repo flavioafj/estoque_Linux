@@ -5,7 +5,7 @@ use Helpers\Session;
 use Models\Product;  
   
 Auth::check();  
-Auth::checkProfile(3); // Checagem de perfil 3 (Inventariador)  
+Auth::checkProfile2([1, 3]);
   
 $productModel = new Product();  
 $produtos = $productModel->getProdutosPorSaidasDesc();  

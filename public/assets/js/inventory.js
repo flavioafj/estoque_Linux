@@ -84,3 +84,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// Adicionar ao final do arquivo
+document.querySelectorAll('form[action="/inventory_undo.php"]').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        if (!confirm('Desfazer este inventário? Esta ação não pode ser revertida.')) {
+            e.preventDefault();
+        }
+    });
+});

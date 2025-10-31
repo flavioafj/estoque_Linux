@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\BaseModel;
+use Models\Estoque;
 
 class Movimentacao extends BaseModel
 {
@@ -17,13 +18,13 @@ class Movimentacao extends BaseModel
      * @param int|null $fornecedorId
      * @return int|false
      */
-    public function criar(int $tipoMovimentacaoId, int $usuarioId, string $observacao = '', ?int $fornecedorId = null)
+    public function criar(int $tipoMovimentacaoId, int $usuarioId, string $observacao = '', ?int $fornecedorId = null, ?int $inventarioId = null): int|false
     {
-        $sql = "INSERT INTO {$this->table} (tipo_movimentacao_id, data_movimentacao, usuario_id, fornecedor_id, observacoes, status) VALUES (?, NOW(), ?, ?, ?, ?)";
+        $sql = "INSERT INTO {$this->table} (tipo_movimentacao_id, data_movimentacao, usuario_id, fornecedor_id, observacoes, status, inventario_id) VALUES (?, NOW(), ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $status = 'PROCESSADO';
         
-        if ($stmt->execute([$tipoMovimentacaoId, $usuarioId, $fornecedorId, $observacao, $status])) {
+        if ($stmt->execute([$tipoMovimentacaoId, $usuarioId, $fornecedorId, $observacao, $status, $inventarioId])) {
             return $this->db->lastInsertId();
         }
         return false;
@@ -74,24 +75,30 @@ class Movimentacao extends BaseModel
         return true;  
     } 
     
-    public function registrarAjusteEntrada(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (+)'): bool {  
+    //usado apenas para ajuste pós inventário
+    public function registrarAjusteEntrada(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (+)', ?int $inventarioId = null): bool {  
         $tipoId = 3; // ID para Ajuste de Inventário (+)  
-        $movId = $this->criar($tipoId, $usuarioId, $observacao);  
+        $qtdEst = new Estoque();
+        $val = $qtdEst->getValorUltimo($produtoId);
+        $movId = $this->criar($tipoId, $usuarioId, $observacao, null, $inventarioId);  
         if (!$movId) return false;  
         $item = new MovimentacaoItem();  
-        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => 0])) {  
+        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {  
             return false;  
         }  
         $this->atualizarValorTotal($movId, 0);  
         return true;  
     }  
 
-    public function registrarAjusteSaida(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (-)'): bool {  
+        //usado apenas para ajuste pós inventário
+    public function registrarAjusteSaida(int $produtoId, float $quantidade, int $usuarioId, string $observacao = 'Ajuste de Inventário (-)', ?int $inventarioId = null): bool {  
         $tipoId = 7; // ID para Ajuste de Inventário (-)  
-        $movId = $this->criar($tipoId, $usuarioId, $observacao);  
+        $qtdEst = new Estoque();
+        $val = $qtdEst->getValorUltimo($produtoId);
+        $movId = $this->criar($tipoId, $usuarioId, $observacao, null, $inventarioId);  
         if (!$movId) return false;  
         $item = new MovimentacaoItem();  
-        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => 0])) {  
+        if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {  
             return false;  
         }  
         $this->atualizarValorTotal($movId, 0);  
