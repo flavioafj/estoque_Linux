@@ -990,4 +990,268 @@ porque o host conectado não respondeu (10060) </br>PHPMailer Debug [2]: SMTP Er
  </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
  </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
  </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDYzODgzNjA2MS4xNzYyMDI1NjQ2QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 1 Nov 2025 16:34:03 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <NJYeNPnXBtV6TOkPf3e31EPTgR9jFP8hiTSVWXAhiA@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto CREME DE LEITE PASTEUR com estoque baixo: 0.000 <= 2.000.</p><p>Produto: CREME DE LEITE PASTEUR</p><p>Estoque Atual: 0.000</p><p>Estoque Mínimo: 2.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDExMzM0OTQ2NzQuMTc2MjAyNTY0OUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDE5MDk0NzU1ODMuMTc2MjAyNTY1MkBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDUyNjMwMjEzMC4xNzYyMDI1NjU1QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDU4NTA0NzM2OS4xNzYyMDI1NjU4QHNtdHAubWFpbHRyYXAuaW8+
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 354 Go ahead
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Date: Sat, 1 Nov 2025 16:34:16 -0300
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: To: admin@sorveteria.com, adm2@borela.com
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: From: Sistema de Estoque <no-reply@sorveteria.com>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Subject: Alerta de Estoque Baixo
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Message-ID: <NJEzAQQ2MNwkKRforBJFLAj0Dv1HCBqMBFY0HZYw@192.168.15.10>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.0 (https://github.com/PHPMailer/PHPMailer)
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MIME-Version: 1.0
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: <p>Produto Açúcar orgânico com estoque baixo: 0.000 <= 1.000.</p><p>Produto: Açúcar orgânico</p><p>Estoque Atual: 0.000</p><p>Estoque Mínimo: 1.000</p>
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: 
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: .
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.0.0 Ok: queued
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDIwNDkyNTAxODkuMTc2MjAyNTY2MUBzbXRwLm1haWx0cmFwLmlvPg==
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 smtp.mailtrap.io ESMTP ready
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 STARTTLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: STARTTLS
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 220 2.0.0 Start TLS
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: EHLO 192.168.15.10
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250-smtp.mailtrap.io
+250-SIZE 5242880
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 AUTH PLAIN LOGIN CRAM-MD5
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: AUTH CRAM-MD5
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 334 PDI1NjIxNDQzLjE3NjIwMjU2NjRAc210cC5tYWlsdHJhcC5pbz4=
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: [credentials hidden] </br>PHPMailer Debug [2]: SERVER -> CLIENT: 235 2.0.0 OK
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: MAIL FROM:<no-reply@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<admin@sorveteria.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: RCPT TO:<adm2@borela.com>
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 250 2.1.0 Ok
+ </br>PHPMailer Debug [1]: CLIENT -> SERVER: DATA
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [1]: SMTP ERROR: DATA command failed: 550 5.7.0 Too many emails per second. Please upgrade your plan https://mailtrap.io/billing/plans/testing
+ </br>PHPMailer Debug [2]: SMTP Error: data not accepted. </br>Alert::sendAlert: SMTP Error: data not accepted.PHPMailer Debug [1]: CLIENT -> SERVER: QUIT
+ </br>PHPMailer Debug [2]: SERVER -> CLIENT: 221 2.0.0 Bye
  </br>

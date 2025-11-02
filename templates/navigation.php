@@ -62,7 +62,14 @@ $userName = Session::getUserName() ?: 'Usuário';
                     <a class="nav-link" href="/produtos.php">Produtos</a>  
                 </li>  
                 <li class="nav-item">  
-                    <a class="nav-link" href="/cart.php">Carrinho</a>  
+                    <a href="/cart.php" class="icon cart-link" title="Ver Carrinho">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2.5H12.36l.5-2.5H3.14zM2 8.5a.5.5 0 0 1 .5-.5h9.025a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5v-.5z"/>
+                            <path d="M5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        </svg>
+                        <span class="cart-text">Carrinho</span>
+                        
+                    </a>
                 </li>  
                 <li class="nav-item">  
                     <a class="nav-link" href="/my_exits.php">Minhas Saídas</a>  

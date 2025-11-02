@@ -6,6 +6,7 @@ use PDO;
 
 class Estoque extends BaseModel
 {
+    protected $table = 'estoques';
     /**
      * Insere uma unidade individual no estoque.
      */

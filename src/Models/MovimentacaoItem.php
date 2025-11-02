@@ -58,7 +58,10 @@ class MovimentacaoItem extends BaseModel
 
             $productModel = new Product();
 
+            $dados = [];
+
             foreach ($itens as $produtoId => $quantidade) {
+
                 // Validações
                 if (!is_numeric($produtoId) || !is_numeric($quantidade) || $quantidade <= 0) {
                     error_log("Dados inválidos - Produto ID: $produtoId, Quantidade: $quantidade");
@@ -94,13 +97,14 @@ class MovimentacaoItem extends BaseModel
                 $valor = $valoresUnitarios[$produtoId] ?? 0;
                 
                 if($tipoMovimentacao=='ENTRADA'){
-
+                    $acao = 'INSERT';
                     for ($i = 0; $i < (int)$quantidade; $i++) {
                         $estoqueModel->inserirUnidade($produtoId, $valor);
 
                     }
 
                 }elseif ($tipoMovimentacao=='SAIDA') {
+                    $acao = 'DELETE';
                     if ($tipo) {
                         $estoqueModel->removerUnidadesLifo($produtoId, (int)$quantidade);
                     }else{
@@ -120,6 +124,14 @@ class MovimentacaoItem extends BaseModel
                     error_log("Erro ao atualizar estoque - Produto: $produtoId, Quantidade: $quantidade, Tipo: $tipoMovimentacao");
                     throw new \Exception("Erro ao atualizar estoque do produto $produtoId");
                 }
+
+                $produto = [
+                    'prodId'    => $produtoId,
+                    'qtd'       => $quantidade,
+                    'valUnit'   => $valoresUnitariosf
+                ];
+
+                $dados[] = $produto;
             }
 
           
@@ -128,6 +140,8 @@ class MovimentacaoItem extends BaseModel
             
             
             error_log("Movimentação processada com sucesso: $movimentacaoId");
+            $estoqueModel->logAudit($acao, $movimentacaoId, null, $dados);
+
             return true;
 
         } catch (\Exception $e) {

@@ -1,35 +1,41 @@
-<?php  
-require_once '../config/config.php';  
-use Middleware\Auth;  
-use Helpers\Session;  
-use Models\Product;  
-  
-Auth::check();  
+<?php
+require_once '../config/config.php';
+use Middleware\Auth;
+
+Auth::check();
 Auth::checkProfile2([1, 3]);
-  
-$productModel = new Product();  
-$produtos = $productModel->getProdutosPorSaidasDesc();  
-  
-require_once '../templates/header.php';  
-require_once '../templates/navigation.php';  
-?>  
-  
-<main class="container mt-4">  
-    <h1>Inventário</h1>  
-    <div class="inventory-controls">  
-        <input type="text" id="search" placeholder="Buscar produto...">  
-        <button id="sort-btn">Ordenar Alfabeticamente</button>  
-    </div>  
-  
-    <form method="POST" action="/inventory_confirm.php">  
-        <div class="product-grid">  
-            <?php foreach ($produtos as $produto): ?>  
-                <?php include '../templates/inventory-product-card.php'; ?>  
-            <?php endforeach; ?>  
-        </div>  
-        <button type="submit" class="btn btn-primary">Submeter Inventário</button>  
-    </form>  
-</main>  
-  
-<script src="/assets/js/inventory.js"></script>  
-<?php require_once '../templates/footer.php'; ?>  
+
+require_once '../templates/header.php';
+require_once '../templates/navigation.php';
+?>
+
+<main class="container mt-4">
+    <h1>Inventário</h1>
+
+    <!-- Controles -->
+    <div class="inventory-controls mb-3">
+        <input type="text" id="search" class="form-control w-auto d-inline-block" placeholder="Buscar produto...">
+        <button id="clear-search" class="btn btn-outline-secondary btn-sm">Limpar Busca</button>
+        <button id="clear-inventory" class="btn btn-warning btn-sm">Limpar Inventário</button>
+    </div>
+
+    
+
+    <!-- Status -->
+    <div id="status" class="mb-3"></div>
+
+    <!-- Grid + Formulário -->
+    <form id="inventory-form" method="POST" action="/inventory_confirm.php">
+        <div id="product-grid" class="product-grid"></div>
+
+        <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Submeter Inventário</button>
+        </div>
+    </form>
+
+    <!-- Paginação -->
+    <nav id="pagination" class="mt-4" aria-label="Paginação"></nav>
+</main>
+
+<script src="/assets/js/inventory-client.js"></script>
+<?php require_once '../templates/footer.php'; ?>

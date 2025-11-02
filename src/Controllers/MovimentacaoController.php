@@ -137,7 +137,7 @@ class MovimentacaoController extends BaseController
         $movimentacaoId = $movimentacaoModel->criar($tipoMovimentacaoId, $usuarioId, $observacao);
         
         // Log para movimentacoes
-        $movimentacaoModel->logAudit('INSERT', $movimentacaoId, null, $postData);
+        $movimentacaoModel->logAudit('DELETE', $movimentacaoId, null, $postData);
 
         if ($movimentacaoId) {
             $itemModel = new MovimentacaoItem();

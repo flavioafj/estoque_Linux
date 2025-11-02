@@ -7,6 +7,14 @@ use Models\Product;
 //require_once SRC_PATH . '/Models/Product.php';
   
 Auth::check(); 
+// API: retorna todos os produtos ativos
+if (isset($_GET['api']) && $_GET['api'] === 'products') {
+    header('Content-Type: application/json');
+    $productModel = new Product();
+    $produtos = $productModel->getProdutosPorSaidasDesc(); // ou all('ativo = 1')
+    echo json_encode(array_values($produtos));
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {  
      // --- INÍCIO DO BLOQUEIO DE REQUISIÇÃO DUPLA ---
@@ -59,8 +67,6 @@ if (Session::isAdmin()) {
     exit;  
 }  
   
-$productModel = new Product();  
-$produtos = $productModel->getProdutosPorSaidasDesc();  
   
 require_once '../templates/header.php';  
 require_once '../templates/navigation.php';  
@@ -72,13 +78,25 @@ require_once '../templates/navigation.php';
     <div class="last-exits">  
         <a href="/my_exits.php" class="icon">📤 Últimas Saídas</a>  
     </div>  
+
+    <!-- BUSCA (igual ao inventory.php) -->
+    <div class="inventory-controls mb-3">
+        <input type="text" id="search" class="form-control w-auto d-inline-block" placeholder="Buscar produto...">
+        <button id="clear-search" class="btn btn-outline-secondary btn-sm">Limpar</button>
+    </div>
   
-    <div class="product-grid">  
-        <?php foreach ($produtos as $produto): ?>  
-            <?php include '../templates/product-card.php'; ?>  
-        <?php endforeach; ?>  
-    </div>  
+    <!-- Status -->
+    <div id="status" class="mb-3"></div>
+
+    <!-- Grid (vazio, será preenchido por JS) -->
+    <div id="product-grid" class="product-grid"></div>
+
+    <!-- Paginação -->
+    <nav id="pagination" class="mt-4" aria-label="Paginação"></nav>
 </main>  
-  
-<script src="/assets/js/main.js"></script>  
-<?php require_once '../templates/footer.php'; ?>  
+
+<!-- JS principal (não conflita com main.js) -->
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/produtos-client.js"></script>
+
+<?php require_once '../templates/footer.php'; ?>

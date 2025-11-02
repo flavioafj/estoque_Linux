@@ -87,6 +87,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (data.success) {
                             alert('Adicionado ao carrinho!');
                             addCartButton.disabled = false; // Reabilita após sucesso
+                            const badge = document.querySelector('.cart-badge');
+                            let count = (parseInt(badge?.textContent) || 0) + 1;
+                            if (!badge) {
+                                const newBadge = document.createElement('span');
+                                newBadge.className = 'cart-badge';
+                                newBadge.textContent = '1';
+                                document.querySelector('.cart-link').appendChild(newBadge);
+                            } else {
+                                badge.textContent = count;
+                            }
                         } else {
                             alert('Erro: ' + data.message);
                             addCartButton.disabled = false;

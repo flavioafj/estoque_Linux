@@ -51,7 +51,7 @@ if (strpos($requestUri, $basePath) === 0) {
 }
 
 // Define as rotas da API
-if ($requestUri === 'api/products') {
+if ($requestUri === '/api/products') {
     try {
         $products = $controller->productModel->getAll();
         echo json_encode($products);

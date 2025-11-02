@@ -139,7 +139,7 @@ class Product extends BaseModel {
      *  
      * @return array  
      */  
-    public function getProdutosPorSaidasDesc() {  
+    public function getProdutosPorSaidasDesc($page = 1, $perPage = 12) {  
             $sql = "  
                 SELECT 
                     p.*,  
@@ -157,7 +157,8 @@ class Product extends BaseModel {
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);  
         }  
 
-   
+       
+               
     }
 
 class UnidadeDeMedida extends BaseModel {
