@@ -439,3 +439,8 @@ ALTER TABLE movimentacoes
 ADD COLUMN inventario_id INT,
 ADD FOREIGN KEY (inventario_id) REFERENCES inventarios(id),
 ADD INDEX idx_inventario (inventario_id);
+
+ALTER TABLE movimentacoes 
+ADD COLUMN corrigida BOOLEAN DEFAULT FALSE,
+ADD COLUMN movimentacao_original_id INT NULL,
+ADD FOREIGN KEY (movimentacao_original_id) REFERENCES movimentacoes(id);

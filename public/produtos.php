@@ -3,6 +3,7 @@ require_once '../config/config.php';
 use Middleware\Auth;  
 use Helpers\Session;  
 use Models\Product;  
+use Controllers\ExitController;
 
 //require_once SRC_PATH . '/Models/Product.php';
   
@@ -42,15 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         exit;  
     }  
   
-    if ($action === 'saida_direta') {  
-        $movimentacao = new \Models\Movimentacao();  
+    if ($action === 'saida_direta') { 
+        (new ExitController())->saidaDireta(); 
+       /*  $movimentacao = new \Models\Movimentacao();  
         if ($movimentacao->registrarSaidaDireta($produtoId, $quantidade, $usuarioId)) {  
             Session::set('is_processing', false); // Libera o bloqueio
             echo json_encode(['success' => true]);  
         } else {  
             Session::set('is_processing', false); // Libera o bloqueio
             echo json_encode(['success' => false, 'message' => 'Erro ao registrar saída']);  
-        }  
+        }  */ 
         exit;  
     } elseif ($action === 'add_cart') {  
         Session::addToCart($produtoId, $quantidade); 

@@ -47,8 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }).then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert('Saída registrada com sucesso!');
-                            location.reload();
+                            // <<< ALTERAÇÃO CRÍTICA >>>
+                            if (data.redirect) {
+                                window.location.href = data.redirect; // Redireciona para pos_saida.php
+                            } else {
+                                alert('Saída registrada com sucesso!');
+                                location.reload();
+                            }
                         } else {
                             alert('Erro: ' + data.message);
                             pegarButton.disabled = false;

@@ -25,6 +25,7 @@ if ($requestUri === '/' || $requestUri === '/index.php') {
     }
 }
 
+
 // Rotas para Categorias
 if ($requestUri === '/admin/categories.php') {
     $controller = new CategoryController();

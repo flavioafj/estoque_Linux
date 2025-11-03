@@ -104,4 +104,46 @@ class Movimentacao extends BaseModel
         $this->atualizarValorTotal($movId, 0);  
         return true;  
     }
+
+    /**
+     * Cria um ajuste compensatório (entrada ou saída) vinculado à movimentação original.
+     *
+     * @param int   $originalId   ID da movimentação que está sendo corrigida
+     * @param array $itens        ['produto_id' => quantidade]  (quantidade pode ser negativa)
+     * @param int   $usuarioId    ID do usuário que faz a correção
+     * @return bool
+     */
+    public function criarAjusteCompensatorio(int $originalId, array $itens, int $usuarioId): bool
+    {
+        $db = Database::getInstance();
+
+        // 1 – buscar tipo de ajuste (+ ou -)
+        $tipoAjuste = current($itens) > 0 ? 3 : 7; // 3 = Ajuste (+), 7 = Ajuste (-)
+        $movId = $this->criar($tipoAjuste, $usuarioId, '');
+
+        if (!$movId) return false;
+
+        // 2 – inserir itens
+        $itemModel = new MovimentacaoItem();
+        $valoresUnitarios = array_fill_keys(array_keys($itens), 0);
+        if (!$itemModel->adicionarItens($movId, array_map('abs', $itens), $valoresUnitarios)) {
+            return false;
+        }
+
+        // 3 – vincular ao original
+        $stmt = $db->prepare(
+            "UPDATE movimentacoes SET movimentacao_original_id = :ajuste_id, corrigida = 1 WHERE id = :original_id"
+        );
+        $stmt->execute([
+            ':ajuste_id'    => $movId,
+            ':original_id'  => $originalId
+        ]);
+
+        // 4 – atualizar estoque (já feito pelo trigger do item)
+        return true;
+    }
+
+    public function getById($id) {
+        return $this->find($id);
+    }
 }

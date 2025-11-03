@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $movimentacao->atualizarValorTotal($movimentacaoId, 0);  
                     Session::clearCart();  
                     Session::setFlash('success', 'Saídas confirmadas com sucesso!');  
-                    header('Location: /produtos.php');  
+                    header("Location: /pos_saida.php?mov=$movimentacaoId");
                     exit;  
                 }  
             }  

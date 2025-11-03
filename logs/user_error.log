@@ -1302,3 +1302,113 @@
                 JOIN perfis p ON u.perfil_id = p.id 
                 WHERE (u.usuario = :username OR u.email = :email) 
                 AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 14:35:01] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 14:36:15] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"Flavio",":email":"Flavio"} | Result: Found
+[2025-11-02 15:46:15] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 15:57:58] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 15:59:07] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:02:32] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:02:55] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:04:36] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:05:21] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:06:38] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:07:30] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:11:10] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 16:13:57] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 18:00:57] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 18:01:56] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 18:28:27] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 18:42:49] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 18:57:18] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 19:18:58] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 19:32:14] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 19:33:38] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
+[2025-11-02 19:39:24] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE (u.usuario = :username OR u.email = :email) 
+                AND u.ativo = 1 | Params: {":username":"flavio",":email":"flavio"} | Result: Found
