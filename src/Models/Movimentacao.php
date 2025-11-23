@@ -67,11 +67,13 @@ class Movimentacao extends BaseModel
         }  
         $movimentacaoItem = new MovimentacaoItem();  
         $itens = [$produtoId => $quantidade];  
-        $valoresUnitarios = [$produtoId => 0]; // Valor unitário 0 para saídas sem custo  
+        $qtdEst = new Estoque();
+        $val = $qtdEst->getValorFIFO($produtoId);
+        $valoresUnitarios = [$produtoId => $val]; // Valor unitário FIFO
         if (!$movimentacaoItem->adicionarItens($movimentacaoId, $itens, $valoresUnitarios)) {  
             return false;  
         }  
-        $this->atualizarValorTotal($movimentacaoId, 0); // Valor total 0 para saídas  
+        $this->atualizarValorTotal($movimentacaoId, $quantidade * $val); // Valor total 
         return true;  
     } 
     
@@ -80,13 +82,15 @@ class Movimentacao extends BaseModel
         $tipoId = 3; // ID para Ajuste de Inventário (+)  
         $qtdEst = new Estoque();
         $val = $qtdEst->getValorUltimo($produtoId);
+        $vlrtotal = $qtdEst->getSomaValores($produtoId, $quantidade, "DESC");
+
         $movId = $this->criar($tipoId, $usuarioId, $observacao, null, $inventarioId);  
         if (!$movId) return false;  
         $item = new MovimentacaoItem();  
         if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {  
             return false;  
         }  
-        $this->atualizarValorTotal($movId, 0);  
+        $this->atualizarValorTotal($movId, $vlrtotal);  
         return true;  
     }  
 
@@ -95,13 +99,15 @@ class Movimentacao extends BaseModel
         $tipoId = 7; // ID para Ajuste de Inventário (-)  
         $qtdEst = new Estoque();
         $val = $qtdEst->getValorUltimo($produtoId);
+        $vlrtotal = $qtdEst->getSomaValores($produtoId, $quantidade, "DESC");
+
         $movId = $this->criar($tipoId, $usuarioId, $observacao, null, $inventarioId);  
         if (!$movId) return false;  
         $item = new MovimentacaoItem();  
         if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {  
             return false;  
         }  
-        $this->atualizarValorTotal($movId, 0);  
+        $this->atualizarValorTotal($movId, $vlrtotal);  
         return true;  
     }
 

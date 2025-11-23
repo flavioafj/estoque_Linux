@@ -55,4 +55,44 @@ class Estoque extends BaseModel
         $stmt->execute([$produtoId]);
         return (int) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
     }
+
+    public function getValorFIFO(int $produtoId): int
+    {
+        $sql =  "SELECT valor_unitario FROM estoques WHERE produto_id = ? ORDER BY data_entrada ASC LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$produtoId]);
+        return (int) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
+    }
+
+    // Note que mudei o nome do argumento para $id para simplificar
+    public function getSomaValores(int $id, int $q, string $tip0 = "ASC"): float
+    {
+        
+        $ordem = (strtoupper($tip0) === 'DESC') ? 'DESC' : 'ASC';
+
+        
+        $sql = "SELECT SUM(valor_unitario) as total 
+                FROM (
+                    SELECT valor_unitario 
+                    FROM estoques 
+                    WHERE produto_id = :id 
+                    ORDER BY id $ordem 
+                    LIMIT :qtd
+                ) as ultimos_registros";
+
+        $stmt = $this->db->prepare($sql);
+
+        // 3. Correção do método: usar bindValue
+        $stmt->bind(':id', $id, PDO::PARAM_INT);
+        // O :tip0 não é mais necessário no bind, pois já está na string acima
+        $stmt->bind(':qtd', $q, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (float) ($resultado['total'] ?? 0);
+    }
+
+
 }

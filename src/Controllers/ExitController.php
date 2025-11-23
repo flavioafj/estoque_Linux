@@ -5,6 +5,7 @@ use Middleware\Auth;
 use Helpers\Session;
 use Models\Movimentacao;  
 use Models\MovimentacaoItem;
+use Models\Estoque;
   
 class ExitController {  
     // Métodos redundantes com Movimentacao; use diretamente para simplicidade  
@@ -25,8 +26,13 @@ class ExitController {
         $movId = $mov->criar($tipoSaidaId, Session::getUserId());
 
         $item = new MovimentacaoItem();
-        if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => 0])) {
-            $mov->atualizarValorTotal($movId, 0);
+        $qtdEst = new Estoque();
+        $val = $qtdEst->getValorFIFO($produtoId);
+        $vlrtotal = $qtdEst->getSomaValores((int)$produtoId, $quantidade);
+
+        if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
+            
+            $mov->atualizarValorTotal($movId, $vlrtotal);
             // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
             echo json_encode(['success'=>true, 'redirect'=>"/pos_saida.php?mov=$movId"]);
         } else {

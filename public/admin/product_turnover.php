@@ -17,7 +17,7 @@ if (!$product_id) {
     exit;
 }
 
-$product = (new \Product())->getById($product_id);
+$product = (new Product())->getById($product_id);
 
 // Lógica básica
 $pageTitle = "Giro de Estoque do Produto ID: " . $product_id;

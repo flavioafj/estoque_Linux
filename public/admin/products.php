@@ -65,7 +65,7 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
                 <input type="text" id="nome" name="nome" placeholder="Nome do produto" required>
             </div>
             <div>
-                <label for="codigo">Código *</label>
+                <label for="codigo">Código</label>
                 <input type="text" id="codigo" name="codigo" placeholder="Código único">
             </div>
             <div>

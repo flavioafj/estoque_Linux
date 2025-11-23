@@ -53,7 +53,6 @@ class ProductController {
     public function store($data) {
         $rules = [
             'nome' => 'required|unique:produtos,nome',
-            'codigo' => 'required|unique:produtos,codigo',
             'categoria_id' => 'required|exists:categorias,id',
             'estoque_atual' => 'numeric|min:0',
             'estoque_minimo' => 'required|numeric|min:0',

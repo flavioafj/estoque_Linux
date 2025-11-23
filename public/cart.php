@@ -5,6 +5,7 @@ use Helpers\Session;
 use Models\Product;  
 use Models\Movimentacao;  
 use Models\MovimentacaoItem;  
+use Models\Estoque;
 
 //require_once SRC_PATH . '/Models/Product.php';
   
@@ -37,17 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Session::removeFromCart($produtoId);  
         } elseif ($action === 'confirm') {  
             $usuarioId = Session::getUserId();  
-            $movimentacao = new Movimentacao();  
+            $movimentacao = new Movimentacao(); 
+            $qtdEst = new Estoque();
+            
+
             $tipoSaidaId = 5; // 'Venda'  
             $movimentacaoId = $movimentacao->criar($tipoSaidaId, $usuarioId);  
             if ($movimentacaoId) {  
                 $movimentacaoItem = new MovimentacaoItem();  
                 $valoresUnitarios = [];  
+                $vlrTotal = 0;
                 foreach ($cart as $id => $qty) {  
-                    $valoresUnitarios[$id] = 0;  
+                    $val = $qtdEst->getValorFIFO($id); 
+
+                    $valoresUnitarios[$id] = $val;  
+                    $vlrTotal += $qtdEst->getSomaValores((int)$id, $qty);
                 }  
                 if ($movimentacaoItem->adicionarItens($movimentacaoId, $cart, $valoresUnitarios)) {  
-                    $movimentacao->atualizarValorTotal($movimentacaoId, 0);  
+                    $movimentacao->atualizarValorTotal($movimentacaoId, $vlrTotal);  
                     Session::clearCart();  
                     Session::setFlash('success', 'Saídas confirmadas com sucesso!');  
                     header("Location: /pos_saida.php?mov=$movimentacaoId");
