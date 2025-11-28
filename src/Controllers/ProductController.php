@@ -103,8 +103,13 @@ class ProductController {
             'estoque_minimo' => 'numeric|min:0',
             'ativo' => 'boolean',
             'unidade_medida_id' => 'exists:unidades_medida,id',
-            'fornecedor_principal_id' => 'exists:fornecedores,id'
+            'fornecedor_principal_id' => 'fornecedores,id'
         ];
+
+        if($data['fornecedor_principal_id']==''){
+            $data['fornecedor_principal_id']= null;
+        }
+
 
         $errors = Validator::validate($data, $rules);
 

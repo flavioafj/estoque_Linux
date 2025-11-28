@@ -211,8 +211,9 @@ class Database {
         $sql = "UPDATE $table SET " . implode(', ', $fields) . " WHERE $where";
         
         $this->prepare($sql);
-        
+        $teste = $sql;
         foreach ($data as $key => $value) {
+            $teste = str_replace(':' . $key, $value, $teste);
             $this->bind(':' . $key, $value);
         }
         
