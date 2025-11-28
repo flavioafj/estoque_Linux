@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             Session::set('is_processing', false); // Libera o bloqueio
             echo json_encode(['success' => false, 'message' => 'Erro ao registrar saída']);  
         }  */ 
+        Session::set('is_processing', false);
         exit;  
     } elseif ($action === 'add_cart') {  
         Session::addToCart($produtoId, $quantidade); 

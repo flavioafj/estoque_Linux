@@ -47,6 +47,7 @@ $pendingCount = count($alertModel->getPendingAlerts());
                 <div class="card-body">
                     <p><strong>Total em Estoque:</strong> <span id="total-estoque">0</span> unidades</p>
                     <p><strong>Valor FIFO:</strong> <span id="valor-fifo">R$ 0.00</span></p>
+                    <p><strong>Valor Estoque:</strong> <span id="valor-estoque">R$ 0.00</span></p>
                 </div>
             </div>
         </div>

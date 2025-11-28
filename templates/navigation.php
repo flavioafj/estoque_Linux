@@ -41,6 +41,9 @@ $userName = Session::getUserName() ?: 'Usuário';
                     <a class="nav-link" href="/admin/entradas.php">Registrar Entrada</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/saidas.php">Registrar Saída</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/audit.php">Auditoria</a>
                 </li>
                 <li class="nav-item">
@@ -55,9 +58,7 @@ $userName = Session::getUserName() ?: 'Usuário';
                 <li class="nav-item">
                     <span class="nav-link">Acesso restrito (não admin)</span>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/saidas.php">Registrar Saída</a>
-                </li>
+
                 <li class="nav-item">  
                     <a class="nav-link" href="/produtos.php">Produtos</a>  
                 </li>  

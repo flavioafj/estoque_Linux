@@ -8,6 +8,7 @@ $(document).ready(function() {
         success: function(data) {
             $('#total-estoque').text(data.total_estoque);
             $('#valor-fifo').text('R$ ' + data.valor_fifo);
+            $('#valor-estoque').text('R$ ' + data.valor_estoque);
         },
         error: function(xhr) {
             console.error('Erro ao carregar resumo:', xhr.responseJSON ? xhr.responseJSON.error : 'Erro desconhecido');

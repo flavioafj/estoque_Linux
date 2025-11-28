@@ -116,6 +116,18 @@ class Report extends BaseModel
         return $valor_estoque;
     }
 
+    public function valorEstoque()
+    {
+        $sql = "SELECT SUM(valor_unitario) as total FROM estoques";;
+       
+       
+        $resultado = $this->rawQuery($sql);
+
+        // Para acessar o valor (assumindo que retorna um array de objetos ou array associativo)
+        $total = $resultado[0]['total'] ?? 0;
+        return $total;
+    }
+
     /**
      * Exporta relatório em CSV
      * @param array $data Dados do relatório

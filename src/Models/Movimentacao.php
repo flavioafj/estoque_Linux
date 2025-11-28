@@ -124,14 +124,42 @@ class Movimentacao extends BaseModel
         $db = Database::getInstance();
 
         // 1 – buscar tipo de ajuste (+ ou -)
-        $tipoAjuste = current($itens) > 0 ? 3 : 7; // 3 = Ajuste (+), 7 = Ajuste (-)
+        $tipoAjuste = current($itens) > 0 ? 7 : 3; // 3 = Ajuste (+), 7 = Ajuste (-)
         $movId = $this->criar($tipoAjuste, $usuarioId, '');
 
         if (!$movId) return false;
 
         // 2 – inserir itens
+        
         $itemModel = new MovimentacaoItem();
-        $valoresUnitarios = array_fill_keys(array_keys($itens), 0);
+        $sql = "SELECT * FROM movimentacao_itens WHERE movimentacao_id = :mov_id AND produto_id = :prod_id";
+       
+          // 2.1 pegar os valores unitários
+        
+        $vlrtotal = 0;
+
+
+        
+
+        
+        // Percorre item por item (Chave é o ID, Valor é a Quantidade)
+        foreach ($itens as $produtoId => $quantidade) {
+            // Chama a função para UM ID e UMA Quantidade específica
+            $params = [
+                ':mov_id'  => $originalId, // Substitua pela sua variável de ID da movimentação
+                ':prod_id' => $produtoId       // Substitua pela sua variável de ID do produto
+            ];
+
+            $originalmovItem = $itemModel->rawQueryOne($sql, $params);
+
+            $valorCalculado = $originalmovItem['valor_unitario'];
+
+            $vlrtotal += $valorCalculado;
+            // Atribui ao array final
+            $valoresUnitarios[$produtoId] = $valorCalculado;
+        }
+           
+
         if (!$itemModel->adicionarItens($movId, array_map('abs', $itens), $valoresUnitarios)) {
             return false;
         }
@@ -145,6 +173,7 @@ class Movimentacao extends BaseModel
             ':original_id'  => $originalId
         ]);
 
+        $this->atualizarValorTotal($movId, $vlrtotal);
         // 4 – atualizar estoque (já feito pelo trigger do item)
         return true;
     }

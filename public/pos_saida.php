@@ -96,7 +96,7 @@ require_once '../templates/navigation.php';
         </table>
 
         <div class="d-flex gap-2">
-            <a href="/produtos.php" class="btn btn-secondary">Continuar</a>
+            <a href="/produtos.php" class="btn btn-secondary">Adicionar produtos</a>
             <button type="submit" name="corrigir" class="btn btn-primary d-none" id="btn-corrigir">
                 Confirmar Correção
             </button>

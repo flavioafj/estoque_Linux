@@ -41,9 +41,12 @@ class DashboardController extends BaseController
             foreach ($produtos as $produto) {
                 $valor_fifo += $this->reportModel->calculateFIFO($produto['id']);
             }
+
+            $valor_esto = $this->reportModel->valorEstoque();
             echo json_encode([
                 'total_estoque' => $total_estoque,
-                'valor_fifo' => number_format($valor_fifo, 2, '.', '')
+                'valor_fifo' => number_format($valor_fifo, 2, '.', ''),
+                'valor_estoque' => number_format($valor_esto, 2, '.', '')
             ]);
         } catch (\Exception $e) {
             error_log("DashboardController::getSummary: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
