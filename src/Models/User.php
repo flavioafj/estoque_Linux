@@ -71,6 +71,52 @@ class User extends BaseModel {
         
         return $user;
     }
+
+    public function authenticateOnlyUser($username, $password = null) {
+        // Buscar usuário
+        $sql = "SELECT u.*, p.nome as perfil_nome 
+                FROM {$this->table} u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE u.usuario = :username
+                AND u.ativo = 1";
+        
+        // CORREÇÃO: usar array associativo com as chaves corretas
+        // Usar dois placeholders, mesmo que o valor seja o mesmo
+        $params = [
+            ':username' => $username
+        ];
+       
+        $user = $this->db->queryOne($sql, $params);
+        
+        // Log detalhado para debug
+        $this->logError("SQL: $sql | Params: " . json_encode($params) . " | Result: " . ($user ? 'Found' : 'Not found'));
+        
+        if (!$user) {
+            // Adicionado: Log de erro para diagnóstico
+            $this->logError("Usuário não encontrado ou perfil inválido");
+            return false;
+        }
+        
+        // Se for adm ou inventariante precisa de senha
+        if($user['perfil_id']==1 or $user['perfil_id']==3){
+            // Verificar senha
+            if (!password_verify($password, $user['senha'])) {
+                $this->logError("Senha inválida para: $username");
+                return false;
+            }
+           
+
+        }
+                
+        // Atualizar último acesso
+        $this->updateLastAccess($user['id']);
+        
+        // Remover senha do retorno
+        unset($user['senha']);
+
+        
+        return $user;
+    }
     
     // Método de log de erros (adicionado para debug)
     private function logError($message) {

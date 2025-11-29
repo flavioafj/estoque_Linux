@@ -100,9 +100,41 @@ require_once '../templates/navigation.php';
             <button type="submit" name="corrigir" class="btn btn-primary d-none" id="btn-corrigir">
                 Confirmar Correção
             </button>
+            <a href="/logout.php" class="btn btn-primary">Sair</a>
         </div>
     </form>
 </main>
+
+<?php
+    $server_name = $_SERVER['SERVER_NAME'];
+    $url_interna = 'http://' . $_SERVER['SERVER_NAME'] . ':5000/abrir_estoque';
+
+    // 2. Inicializa a sessão cURL
+    $ch = curl_init();
+
+    // 3. Define as opções da requisição
+    curl_setopt($ch, CURLOPT_URL, $url_interna);
+    // Define para retornar o resultado como string em vez de imprimi-lo diretamente
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Opcional: define um timeout
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5); 
+
+    // 4. Executa a requisição e armazena o resultado
+    $conteudo_pagina = curl_exec($ch);
+
+    // 5. Verifica por erros
+    if (curl_errno($ch)) {
+        echo 'Erro cURL: ' . curl_error($ch);
+    }
+
+    // 6. Fecha a sessão cURL
+    curl_close($ch);
+
+    // 7. Processa o resultado
+    if (!$conteudo_pagina) {
+       echo "Não foi possível abrir a porta.";
+    }
+?>
 
 <script>
 /* --------------------------------------------------------------

@@ -50,7 +50,8 @@ class AuthController extends BaseController {
 
         try {
             // Autenticar
-            $userData = $this->userModel->authenticate($username, $password);
+            //$userData = $this->userModel->authenticate($username, $password);
+            $userData = $this->userModel->authenticateOnlyUser($username, $password);
 
             if ($userData) {
                 // Sucesso - registrar log

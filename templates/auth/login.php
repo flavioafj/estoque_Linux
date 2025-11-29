@@ -11,7 +11,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="senha" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="senha" name="senha" required>
+                            <input type="password" class="form-control" id="senha" name="senha" value="senha" required>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Entrar</button>
@@ -28,3 +28,15 @@
         </div>
     </div>
 </div>
+
+    <script>
+        
+        const inputSenha = document.getElementById('senha');
+
+        inputSenha.addEventListener('focus', function() {
+            
+            this.value = '';
+        });
+
+       
+    </script>
