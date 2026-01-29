@@ -32,14 +32,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $usuarioId = Session::getUserId();  
   
     if ($quantidade <= 0) {  
-        echo json_encode(['success' => false, 'message' => 'Quantidade inválida']);  
+        echo json_encode(['success' => false, 'message' => 'Quantidade inválida']);
+        Session::set('is_processing', false); 
         exit;  
     }  
   
     $productModel = new Product();  
     $produto = $productModel->getById($produtoId);  
     if ($produto['estoque_atual'] < $quantidade) {  
-        echo json_encode(['success' => false, 'message' => 'Estoque insuficiente']);  
+        echo json_encode(['success' => false, 'message' => 'Estoque insuficiente']);
+        Session::set('is_processing', false);  
         exit;  
     }  
   

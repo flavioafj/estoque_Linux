@@ -111,6 +111,19 @@ h1 {
     margin-right: 10px;
 }
 
+.btn2 {
+    
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    display: table;
+    text-decoration: none;
+
+}
+
 .btn:hover {
     background-color: #218838;
 }
@@ -299,6 +312,16 @@ h1 {
     margin-top: -8px;
     position: relative;
     z-index: 1;
+}
+.esconder {
+        display: none;
+    }
+
+.cursor-maozinha {
+    cursor: pointer;
+}
+.fundo-azul {
+    background-color: blue;
 }
 
 /* Opcional: esconder texto em telas pequenas */

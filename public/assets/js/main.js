@@ -116,4 +116,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    const productGrid = document.getElementById('product-grid');
+
+    if (productGrid) {
+        productGrid.addEventListener('click', (event) => {
+            const input = event.target.closest('input[type="number"]');
+            if (input) {
+                input.value = '';
+            }
+        });
+    }
+
+
 });
+
