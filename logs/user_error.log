@@ -2127,3 +2127,18 @@
                 JOIN perfis p ON u.perfil_id = p.id 
                 WHERE u.usuario = :username
                 AND u.ativo = 1 | Params: {":username":"Inventariante"} | Result: Found
+[2026-02-01 00:52:35] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE u.usuario = :username
+                AND u.ativo = 1 | Params: {":username":"0716"} | Result: Found
+[2026-02-01 10:31:44] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE u.usuario = :username
+                AND u.ativo = 1 | Params: {":username":"0716"} | Result: Found
+[2026-02-01 11:30:36] [USER ERROR] SQL: SELECT u.*, p.nome as perfil_nome 
+                FROM usuarios u 
+                JOIN perfis p ON u.perfil_id = p.id 
+                WHERE u.usuario = :username
+                AND u.ativo = 1 | Params: {":username":"0716"} | Result: Found

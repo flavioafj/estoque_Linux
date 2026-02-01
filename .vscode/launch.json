@@ -7,12 +7,12 @@
 
 
         {
-            "name": "Listen for Xdebug",
+            "name": "Listen for Xdebug (Apache",
             "type": "php",
             "request": "launch",
             "port": 9003,
             "pathMappings": {
-                "/var/www/html": "${workspaceFolder}"
+                "/var/www/borelli/public_html/estoque_Linux": "${workspaceFolder}"
             }
         },
         {

@@ -1,0 +1,168 @@
+Array
+(
+    [USER] => apache
+    [HOME] => /usr/share/httpd
+    [SCRIPT_NAME] => /api/sync.php
+    [REQUEST_URI] => /api/sync.php
+    [QUERY_STRING] => 
+    [REQUEST_METHOD] => POST
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [REMOTE_PORT] => 7979
+    [SCRIPT_FILENAME] => /var/www/borelli/public_html/estoque_Linux/public/api/sync.php
+    [SERVER_ADMIN] => root@localhost
+    [CONTEXT_DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [CONTEXT_PREFIX] => 
+    [REQUEST_SCHEME] => http
+    [DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [REMOTE_ADDR] => 54.86.50.139
+    [SERVER_PORT] => 80
+    [SERVER_ADDR] => 76.13.225.98
+    [SERVER_NAME] => 76.13.225.98
+    [SERVER_SOFTWARE] => Apache
+    [SERVER_SIGNATURE] => 
+    [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+    [HTTP_X_FORWARDED_FOR] => 2804:7f0:9180:efb2:2dce:be4f:b28c:3867
+    [CONTENT_LENGTH] => 105
+    [HTTP_COOKIE] => PHPSESSID=eo7kltcj7umb7mifd08unosv0h
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br
+    [HTTP_HOST] => 76.13.225.98
+    [HTTP_POSTMAN_TOKEN] => 444e2fb2-8ef5-40ac-8d2e-67e9049044fc
+    [HTTP_CACHE_CONTROL] => no-cache
+    [HTTP_ACCEPT] => */*
+    [HTTP_USER_AGENT] => PostmanRuntime/7.51.1
+    [CONTENT_TYPE] => application/json
+    [proxy-nokeepalive] => 1
+    [UNIQUE_ID] => aX-eg9E4qWn7E80yVhX_BwAAANE
+    [FCGI_ROLE] => RESPONDER
+    [PHP_SELF] => /api/sync.php
+    [REQUEST_TIME_FLOAT] => 1769971331.4624
+    [REQUEST_TIME] => 1769971331
+)
+Array
+(
+    [USER] => apache
+    [HOME] => /usr/share/httpd
+    [SCRIPT_NAME] => /api/sync.php
+    [REQUEST_URI] => /api/sync.php
+    [QUERY_STRING] => 
+    [REQUEST_METHOD] => POST
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [REMOTE_PORT] => 31887
+    [SCRIPT_FILENAME] => /var/www/borelli/public_html/estoque_Linux/public/api/sync.php
+    [SERVER_ADMIN] => root@localhost
+    [CONTEXT_DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [CONTEXT_PREFIX] => 
+    [REQUEST_SCHEME] => http
+    [DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [REMOTE_ADDR] => 54.86.50.139
+    [SERVER_PORT] => 80
+    [SERVER_ADDR] => 76.13.225.98
+    [SERVER_NAME] => 76.13.225.98
+    [SERVER_SOFTWARE] => Apache
+    [SERVER_SIGNATURE] => 
+    [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+    [HTTP_X_FORWARDED_FOR] => 2804:7f0:9180:efb2:2dce:be4f:b28c:3867
+    [CONTENT_LENGTH] => 105
+    [HTTP_COOKIE] => PHPSESSID=eo7kltcj7umb7mifd08unosv0h
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br
+    [HTTP_HOST] => 76.13.225.98
+    [HTTP_POSTMAN_TOKEN] => aef912fc-a042-459f-8151-e816fec6fe9f
+    [HTTP_CACHE_CONTROL] => no-cache
+    [HTTP_ACCEPT] => */*
+    [HTTP_USER_AGENT] => PostmanRuntime/7.51.1
+    [CONTENT_TYPE] => application/json
+    [proxy-nokeepalive] => 1
+    [UNIQUE_ID] => aX-fPeOJxK255SgHfky8xAAAAAA
+    [FCGI_ROLE] => RESPONDER
+    [PHP_SELF] => /api/sync.php
+    [REQUEST_TIME_FLOAT] => 1769971517.6027
+    [REQUEST_TIME] => 1769971517
+)
+Array
+(
+    [USER] => apache
+    [HOME] => /usr/share/httpd
+    [SCRIPT_NAME] => /api/sync.php
+    [REQUEST_URI] => /api/sync.php
+    [QUERY_STRING] => 
+    [REQUEST_METHOD] => POST
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [REMOTE_PORT] => 45578
+    [SCRIPT_FILENAME] => /var/www/borelli/public_html/estoque_Linux/public/api/sync.php
+    [SERVER_ADMIN] => root@localhost
+    [CONTEXT_DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [CONTEXT_PREFIX] => 
+    [REQUEST_SCHEME] => http
+    [DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [REMOTE_ADDR] => 54.86.50.139
+    [SERVER_PORT] => 80
+    [SERVER_ADDR] => 76.13.225.98
+    [SERVER_NAME] => 76.13.225.98
+    [SERVER_SOFTWARE] => Apache
+    [SERVER_SIGNATURE] => 
+    [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+    [HTTP_X_FORWARDED_FOR] => 2804:7f0:9180:efb2:2dce:be4f:b28c:3867
+    [CONTENT_LENGTH] => 11
+    [HTTP_COOKIE] => PHPSESSID=eo7kltcj7umb7mifd08unosv0h
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br
+    [HTTP_HOST] => 76.13.225.98
+    [HTTP_POSTMAN_TOKEN] => 12986612-f93c-4ae4-8830-510d1d5b4325
+    [HTTP_CACHE_CONTROL] => no-cache
+    [HTTP_ACCEPT] => */*
+    [HTTP_USER_AGENT] => PostmanRuntime/7.51.1
+    [CONTENT_TYPE] => application/json
+    [proxy-nokeepalive] => 1
+    [UNIQUE_ID] => aX-hKKoKLaqN-fHfvHA-2wAAAEA
+    [FCGI_ROLE] => RESPONDER
+    [PHP_SELF] => /api/sync.php
+    [REQUEST_TIME_FLOAT] => 1769972008.2621
+    [REQUEST_TIME] => 1769972008
+)
+Array
+(
+    [USER] => apache
+    [HOME] => /usr/share/httpd
+    [SCRIPT_NAME] => /api/sync.php
+    [REQUEST_URI] => /api/sync.php
+    [QUERY_STRING] => 
+    [REQUEST_METHOD] => POST
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [REMOTE_PORT] => 42156
+    [SCRIPT_FILENAME] => /var/www/borelli/public_html/estoque_Linux/public/api/sync.php
+    [SERVER_ADMIN] => root@localhost
+    [CONTEXT_DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [CONTEXT_PREFIX] => 
+    [REQUEST_SCHEME] => http
+    [DOCUMENT_ROOT] => /var/www/borelli/public_html/estoque_Linux/public
+    [REMOTE_ADDR] => 54.86.50.139
+    [SERVER_PORT] => 80
+    [SERVER_ADDR] => 76.13.225.98
+    [SERVER_NAME] => 76.13.225.98
+    [SERVER_SOFTWARE] => Apache
+    [SERVER_SIGNATURE] => 
+    [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+    [HTTP_X_FORWARDED_FOR] => 2804:7f0:9180:efb2:2dce:be4f:b28c:3867
+    [CONTENT_LENGTH] => 11
+    [HTTP_COOKIE] => PHPSESSID=eo7kltcj7umb7mifd08unosv0h
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br
+    [HTTP_HOST] => 76.13.225.98
+    [HTTP_POSTMAN_TOKEN] => 1e1c49e7-66c9-45ee-a0f0-cc2c28733a63
+    [HTTP_CACHE_CONTROL] => no-cache
+    [HTTP_ACCEPT] => */*
+    [HTTP_USER_AGENT] => PostmanRuntime/7.51.1
+    [CONTENT_TYPE] => application/json
+    [proxy-nokeepalive] => 1
+    [UNIQUE_ID] => aX-ijBOd5rbGu9da1jhqUQAAAIA
+    [FCGI_ROLE] => RESPONDER
+    [PHP_SELF] => /api/sync.php
+    [REQUEST_TIME_FLOAT] => 1769972364.4293
+    [REQUEST_TIME] => 1769972364
+)

@@ -69,11 +69,15 @@ if ($requestUri === '/api/products') {
     $controller->apiGetById($matches[1]);
 } elseif ($requestUri === '/api/sync') {
     require_once __DIR__ . '/../src/Controllers/SyncController.php';
-    $controller = new Controllers\SyncController();
+    $controller = new \Controllers\SyncController();
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $controller->receiveSync();
     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $controller->sendSync();
+    } else {
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Método não permitido']);
     }
  }elseif (preg_match('/\/admin\/product_turnover/', $requestUri)) {
     require_once __DIR__ . '/admin/product_turnover.php';

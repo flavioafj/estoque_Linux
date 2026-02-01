@@ -21,11 +21,11 @@ if ($is_local) {
     define('ENVIRONMENT', 'local');
 } else {
     // Configurações para ambiente WEB/PRODUÇÃO
-    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-    define('DB_NAME', getenv('DB_NAME') ?: 'sorveteria_estoque');
-    define('DB_USER', getenv('DB_USER') ?: 'admin');
-    define('DB_PASS', getenv('DB_PASSWORD') ?: getenv('DB_PASS') ?: 'rosapapi2');
-    define('DB_PORT', getenv('DB_PORT') ?: 3306);
+    define('DB_HOST', $_ENV['DB_HOST'] ?: '127.0.0.1');
+    define('DB_NAME', $_ENV['DB_NAME'] ?: 'borelli');
+    define('DB_USER', $_ENV['DB_USER'] ?: 'root');
+    define('DB_PASS', $_ENV['DB_PASSWORD'] ?: $_ENV['DB_PASS'] ?: 'rosapapi2');
+    define('DB_PORT', $_ENV['DB_PORT'] ?: 3306);
     define('DB_CHARSET', 'utf8mb4');
     define('ENVIRONMENT', 'production');
 }
@@ -41,8 +41,8 @@ define('PDO_OPTIONS', [
 // Configurações de sincronização
 define('SYNC_ENABLED', true);
 define('SYNC_INTERVAL', 300); // 5 minutos em segundos
-define('SYNC_URL', getenv('SYNC_URL') ?: 'https://seu-servidor.com/api/sync');
-define('SYNC_TOKEN', getenv('SYNC_TOKEN') ?: 'seu_token_secreto');
+define('SYNC_URL', $_ENV['SYNC_URL'] ?: 'http://76.13.225.98/api/sync.php');
+define('SYNC_TOKEN', $_ENV['SYNC_TOKEN'] ?: 'seu_token_secreto');
 if (ENVIRONMENT === 'production' && (empty(SYNC_URL) || empty(SYNC_TOKEN))) {
         die('Erro: SYNC_URL e SYNC_TOKEN são obrigatórios em produção.');
 }
