@@ -8,6 +8,7 @@ namespace Models;
 
 use PDO;
 use PDOException;
+use Helpers\SyncQueueHelper;
 
 class Database {
     private static $instance = null;
@@ -18,6 +19,7 @@ class Database {
         try {
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET . ";port=" . DB_PORT;
             $this->connection = new PDO($dsn, DB_USER, DB_PASS, PDO_OPTIONS);
+            SyncQueueHelper::initialize($this->connection);
         } catch (PDOException $e) {
             $this->logError("Erro de conexão: " . $e->getMessage());
             die("Erro ao conectar com o banco de dados. Por favor, tente novamente mais tarde.");
@@ -262,6 +264,13 @@ class Database {
             $data['tentativas'] = new \PDOStatement('tentativas + 1');
         }
         return $this->update('sincronizacao', $data, "id = :id", [':id' => $id]);
+    }
+
+    public function inTransaction()
+    {
+        // Altere para o nome da variável que guarda o PDO dentro do seu Wrapper
+        // Exemplo: $this->pdo ou $this->connection
+        return $this->connection && $this->connection->inTransaction();
     }
     
     // Destrutor

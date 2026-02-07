@@ -4,6 +4,7 @@ namespace Models;
 
 use Models\BaseModel;
 use Models\Estoque;
+use Helpers\SyncQueueHelper;
 
 class Movimentacao extends BaseModel
 {
@@ -25,7 +26,10 @@ class Movimentacao extends BaseModel
         $status = 'PROCESSADO';
         
         if ($stmt->execute([$tipoMovimentacaoId, $usuarioId, $fornecedorId, $observacao, $status, $inventarioId])) {
-            return $this->db->lastInsertId();
+
+                $lstId = $this->db->lastInsertId();
+            return $lstId;
+
         }
         return false;
     }
@@ -73,7 +77,24 @@ class Movimentacao extends BaseModel
         if (!$movimentacaoItem->adicionarItens($movimentacaoId, $itens, $valoresUnitarios)) {  
             return false;  
         }  
+        $vlrtotal = $quantidade * $val;
         $this->atualizarValorTotal($movimentacaoId, $quantidade * $val); // Valor total 
+
+         SyncQueueHelper::queueChange(
+            'movimentacoes',
+            $movId,
+            'SAIDA_DIRETA',
+            [
+                'produtoId'     => $produtoId,
+                'quantidade'    => $quantidade,
+                'UserID'        => $usuarioId,
+                'ValorFIFOEst'  => $val,
+                'observacao'    => $observacao,
+                'ValorTotalEst' => $vlrtotal
+            ]
+        );
+
+
         return true;  
     } 
     

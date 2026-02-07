@@ -5,6 +5,7 @@ namespace Models;
 use Models\BaseModel;
 use Models\Product;
 use Models\Estoque;
+use Helpers\SyncQueueHelper;
 
 //require_once SRC_PATH . '/Models/Product.php'; 
 
@@ -49,8 +50,13 @@ class MovimentacaoItem extends BaseModel
 
             
             // Inicia a transação
-            
-            $this->db->beginTransaction();
+            $transacaoIniciadaAqui = false;
+            if (!$this->db->inTransaction()) {
+                $this->db->beginTransaction();
+                $transacaoIniciadaAqui = true;
+            }
+                
+           
          
 
             // NOVO: Atualizar tabela estoques e estoque_atual
@@ -93,6 +99,22 @@ class MovimentacaoItem extends BaseModel
                     throw new \Exception("Erro ao inserir item da movimentação");
                 }
 
+                $itemId = (int) $this->db->lastInsertId();
+
+                // Registra INSERT de movimentacao_itens para sincronização
+                /* SyncQueueHelper::queueInsert(
+                    'movimentacao_itens',
+                    $itemId,
+                    [
+                        'movimentacao_id' => $movimentacaoId,
+                        'produto_id'      => $produtoId,
+                        'quantidade'      => $quantidade,
+                        'valor_unitario'  => $valoresUnitariosf,
+                        'valor_total'     => $valorTotalItem,
+                        'criado_em'       => date('Y-m-d H:i:s')
+                    ]
+                ); */
+
                 //Atualiza o estoque atual
                 $valor = $valoresUnitarios[$produtoId] ?? 0;
                 
@@ -118,7 +140,7 @@ class MovimentacaoItem extends BaseModel
   
                 // Atualiza o estoque do produto usando o tipo correto
                 $resultadoEstoque = $productModel->atualizarEstoque($produtoId, $quantidade, $tipoMovimentacao);
-                
+                                
                 
                 if (!$resultadoEstoque) {
                     error_log("Erro ao atualizar estoque - Produto: $produtoId, Quantidade: $quantidade, Tipo: $tipoMovimentacao");
@@ -136,7 +158,9 @@ class MovimentacaoItem extends BaseModel
 
           
 
-            $this->db->commit();
+            if ($transacaoIniciadaAqui) {
+                $this->db->commit();
+            }
             
             
             error_log("Movimentação processada com sucesso: $movimentacaoId");

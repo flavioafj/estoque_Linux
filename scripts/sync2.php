@@ -8,8 +8,44 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Models/Database.php';
 
 use Models\Database;
+use Models\Movimentacao;
+use Models\MovimentacaoItem;
+use Models\Product;
 
 $db = Database::getInstance();
+//Funções auxiliares
+
+function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst) {
+        
+        
+        $quantidade = abs(floatval($quantidade ?? 0));
+
+        if ($quantidade <= 0) {
+            echo 'Quantidade inválida';
+            exit;
+        }
+
+        $mov = new Movimentacao();
+        $tipoSaidaId = 5; // Venda
+        $movId = $mov->criar($tipoSaidaId, $UserID);
+
+        $item = new MovimentacaoItem();
+        $qtdEst = new Estoque();
+        $val = $ValorFIFOEst;
+        $vlrtotal = $ValorTotalEst;
+
+        if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
+            
+            $mov->atualizarValorTotal($movId, $vlrtotal);
+            // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
+            echo 'Saída direta feita com sucesso';
+        } else {
+            echo 'Estoque insuficiente';
+        }
+        exit;
+}
+
+
 
 // PUSH Local → Web
 $pendentes = $db->query(
@@ -70,6 +106,7 @@ if ($http_code === 200) {
                     case 'INSERT': $db->insert($item['tabela'], $dados); break;
                     case 'UPDATE': $db->update($item['tabela'], $dados, "id = :id", ['id' => $item['registro_id']]); break;
                     case 'DELETE': $db->delete($item['tabela'], "id = :id", ['id' => $item['registro_id']]); break;
+                    case 'SAIDA_DIRETA': saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst']);
                 }
             }
             $db->commit();

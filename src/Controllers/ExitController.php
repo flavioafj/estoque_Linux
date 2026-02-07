@@ -6,6 +6,7 @@ use Helpers\Session;
 use Models\Movimentacao;  
 use Models\MovimentacaoItem;
 use Models\Estoque;
+use Helpers\SyncQueueHelper;
   
 class ExitController {  
     // Métodos redundantes com Movimentacao; use diretamente para simplicidade  
@@ -33,6 +34,21 @@ class ExitController {
         if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
             
             $mov->atualizarValorTotal($movId, $vlrtotal);
+
+            SyncQueueHelper::queueChange(
+                    'movimentacoes',
+                    $movId,
+                    'SAIDA_DIRETA',
+                    [
+                        'produtoId'     => $produtoId,
+                        'quantidade'    => $quantidade,
+                        'UserID'        => Session::getUserId(),
+                        'ValorFIFOEst'  => $val,
+                        'ValorTotalEst' => $vlrtotal
+                    ]
+                );
+
+
             // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
             echo json_encode(['success'=>true, 'redirect'=>"/pos_saida.php?mov=$movId"]);
         } else {
