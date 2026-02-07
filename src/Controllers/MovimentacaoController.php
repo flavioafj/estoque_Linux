@@ -9,6 +9,7 @@ use Models\MovimentacaoItem;
 //use Models\Product;  
 use Helpers\Session;
 use Models\Alert;
+use Helpers\SyncQueueHelper;
 
 
 $productPath = __DIR__ . '/../Models/Product.php';
@@ -161,7 +162,22 @@ class MovimentacaoController extends BaseController
                     $alertModel->checkLowStock($produtoId);   
                 }
 
+               /*  parei aqui 07/02/2026 SyncQueueHelper::queueChange(
+                    'movimentacoes',
+                    $movimentacaoId,
+                    'SAIDA_DIRETA',
+                    [
+                        'produtoId'     => $produtoId,
+                        'quantidade'    => $quantidade,
+                        'UserID'        => $usuarioId,
+                        'ValorFIFOEst'  => $val,
+                        'observacao'    => $observacao,
+                        'ValorTotalEst' => $vlrtotal
+                    ]
+                );
+ */
                 $session->setFlash('success', 'Saída de estoque registrada com sucesso!');
+
             } else {
                 $session->setFlash('error', 'Falha ao registrar os itens da saída.');
             }

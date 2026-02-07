@@ -82,7 +82,7 @@ class Movimentacao extends BaseModel
 
          SyncQueueHelper::queueChange(
             'movimentacoes',
-            $movId,
+            $movimentacaoId,
             'SAIDA_DIRETA',
             [
                 'produtoId'     => $produtoId,
