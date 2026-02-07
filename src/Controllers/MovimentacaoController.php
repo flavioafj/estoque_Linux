@@ -162,20 +162,19 @@ class MovimentacaoController extends BaseController
                     $alertModel->checkLowStock($produtoId);   
                 }
 
-               /*  parei aqui 07/02/2026 SyncQueueHelper::queueChange(
+               SyncQueueHelper::queueChange(
                     'movimentacoes',
                     $movimentacaoId,
-                    'SAIDA_DIRETA',
+                    'SAIDA_DIRETA_ADM',
                     [
-                        'produtoId'     => $produtoId,
-                        'quantidade'    => $quantidade,
+                        'Itens'     => $itens,
                         'UserID'        => $usuarioId,
-                        'ValorFIFOEst'  => $val,
-                        'observacao'    => $observacao,
-                        'ValorTotalEst' => $vlrtotal
+                        'observacao'    => $observacao
+                        
                     ]
                 );
- */
+
+
                 $session->setFlash('success', 'Saída de estoque registrada com sucesso!');
 
             } else {

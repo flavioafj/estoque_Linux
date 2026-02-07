@@ -54,7 +54,7 @@ final class SyncQueueHelper
             throw new RuntimeException('SyncQueueHelper não foi inicializado. Chame SyncQueueHelper::initialize($pdo) primeiro.');
         }
 
-        $validActions = ['INSERT', 'UPDATE', 'DELETE', 'SAIDA_DIRETA'];
+        $validActions = ['INSERT', 'UPDATE', 'DELETE', 'SAIDA_DIRETA', 'SAIDA_DIRETA_ADM'];
         if (!in_array($action, $validActions, true)) {
             throw new RuntimeException("Ação inválida: '$action'. Valores permitidos: " . implode(', ', $validActions));
         }

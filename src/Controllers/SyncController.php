@@ -39,7 +39,7 @@ class SyncController extends BaseController
 
     //Funções auxiliares
 
-    public function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst, $observacao) {
+    public function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst, $observacao = '') {
             
             
             $quantidade = abs(floatval($quantidade ?? 0));
@@ -63,6 +63,44 @@ class SyncController extends BaseController
                 $mov->atualizarValorTotal($movId, $vlrtotal);
                 // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
                 echo json_encode(['success'=>true,'message'=>'Saída direta feita com sucesso']);
+            } else {
+                echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
+                return false;
+            }
+            return true;
+
+    }
+
+    /* Seria interessante no futuro colocar o valor unitário do produto nessa função*/
+    public function saidaDiretaADM($Itens, $UserID, $observacao = '') {
+            
+            $mov = new Movimentacao();
+            $tipoSaidaId = 5; // Venda
+            $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
+
+            foreach ($Itens as $produtoId => $quantidade){
+
+                $quantidade = abs(floatval($quantidade ?? 0));
+
+                if ($quantidade <= 0) {
+                    echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
+                    return false;
+                }
+
+            }
+            
+                  
+
+            $item = new MovimentacaoItem();
+            //$qtdEst = new Estoque();
+            //$val = $ValorFIFOEst;
+            $vlrtotal = 0;
+
+            if ($item->adicionarItens($movId, $Itens)) {
+                
+                $mov->atualizarValorTotal($movId, $vlrtotal);
+                // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
+                echo json_encode(['success'=>true,'message'=>'Saída direta do ADM feita com sucesso']);
             } else {
                 echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
                 return false;
@@ -125,9 +163,13 @@ class SyncController extends BaseController
                     break;
 
                 case 'SAIDA_DIRETA':
-                    
                     $this->saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao']);
                     break;
+
+                case 'SAIDA_DIRETA_ADM':
+                    $this->saidaDiretaADM($dados['Itens'], $dados['UserID'], $dados['observacao']);
+                    break;
+
                 default:
                     throw new \Exception("Ação inválida: $acao");
             }
