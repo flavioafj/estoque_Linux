@@ -115,7 +115,7 @@ class SyncController extends BaseController
     {
         $headers = getallheaders();
         $auth = $headers['X-Api-Token'] ?? '';
-        if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== SYNC_TOKEN) {
+        if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== $_ENV['SYNC_TOKEN']) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Token inválido']);
             exit;
