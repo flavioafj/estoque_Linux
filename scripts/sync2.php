@@ -62,14 +62,33 @@ if (!empty($pendentes)) {  // Usa retorno array de query()
             'dados' => json_decode($item['dados'], true)
         ];
 
-        $ch = curl_init(SYNC_URL);
+        $ch = curl_init($_ENV['SYNC_URL']);
         curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Api-Token: Bearer ' . SYNC_TOKEN],
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 30  // Para RPi redes lentas
         ]);
+
+        // Montando o comando cURL para o Postman
+        $headers = [
+            'Content-Type: application/json',
+            'X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']
+        ];
+
+        $curlCommand = "curl --location --request POST '" . $_ENV['SYNC_URL'] . "' \\\n";
+        foreach ($headers as $header) {
+            $curlCommand .= "--header '" . $header . "' \\\n";
+        }
+        $curlCommand .= "--data-raw '" . json_encode($payload, JSON_PRETTY_PRINT) . "'";
+
+        // Imprime na tela de forma legível
+        echo "<pre>Copiável para o Postman:\n\n";
+        echo $curlCommand;
+        echo "</pre>";
+        // Montando o comando cURL para o Postman FIM
+
         $response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
@@ -85,9 +104,9 @@ if (!empty($pendentes)) {  // Usa retorno array de query()
 
 // PULL Web → Local
 $last_sync = $db->query("SELECT MAX(sincronizado_em) FROM sincronizacao")[0]['MAX(sincronizado_em)'] ?? '2000-01-01';
-$ch = curl_init(SYNC_URL . '?last_sync=' . urlencode($last_sync));
+$ch = curl_init($_ENV['SYNC_URL'] . '?last_sync=' . urlencode($last_sync));
 curl_setopt_array($ch, [
-    CURLOPT_HTTPHEADER => ['X-Api-Token: Bearer ' . SYNC_TOKEN],
+    CURLOPT_HTTPHEADER => ['X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']],
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 30
 ]);

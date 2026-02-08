@@ -72,7 +72,7 @@ class SyncController extends BaseController
     }
 
     /* Seria interessante no futuro colocar o valor unitário do produto nessa função*/
-    public function saidaDiretaADM($Itens, $UserID, $observacao = '') {
+    public function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '') {
             
             $mov = new Movimentacao();
             $tipoSaidaId = 5; // Venda
@@ -92,14 +92,12 @@ class SyncController extends BaseController
                   
 
             $item = new MovimentacaoItem();
-            //$qtdEst = new Estoque();
-            //$val = $ValorFIFOEst;
-            $vlrtotal = 0;
+            
 
-            if ($item->adicionarItens($movId, $Itens)) {
+            if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
                 
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-                // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
+               
                 echo json_encode(['success'=>true,'message'=>'Saída direta do ADM feita com sucesso']);
             } else {
                 echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
@@ -167,7 +165,7 @@ class SyncController extends BaseController
                     break;
 
                 case 'SAIDA_DIRETA_ADM':
-                    $this->saidaDiretaADM($dados['Itens'], $dados['UserID'], $dados['observacao']);
+                    $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao']);
                     break;
 
                 default:

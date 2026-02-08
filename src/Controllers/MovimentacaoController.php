@@ -5,7 +5,7 @@ namespace App\Controllers;
 use Controllers\BaseController;
 use Models\Movimentacao;
 use Models\MovimentacaoItem;
-//use Models\Estoque;
+use Models\Estoque;
 //use Models\Product;  
 use Helpers\Session;
 use Models\Alert;
@@ -132,6 +132,23 @@ class MovimentacaoController extends BaseController
             $session->setFlash('error', 'Nenhum produto foi selecionado para saída.');
             header('Location: /saidas.php');
             return;
+        }else{
+            $qtdEst = new Estoque();
+            $itensLimpo = [];
+            $valoresUnitarios = [];
+
+        
+             foreach($itens as $produtoId => $quantidade){
+                if($quantidade>0){
+                    $val = $qtdEst->getValorFIFO($produtoId);
+                    // Acumula os valores no array
+                    $valoresUnitarios[$produtoId] = $val;
+                    $itensLimpo[$produtoId] = $quantidade;
+                    $totais[$produtoId] = $quantidade * $val;
+                    
+                }
+                
+             }
         }
 
         $movimentacaoModel = new Movimentacao();
@@ -142,17 +159,9 @@ class MovimentacaoController extends BaseController
 
         if ($movimentacaoId) {
             $itemModel = new MovimentacaoItem();
-            if ($itemModel->adicionarItens($movimentacaoId, $itens)) {
+            if ($itemModel->adicionarItens($movimentacaoId, $itensLimpo, $valoresUnitarios)) {
 
-               /*  // NOVO: Atualizar tabela estoques e estoque_atual
-                $estoqueModel = new Estoque();
-                $produtoModel = new Product();
-                foreach ($itens as $produtoId => $quantidade) {
-                    $estoqueModel->removerUnidades($produtoId, (int)$quantidade);
-                    // Atualizar estoque_atual em produtos
-                    $produtoModel->atualizarEstoque2($produtoId, (int)$quantidade, 'subtract');
-                } */
-
+               
                 // Verifica estoque mínimo para cada item
                 $alertModel = new Alert();
 
@@ -162,12 +171,19 @@ class MovimentacaoController extends BaseController
                     $alertModel->checkLowStock($produtoId);   
                 }
 
+
+                $totalGeral = array_sum($totais);
+
+                $movimentacaoModel->atualizarValorTotal($movimentacaoId, $totalGeral);
+
                SyncQueueHelper::queueChange(
                     'movimentacoes',
                     $movimentacaoId,
                     'SAIDA_DIRETA_ADM',
                     [
-                        'Itens'     => $itens,
+                        'Itens'         => $itensLimpo,
+                        'ItensVal'      => $valoresUnitarios,
+                        'totalGeral'    => $totalGeral,
                         'UserID'        => $usuarioId,
                         'observacao'    => $observacao
                         
