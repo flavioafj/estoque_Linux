@@ -1,0 +1,63 @@
+[2026-02-08 20:50:21] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 20:50:21] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 20:50:21] [DATABASE ERROR] Parâmetro associado: :tentativas = 1 (tipo: 1)
+[2026-02-08 20:50:21] [DATABASE ERROR] Parâmetro associado: :erro_mensagem = {"success":false,"message":"Token inv\u00e1lido"} (tipo: 2)
+[2026-02-08 20:50:21] [DATABASE ERROR] Parâmetro associado: id = 16 (tipo: 1)
+[2026-02-08 20:50:21] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 20:50:21] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
+[2026-02-08 20:50:36] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 20:50:36] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 20:50:36] [DATABASE ERROR] Parâmetro associado: :tentativas = 2 (tipo: 1)
+[2026-02-08 20:50:36] [DATABASE ERROR] Parâmetro associado: :erro_mensagem = {"success":false,"message":"Token inv\u00e1lido"} (tipo: 2)
+[2026-02-08 20:50:36] [DATABASE ERROR] Parâmetro associado: id = 16 (tipo: 1)
+[2026-02-08 20:50:36] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 20:50:36] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
+[2026-02-08 21:00:51] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 21:00:51] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: :sincronizado = 1 (tipo: 1)
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: :sincronizado_em = 2026-02-08 21:00:51 (tipo: 2)
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: id = 16 (tipo: 1)
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: :sincronizado = 1 (tipo: 1)
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: :sincronizado_em = 2026-02-08 21:00:51 (tipo: 2)
+[2026-02-08 21:00:51] [DATABASE ERROR] Parâmetro associado: id = 17 (tipo: 1)
+[2026-02-08 21:00:51] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 21:00:51] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
+[2026-02-08 21:02:29] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 21:02:29] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 21:02:29] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 21:02:29] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
+[2026-02-08 21:02:43] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 21:02:43] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 21:02:43] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 21:02:43] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
+[2026-02-08 21:03:16] [DATABASE ERROR] Preparando query: SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20 com parâmetros: []
+[2026-02-08 21:03:16] [DATABASE ERROR] Debug PDO após binding: SQL: [101] SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20
+Params:  0
+
+[2026-02-08 21:03:16] [DATABASE ERROR] Parâmetro associado: :sincronizado = 1 (tipo: 1)
+[2026-02-08 21:03:16] [DATABASE ERROR] Parâmetro associado: :sincronizado_em = 2026-02-08 21:03:16 (tipo: 2)
+[2026-02-08 21:03:16] [DATABASE ERROR] Parâmetro associado: id = 18 (tipo: 1)
+[2026-02-08 21:03:16] [DATABASE ERROR] Preparando query: SELECT MAX(sincronizado_em) FROM sincronizacao com parâmetros: []
+[2026-02-08 21:03:16] [DATABASE ERROR] Debug PDO após binding: SQL: [46] SELECT MAX(sincronizado_em) FROM sincronizacao
+Params:  0
+
