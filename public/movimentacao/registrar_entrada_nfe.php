@@ -6,6 +6,8 @@ require_once SRC_PATH . '/Models/Database.php';
 require_once SRC_PATH . '/Models/Movimentacao.php';
 require_once SRC_PATH . '/Models/MovimentacaoItem.php';
 require_once SRC_PATH . '/Models/TipoMovimentacao.php';
+require_once SRC_PATH . '/Helpers/SyncQueueHelper.php';
+
 
 use Helpers\Session;
 use Models\Database;
@@ -14,6 +16,7 @@ use Models\Movimentacao;
 use Models\MovimentacaoItem;
 use Models\TipoMovimentacao;
 use Models\ItensNota;
+use Helpers\SyncQueueHelper;
 
 // Inicia a sessão
 Session::start();
@@ -169,6 +172,35 @@ try {
 
     // 5. Commit da transação
     $db->commit();
+
+    // Registrar na sincronizacao para envio ao web
+    // a inicialização do helper já é feita pelo Database quando criada a conexão,
+    // portanto não precisamos reinicializar. apenas obtenha o último ID
+    $notaFiscalId = $db->lastInsertId();
+    $syncPayload = [
+        'fornecedor' => $idFornecedorSistema,
+        'cnpj' => $cnpj,
+        'razao_social' => $razaoSocial,
+        'itens' => $itensValidos,
+        'valores' => $valoresUnitarios,
+        'total' => $notaValorTotal,
+        'numero' => $notaNumero,
+        'chave_acesso' => $notaChaveAcesso,
+        'data' => $notaDataEmissao,
+        'user_id' => $usuarioId,
+        'nomes_xml' => array_column($produtos, 'nome_xml', 'id_produto_sistema') // Mapear nomes_xml
+    ];
+    // gravação no log de sincronia para troubleshooting
+    $logMessage = "[[ENTRADA_NFE local]] nota={$notaNumero} fornecedor={$fornecedorId} movId={$movimentacaoId} payload=" . json_encode($syncPayload, JSON_UNESCAPED_UNICODE);
+    error_log($logMessage . "\n", 3, LOG_PATH . '/sync_nfe.log');
+
+    try {
+        SyncQueueHelper::queueChange('notas_fiscais', $notaFiscalId, 'ENTRADA_NFE', $syncPayload);
+        error_log("[sync] payload enfileirado com sucesso para nota {$notaNumero}\n", 3, LOG_PATH . '/sync_nfe.log');
+    } catch (Exception $syncEx) {
+        error_log("[sync] falha ao enfileirar nota {$notaNumero}: " . $syncEx->getMessage() . "\n", 3, LOG_PATH . '/sync_nfe.log');
+    }
+
     Session::setFlash('success', 'Entrada registrada com sucesso!');
     header('Location: ../admin/entradas.php');
     exit();

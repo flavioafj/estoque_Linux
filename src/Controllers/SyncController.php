@@ -14,6 +14,8 @@ use Models\Movimentacao;
 use Models\MovimentacaoItem;
 use Models\Estoque;
 use Models\Product;
+use Models\ItensNota;
+use Models\TipoMovimentacao;
 
 class SyncController extends BaseController
 {
@@ -27,7 +29,9 @@ class SyncController extends BaseController
         'unidades_medida',
         'movimentacoes',
         'movimentacao_itens',
-        'estoques'
+        'estoques',
+        'notas_fiscais',
+        'itens_nota'
         // Adicione aqui outras tabelas operacionais necessárias
         // NÃO inclua: sincronizacao, auditoria, sessoes, usuarios, perfis, configuracoes, alertas_estoque
     ];
@@ -108,6 +112,138 @@ class SyncController extends BaseController
     }
 
     /**
+     * Recria o fluxo de registrar_entrada_nfe.php para o evento recebido via sync
+     */
+    private function registrarEntradaNfe(array $dados)
+    {
+        // campos obrigatórios
+        if (
+            empty($dados['fornecedor']) ||
+            empty($dados['itens']) || !is_array($dados['itens']) ||
+            empty($dados['valores']) || !is_array($dados['valores']) ||
+            !isset($dados['total'], $dados['numero'],
+                    $dados['chave_acesso'], $dados['data'],
+                    $dados['user_id'])
+        ) {
+            throw new \Exception('dados de entrada nfe incompletos');
+        }
+
+        // Verificar duplicata para evitar duplicações no PULL
+        $existingNota = $this->db->query(
+            "SELECT id FROM notas_fiscais WHERE numero_nota = :numero OR chave_acesso = :chave",
+            [':numero' => $dados['numero'], ':chave' => $dados['chave_acesso']]
+        );
+        if (!empty($existingNota)) {
+            // Já existe, pular para evitar duplicação
+            return;
+        }
+
+        // sanitizações e validações similares às do script web
+        $cnpj = preg_replace('/\D/', '', $dados['cnpj'] ?? '');
+        if ($cnpj !== '' && strlen($cnpj) !== 14) {
+            throw new \Exception('CNPJ inválido na NF‑e');
+        }
+        if (!strtotime($dados['data'])) {
+            throw new \Exception('Data de emissão inválida na NF‑e');
+        }
+        if (floatval($dados['total']) <= 0) {
+            throw new \Exception('Valor total da NF‑e deve ser positivo');
+        }
+
+        // constroi vetores de itens e valores, descartando quantidades nulas
+        $itens = [];
+        $valores = [];
+        foreach ($dados['itens'] as $pid => $qtd) {
+            $qtd = abs(floatval($qtd));
+            if ($qtd <= 0) {
+                continue;
+            }
+            $itens[(int)$pid] = $qtd;
+            $valores[(int)$pid] = floatval($dados['valores'][$pid] ?? 0);
+        }
+        if (empty($itens)) {
+            throw new \Exception('nenhum produto válido na NF‑e');
+        }
+
+        // atualiza mapeamento nome_xml → produto, se enviado
+        if (!empty($dados['nomes_xml']) && is_array($dados['nomes_xml'])) {
+            $itensNotaModel = new ItensNota();
+            foreach ($dados['nomes_xml'] as $pid => $nome) {
+                if ($nome === '' || !isset($itens[(int)$pid])) {
+                    continue;
+                }
+                $exist = $itensNotaModel->getByNomeXml($nome);
+                if (!$exist) {
+                    $itensNotaModel->insert($nome, (int)$pid);
+                }
+            }
+        }
+
+        // fornecedor novo ou existente
+        $fornecedorModel = new \Models\Fornecedor();
+        if ($dados['fornecedor'] === 'cadastrar_novo') {
+            $fornecedorId = $fornecedorModel->create([
+                'cnpj'         => $cnpj,
+                'razao_social' => $dados['razao_social'] ?? '',
+                'tipo'         => 'PJ',
+                'ativo'        => 1,
+                'criado_por'   => $dados['user_id']
+            ]);
+            if (!$fornecedorId) {
+                throw new \Exception('erro ao cadastrar fornecedor');
+            }
+        } else {
+            $fornecedorExistente = $fornecedorModel->getById((int)$dados['fornecedor']);
+            if (!$fornecedorExistente) {
+                throw new \Exception('fornecedor inválido');
+            }
+            $fornecedorId = $fornecedorExistente['id'];
+            $cnpjDb = preg_replace('/\D/', '', $fornecedorExistente['cnpj']);
+            if ($cnpj !== '' && $cnpjDb !== $cnpj) {
+                throw new \Exception('CNPJ do fornecedor não bate com a nota');
+            }
+        }
+
+        // cria movimentação de entrada usando primeiro tipo disponível
+        $tipoModel = new TipoMovimentacao();
+        $tiposEntrada = $tipoModel->findByTipo('ENTRADA');
+        if (empty($tiposEntrada)) {
+            throw new \Exception('nenhum tipo de movimentação de entrada configurado');
+        }
+        $tipoMovId = $tiposEntrada[0]['id'];
+
+        $mov = new Movimentacao();
+        $movId = $mov->criar(
+            $tipoMovId,
+            $dados['user_id'],
+            'Entrada via NF‑e ' . $dados['numero'],
+            $fornecedorId
+        );
+        if (!$movId) {
+            throw new \Exception('falha ao criar movimentação');
+        }
+
+        $itemModel = new MovimentacaoItem();
+        if (!$itemModel->adicionarItens($movId, $itens, $valores)) {
+            throw new \Exception('erro ao adicionar itens');
+        }
+
+        $mov->atualizarValorTotal($movId, floatval($dados['total']), $dados['numero']);
+
+        // insere nota fiscal
+        $this->db->insert('notas_fiscais', [
+            'movimentacao_id' => $movId,
+            'numero_nota'     => $dados['numero'],
+            'chave_acesso'    => $dados['chave_acesso'],
+            'data_emissao'    => date('Y-m-d', strtotime($dados['data'])),
+            'fornecedor_id'   => $fornecedorId,
+            'valor_total'     => floatval($dados['total']),
+            'processado'      => true,
+            'usuario_id'      => $dados['user_id']
+        ]);
+    }
+
+    /**
      * Recebe alterações do sistema local (PUSH: local → web)
      * POST /api/sync
      */
@@ -166,6 +302,10 @@ class SyncController extends BaseController
 
                 case 'SAIDA_DIRETA_ADM':
                     $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao']);
+                    break;
+
+                case 'ENTRADA_NFE':
+                    $this->registrarEntradaNfe($dados);
                     break;
 
                 default:
