@@ -11,74 +11,56 @@ use Models\Database;
 use Models\Movimentacao;
 use Models\MovimentacaoItem;
 use Models\Product;
+use Models\ItensNota;
+use Models\TipoMovimentacao;
 
 $db = Database::getInstance();
 //Funções auxiliares
 
-function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst) {
-        
-        
+function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst, $observacao = '') {
         $quantidade = abs(floatval($quantidade ?? 0));
 
         if ($quantidade <= 0) {
-            echo 'Quantidade inválida';
-            exit;
+            throw new \Exception('Quantidade inválida');
         }
 
         $mov = new Movimentacao();
         $tipoSaidaId = 5; // Venda
-        $movId = $mov->criar($tipoSaidaId, $UserID);
+        $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
 
         $item = new MovimentacaoItem();
-        $qtdEst = new Estoque();
         $val = $ValorFIFOEst;
         $vlrtotal = $ValorTotalEst;
 
         if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
-            
             $mov->atualizarValorTotal($movId, $vlrtotal);
-            // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
-            echo 'Saída direta feita com sucesso';
+            return true;
         } else {
-            echo 'Estoque insuficiente';
+            throw new \Exception('Estoque insuficiente');
         }
-        exit;
 }
 
 
 function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '') {
-            
             $mov = new Movimentacao();
             $tipoSaidaId = 5; // Venda
             $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
 
             foreach ($Itens as $produtoId => $quantidade){
-
                 $quantidade = abs(floatval($quantidade ?? 0));
-
                 if ($quantidade <= 0) {
-                    echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
-                    return false;
+                    throw new \Exception('Quantidade inválida nos itens');
                 }
-
             }
-            
-                  
 
             $item = new MovimentacaoItem();
-            
 
             if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
-                
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-               
-                echo json_encode(['success'=>true,'message'=>'Saída direta do ADM feita com sucesso']);
+                return true;
             } else {
-                echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
-                return false;
+                throw new \Exception('Estoque insuficiente');
             }
-            return true;
-
     }
     
 
@@ -87,6 +69,7 @@ function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '')
      */
 function registrarEntradaNfe(array $dados)
     {
+        global $db;
         // campos obrigatórios
         if (
             empty($dados['fornecedor']) ||
@@ -100,7 +83,7 @@ function registrarEntradaNfe(array $dados)
         }
 
         // Verificar duplicata para evitar duplicações no PULL
-        $existingNota = $this->db->query(
+        $existingNota = $db->query(
             "SELECT id FROM notas_fiscais WHERE numero_nota = :numero OR chave_acesso = :chave",
             [':numero' => $dados['numero'], ':chave' => $dados['chave_acesso']]
         );
@@ -153,15 +136,23 @@ function registrarEntradaNfe(array $dados)
         // fornecedor novo ou existente
         $fornecedorModel = new \Models\Fornecedor();
         if ($dados['fornecedor'] === 'cadastrar_novo') {
-            $fornecedorId = $fornecedorModel->create([
-                'cnpj'         => $cnpj,
-                'razao_social' => $dados['razao_social'] ?? '',
-                'tipo'         => 'PJ',
-                'ativo'        => 1,
-                'criado_por'   => $dados['user_id']
-            ]);
-            if (!$fornecedorId) {
-                throw new \Exception('erro ao cadastrar fornecedor');
+            $existentePorCnpj = $db->query(
+                "SELECT id FROM fornecedores WHERE REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', '') = :cnpj LIMIT 1",
+                [':cnpj' => $cnpj]
+            );
+            if (!empty($existentePorCnpj)) {
+                $fornecedorId = $existentePorCnpj[0]['id'];
+            } else {
+                $fornecedorId = $fornecedorModel->create([
+                    'cnpj'         => $cnpj,
+                    'razao_social' => $dados['razao_social'] ?? '',
+                    'tipo'         => 'PJ',
+                    'ativo'        => 1,
+                    'criado_por'   => $dados['user_id']
+                ]);
+                if (!$fornecedorId) {
+                    throw new \Exception('erro ao cadastrar fornecedor');
+                }
             }
         } else {
             $fornecedorExistente = $fornecedorModel->getById((int)$dados['fornecedor']);
@@ -202,7 +193,7 @@ function registrarEntradaNfe(array $dados)
         $mov->atualizarValorTotal($movId, floatval($dados['total']), $dados['numero']);
 
         // insere nota fiscal
-        $this->db->insert('notas_fiscais', [
+        $db->insert('notas_fiscais', [
             'movimentacao_id' => $movId,
             'numero_nota'     => $dados['numero'],
             'chave_acesso'    => $dados['chave_acesso'],
@@ -215,7 +206,9 @@ function registrarEntradaNfe(array $dados)
         
     }
 
-
+// Configurações de sincronização (usa constantes definidas pelo sistema ou variáveis de ambiente)
+$sync_url = defined('SYNC_URL') ? SYNC_URL : ($_SERVER['SYNC_URL'] ?? $_ENV['SYNC_URL'] ?? getenv('SYNC_URL') ?: '');
+$sync_token = defined('SYNC_TOKEN') ? SYNC_TOKEN : ($_SERVER['SYNC_TOKEN'] ?? $_ENV['SYNC_TOKEN'] ?? getenv('SYNC_TOKEN') ?: '');
 
 // PUSH Local → Web
 $pendentes = $db->query(
@@ -232,11 +225,16 @@ if (!empty($pendentes)) {  // Usa retorno array de query()
             'dados' => json_decode($item['dados'], true)
         ];
 
-        $ch = curl_init($_ENV['SYNC_URL']);
+        // Ponto de parada para depuração (Xdebug)
+        if (function_exists('xdebug_break')) {
+            xdebug_break();
+        }
+
+        $ch = curl_init($sync_url);
         curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']],
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Api-Token: Bearer ' . $sync_token],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 30  // Para RPi redes lentas
         ]);
@@ -244,19 +242,19 @@ if (!empty($pendentes)) {  // Usa retorno array de query()
         // Montando o comando cURL para o Postman
         $headers = [
             'Content-Type: application/json',
-            'X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']
+            'X-Api-Token: Bearer ' . $sync_token
         ];
 
-        $curlCommand = "curl --location --request POST '" . $_ENV['SYNC_URL'] . "' \\\n";
+        $curlCommand = "curl --location --request POST '" . $sync_url . "' \\\n";
         foreach ($headers as $header) {
             $curlCommand .= "--header '" . $header . "' \\\n";
         }
         $curlCommand .= "--data-raw '" . json_encode($payload, JSON_PRETTY_PRINT) . "'";
 
         // Imprime na tela de forma legível
-        echo "<pre>Copiável para o Postman:\n\n";
+       /*  echo "<pre>Copiável para o Postman:\n\n";
         echo $curlCommand;
-        echo "</pre>";
+        echo "</pre>"; */
         // Montando o comando cURL para o Postman FIM
 
         $response = curl_exec($ch);
@@ -274,9 +272,9 @@ if (!empty($pendentes)) {  // Usa retorno array de query()
 
 // PULL Web → Local
 $last_sync = $db->query("SELECT MAX(sincronizado_em) FROM sincronizacao")[0]['MAX(sincronizado_em)'] ?? '2000-01-01';
-$ch = curl_init($_ENV['SYNC_URL'] . '?last_sync=' . urlencode($last_sync));
+$ch = curl_init($sync_url . '?last_sync=' . urlencode($last_sync));
 curl_setopt_array($ch, [
-    CURLOPT_HTTPHEADER => ['X-Api-Token: Bearer ' . $_ENV['SYNC_TOKEN']],
+    CURLOPT_HTTPHEADER => ['X-Api-Token: Bearer ' . $sync_token],
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 30
 ]);
@@ -295,19 +293,25 @@ if ($http_code === 200) {
                     case 'INSERT': $db->insert($item['tabela'], $dados); break;
                     case 'UPDATE': $db->update($item['tabela'], $dados, "id = :id", ['id' => $item['registro_id']]); break;
                     case 'DELETE': $db->delete($item['tabela'], "id = :id", ['id' => $item['registro_id']]); break;
-                    case 'SAIDA_DIRETA': saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst']);
+                    case 'SAIDA_DIRETA':
+                        saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
+                        break;
                     case 'SAIDA_DIRETA_ADM':
-                    $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao']);
-                    break;
+                        saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                        break;
 
                     case 'ENTRADA_NFE':
-                    $this->registrarEntradaNfe($dados);
-                    break;
+                        registrarEntradaNfe($dados);
+                        break;
                 }
             }
-            $db->commit();
+            if ($db->inTransaction()) {
+                $db->commit();
+            }
         } catch (Exception $e) {
-            $db->rollback();
+            if ($db->inTransaction()) {
+                $db->rollback();
+            }
             error_log("Pull erro: " . $e->getMessage(), 3, LOG_PATH . '/sync_error.log');
         }
     }

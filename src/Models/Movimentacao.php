@@ -34,7 +34,7 @@ class Movimentacao extends BaseModel
         return false;
     }
 
-    public function atualizarValorTotal(int $movimentacaoId, float $valorTotal, int $nrNota = null)
+    public function atualizarValorTotal(int $movimentacaoId, float $valorTotal, int|string|null $nrNota = null)
     {
         $sql = "UPDATE {$this->table} SET valor_total = ?, documento_numero = ? WHERE id = ?";
         $stmt = $this->db->prepare($sql);

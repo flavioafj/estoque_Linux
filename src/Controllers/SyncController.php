@@ -44,13 +44,10 @@ class SyncController extends BaseController
     //Funções auxiliares
 
     public function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst, $observacao = '') {
-            
-            
             $quantidade = abs(floatval($quantidade ?? 0));
 
             if ($quantidade <= 0) {
-                echo 'Quantidade inválida';
-                exit;
+                throw new \Exception('Quantidade inválida');
             }
 
             $mov = new Movimentacao();
@@ -58,57 +55,38 @@ class SyncController extends BaseController
             $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
 
             $item = new MovimentacaoItem();
-            $qtdEst = new Estoque();
             $val = $ValorFIFOEst;
             $vlrtotal = $ValorTotalEst;
 
             if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
-                
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-                // <<< ALTERAÇÃO >>> redireciona para página de pós-saída
-                echo json_encode(['success'=>true,'message'=>'Saída direta feita com sucesso']);
+                return true;
             } else {
-                echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
-                return false;
+                throw new \Exception('Estoque insuficiente');
             }
-            return true;
-
     }
 
     /* Seria interessante no futuro colocar o valor unitário do produto nessa função*/
     public function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '') {
-            
             $mov = new Movimentacao();
             $tipoSaidaId = 5; // Venda
             $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
 
             foreach ($Itens as $produtoId => $quantidade){
-
                 $quantidade = abs(floatval($quantidade ?? 0));
-
                 if ($quantidade <= 0) {
-                    echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
-                    return false;
+                    throw new \Exception('Quantidade inválida nos itens');
                 }
-
             }
-            
-                  
 
             $item = new MovimentacaoItem();
-            
 
             if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
-                
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-               
-                echo json_encode(['success'=>true,'message'=>'Saída direta do ADM feita com sucesso']);
+                return true;
             } else {
-                echo json_encode(['success'=>false,'message'=>'Estoque insuficiente']);
-                return false;
+                throw new \Exception('Estoque insuficiente');
             }
-            return true;
-
     }
 
     /**
@@ -182,18 +160,35 @@ class SyncController extends BaseController
         // fornecedor novo ou existente
         $fornecedorModel = new \Models\Fornecedor();
         if ($dados['fornecedor'] === 'cadastrar_novo') {
-            $fornecedorId = $fornecedorModel->create([
-                'cnpj'         => $cnpj,
-                'razao_social' => $dados['razao_social'] ?? '',
-                'tipo'         => 'PJ',
-                'ativo'        => 1,
-                'criado_por'   => $dados['user_id']
-            ]);
-            if (!$fornecedorId) {
-                throw new \Exception('erro ao cadastrar fornecedor');
+            $existentePorCnpj = $this->db->query(
+                "SELECT id FROM fornecedores WHERE REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', '') = :cnpj LIMIT 1",
+                [':cnpj' => $cnpj]
+            );
+            if (!empty($existentePorCnpj)) {
+                $fornecedorId = $existentePorCnpj[0]['id'];
+            } else {
+                $fornecedorId = $fornecedorModel->create([
+                    'cnpj'         => $cnpj,
+                    'razao_social' => $dados['razao_social'] ?? '',
+                    'tipo'         => 'PJ',
+                    'ativo'        => 1,
+                    'criado_por'   => $dados['user_id']
+                ]);
+                if (!$fornecedorId) {
+                    throw new \Exception('erro ao cadastrar fornecedor');
+                }
             }
         } else {
             $fornecedorExistente = $fornecedorModel->getById((int)$dados['fornecedor']);
+            if ((!$fornecedorExistente || ($cnpj !== '' && preg_replace('/\D/', '', $fornecedorExistente['cnpj']) !== $cnpj)) && $cnpj !== '') {
+                $porCnpj = $this->db->query(
+                    "SELECT * FROM fornecedores WHERE REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', '') = :cnpj LIMIT 1",
+                    [':cnpj' => $cnpj]
+                );
+                if (!empty($porCnpj)) {
+                    $fornecedorExistente = $porCnpj[0];
+                }
+            }
             if (!$fornecedorExistente) {
                 throw new \Exception('fornecedor inválido');
             }
@@ -253,7 +248,7 @@ class SyncController extends BaseController
         $auth = $headers['X-Api-Token'] ?? '';
         if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== $_ENV['SYNC_TOKEN']) {
             http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Token inválido']);
+            echo json_encode(['success' => false, 'message' => 'Token inválido' . ' | Recebido: ' . $auth . ' | Esperado: Bearer ' . $_ENV['SYNC_TOKEN']]);
             exit;
         }
 
@@ -276,7 +271,7 @@ class SyncController extends BaseController
         // Segurança: só tabelas permitidas
         if (!in_array($tabela, $this->allowedTables)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'message' => 'Tabela não autorizada para sincronização']);
+            echo json_encode(['success' => false, 'message' => 'Tabela não autorizada para sincronização' . json_encode($this->allowedTables)]);
             exit;
         }
 
@@ -297,11 +292,11 @@ class SyncController extends BaseController
                     break;
 
                 case 'SAIDA_DIRETA':
-                    $this->saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao']);
+                    $this->saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
                     break;
 
                 case 'SAIDA_DIRETA_ADM':
-                    $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao']);
+                    $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
                     break;
 
                 case 'ENTRADA_NFE':
@@ -325,7 +320,9 @@ class SyncController extends BaseController
                 // criado_em é preenchido automaticamente pelo DEFAULT CURRENT_TIMESTAMP
             ]);
 
-            $this->db->commit();
+            if ($this->db->inTransaction()) {
+                $this->db->commit();
+            }
 
             http_response_code(200);
             echo json_encode([
@@ -333,7 +330,9 @@ class SyncController extends BaseController
                 'message' => 'Sincronização recebida e aplicada'
             ]);
         } catch (\Exception $e) {
-            $this->db->rollback();
+            if ($this->db->inTransaction()) {
+                $this->db->rollback();
+            }
 
             $error = "Erro receiveSync: " . $e->getMessage() .
                      " | tabela=$tabela | acao=$acao | registro_id=$registro_id";
@@ -359,7 +358,7 @@ class SyncController extends BaseController
         $auth = $headers['X-Api-Token'] ?? '';
         if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== $_ENV['SYNC_TOKEN']) {
             http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Token inválido']);
+            echo json_encode(['success' => false, 'message' => 'Token inválido'  . ' | Recebido: ' . $auth]);
             exit;
         }
 

@@ -220,7 +220,8 @@ class Database {
         }
         
         foreach ($whereParams as $key => $value) {
-            $this->bind($key, $value);
+            $paramKey = strpos($key, ':') === 0 ? $key : ':' . $key;
+            $this->bind($paramKey, $value);
         }
         
         return $this->execute();

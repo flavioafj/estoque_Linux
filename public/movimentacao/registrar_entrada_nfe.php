@@ -86,6 +86,9 @@ if (empty($itensValidos)) {
     exit();
 }
 
+// Inicializa conexão com banco antes do bloco try para garantir rollback seguro
+$db = Database::getInstance();
+
 try {
 
   
@@ -96,17 +99,25 @@ try {
     $fornecedorId = null;
 
     if ($idFornecedorSistema === 'cadastrar_novo') {
-        // Cadastra novo fornecedor
-        $fornecedorData = [
-            'cnpj' => $cnpj,
-            'razao_social' => $razaoSocial,
-            'tipo' => 'PJ',
-            'ativo' => 1,
-            'criado_por' => $_SESSION['user_id'] ?? null
-        ];
-        $fornecedorId = $fornecedorModel->create($fornecedorData);
-        if (!$fornecedorId) {
-            throw new Exception('Erro ao cadastrar fornecedor.');
+        $existentePorCnpj = $db->query(
+            "SELECT id FROM fornecedores WHERE REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', '') = :cnpj LIMIT 1",
+            [':cnpj' => $cnpj]
+        );
+        if (!empty($existentePorCnpj)) {
+            $fornecedorId = $existentePorCnpj[0]['id'];
+        } else {
+            // Cadastra novo fornecedor
+            $fornecedorData = [
+                'cnpj' => $cnpj,
+                'razao_social' => $razaoSocial,
+                'tipo' => 'PJ',
+                'ativo' => 1,
+                'criado_por' => $_SESSION['user_id'] ?? null
+            ];
+            $fornecedorId = $fornecedorModel->create($fornecedorData);
+            if (!$fornecedorId) {
+                throw new Exception('Erro ao cadastrar fornecedor.');
+            }
         }
     } else {
         // Verifica fornecedor existente
@@ -152,7 +163,6 @@ try {
     }
 
     // Inicia transação
-    $db = Database::getInstance();
     $db->beginTransaction();
     // 4. Registrar Nota Fiscal
     $notaData = [
@@ -206,8 +216,10 @@ try {
     exit();
 
 } catch (Exception $e) {
-    // Rollback em caso de erro
-    $db->rollback();
+    // Rollback em caso de erro (apenas se houver transação ativa)
+    if ($db->inTransaction()) {
+        $db->rollback();
+    }
     error_log("Erro em registrar_entrada.php: " . $e->getMessage());
     Session::setFlash('error', 'Erro ao registrar entrada: ' . $e->getMessage());
     header('Location: ../movimentacao/processar_nfe.php');

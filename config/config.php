@@ -8,9 +8,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
-// Carrega o arquivo .env
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+// Carrega o arquivo .env (safeLoad nao falha se variavel ja existe no ambiente)
+$dotenv = Dotenv::createUnsafeImmutable(__DIR__ . '/..');
+$dotenv->safeLoad();
 
 
 // Iniciar sessão se ainda não iniciada
@@ -45,7 +45,7 @@ define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 
 // URLs do sistema - Corrigido para funcionar corretamente
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 // Detectar se estamos na pasta public ou na raiz do projeto
 $scriptName = $_SERVER['SCRIPT_NAME'];

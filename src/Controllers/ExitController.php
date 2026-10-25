@@ -44,7 +44,8 @@ class ExitController {
                         'quantidade'    => $quantidade,
                         'UserID'        => Session::getUserId(),
                         'ValorFIFOEst'  => $val,
-                        'ValorTotalEst' => $vlrtotal
+                        'ValorTotalEst' => $vlrtotal,
+                        'observacao'    => ''
                     ]
                 );
 

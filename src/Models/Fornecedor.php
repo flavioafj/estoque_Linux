@@ -19,7 +19,9 @@ class Fornecedor extends BaseModel {
     ];
 
     public function create($data) {
-        $data['criado_por'] = $_SESSION['user_id'] ?? null;
+        if (!isset($data['criado_por'])) {
+            $data['criado_por'] = $_SESSION['user_id'] ?? null;
+        }
         return parent::create($data);
     }
 
