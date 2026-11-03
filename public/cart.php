@@ -6,6 +6,7 @@ use Models\Product;
 use Models\Movimentacao;  
 use Models\MovimentacaoItem;  
 use Models\Estoque;
+use Helpers\SyncQueueHelper;
 
 //require_once SRC_PATH . '/Models/Product.php';
   
@@ -47,15 +48,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($movimentacaoId) {  
                 $movimentacaoItem = new MovimentacaoItem();  
                 $valoresUnitarios = [];  
+                $valoresTotais = [];
                 $vlrTotal = 0;
                 foreach ($cart as $id => $qty) {  
                     $val = $qtdEst->getValorFIFO($id); 
+                    $valorTotalItem = $qtdEst->getSomaValores((int)$id, $qty);
 
                     $valoresUnitarios[$id] = $val;  
-                    $vlrTotal += $qtdEst->getSomaValores((int)$id, $qty);
+                    $valoresTotais[$id] = $valorTotalItem;
+                    $vlrTotal += $valorTotalItem;
                 }  
                 if ($movimentacaoItem->adicionarItens($movimentacaoId, $cart, $valoresUnitarios)) {  
                     $movimentacao->atualizarValorTotal($movimentacaoId, $vlrTotal);  
+
+                    // SAIDA_DIRETA representa um único produto. Para manter o
+                    // contrato do sincronizador, o carrinho gera uma entrada
+                    // na fila para cada item da movimentação local.
+                    foreach ($cart as $id => $qty) {
+                        SyncQueueHelper::queueChange(
+                            'movimentacoes',
+                            $movimentacaoId,
+                            'SAIDA_DIRETA',
+                            [
+                                'produtoId'     => (int)$id,
+                                'quantidade'    => abs((float)$qty),
+                                'UserID'        => $usuarioId,
+                                'ValorFIFOEst'  => $valoresUnitarios[$id],
+                                'ValorTotalEst' => $valoresTotais[$id],
+                                'observacao'    => ''
+                            ]
+                        );
+                    }
+
                     Session::clearCart();  
                     Session::setFlash('success', 'Saídas confirmadas com sucesso!');  
                     header("Location: /pos_saida.php?mov=$movimentacaoId");

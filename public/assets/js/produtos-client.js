@@ -197,6 +197,11 @@ class ProdutosManager {
             const data = await res.json();
 
             if (data.success) {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+
                 alert('Saída registrada com sucesso!');
                 location.reload();
             } else {
