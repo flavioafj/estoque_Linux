@@ -121,7 +121,9 @@ class MovimentacaoItem extends BaseModel
                 if($tipoMovimentacao=='ENTRADA'){
                     $acao = 'INSERT';
                     for ($i = 0; $i < (int)$quantidade; $i++) {
-                        $estoqueModel->inserirUnidade($produtoId, $valor);
+                        if (!$estoqueModel->inserirUnidade($produtoId, $valor)) {
+                            throw new \RuntimeException('Erro ao inserir unidade no estoque.');
+                        }
 
                     }
 

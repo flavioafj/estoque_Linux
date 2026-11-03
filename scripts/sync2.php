@@ -300,6 +300,13 @@ if ($http_code === 200) {
                         saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
                         break;
 
+                    case 'ENTRADA_MANUAL':
+                        if ($item['tabela'] !== 'movimentacoes') {
+                            throw new \RuntimeException('Tabela inválida para entrada manual.');
+                        }
+                        (new \Services\EntradaManualService())->receber($dados);
+                        break;
+
                     case 'ENTRADA_NFE':
                         registrarEntradaNfe($dados);
                         break;
@@ -308,7 +315,7 @@ if ($http_code === 200) {
             if ($db->inTransaction()) {
                 $db->commit();
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($db->inTransaction()) {
                 $db->rollback();
             }

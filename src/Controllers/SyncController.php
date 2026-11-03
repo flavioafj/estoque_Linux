@@ -299,6 +299,13 @@ class SyncController extends BaseController
                     $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
                     break;
 
+                case 'ENTRADA_MANUAL':
+                    if ($tabela !== 'movimentacoes') {
+                        throw new \RuntimeException('Tabela inválida para entrada manual.');
+                    }
+                    (new \Services\EntradaManualService())->receber($dados);
+                    break;
+
                 case 'ENTRADA_NFE':
                     $this->registrarEntradaNfe($dados);
                     break;
@@ -308,17 +315,19 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            $this->db->insert('sincronizacao', [
-                'tabela'          => $tabela,
-                'registro_id'     => $registro_id,
-                'acao'            => $acao,
-                'dados'           => json_encode($dados, JSON_UNESCAPED_UNICODE),
-                'sincronizado'    => true,
-                'tentativas'      => 0,
-                'erro_mensagem'   => null,
-                'sincronizado_em' => date('Y-m-d H:i:s')
-                // criado_em é preenchido automaticamente pelo DEFAULT CURRENT_TIMESTAMP
-            ]);
+            if ($acao !== 'ENTRADA_MANUAL') {
+                $this->db->insert('sincronizacao', [
+                    'tabela'          => $tabela,
+                    'registro_id'     => $registro_id,
+                    'acao'            => $acao,
+                    'dados'           => json_encode($dados, JSON_UNESCAPED_UNICODE),
+                    'sincronizado'    => true,
+                    'tentativas'      => 0,
+                    'erro_mensagem'   => null,
+                    'sincronizado_em' => date('Y-m-d H:i:s')
+                    // criado_em é preenchido automaticamente pelo DEFAULT CURRENT_TIMESTAMP
+                ]);
+            }
 
             if ($this->db->inTransaction()) {
                 $this->db->commit();
@@ -329,7 +338,7 @@ class SyncController extends BaseController
                 'success' => true,
                 'message' => 'Sincronização recebida e aplicada'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
                 $this->db->rollback();
             }
