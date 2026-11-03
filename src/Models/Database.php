@@ -192,7 +192,7 @@ class Database {
         $teste = $sql;
         
         foreach ($data as $key => $value) {
-            $teste = str_replace(':' . $key, $value, $teste);
+            $teste = str_replace(':' . $key, (string) ($value ?? ''), $teste);
             $this->bind(':' . $key, $value);
         }
         

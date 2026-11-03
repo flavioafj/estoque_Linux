@@ -20,7 +20,7 @@ class MovimentacaoItem extends BaseModel
      * @param array $itens
      * @return bool
      */
-    public function adicionarItens(int $movimentacaoId, array $itens, array $valoresUnitarios = null, int $tipo = 0): bool
+    public function adicionarItens(int $movimentacaoId, array $itens, ?array $valoresUnitarios = null, int $tipo = 0): bool
     {
         try {
             // Validação básica
