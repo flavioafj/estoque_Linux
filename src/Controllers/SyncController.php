@@ -244,13 +244,7 @@ class SyncController extends BaseController
      */
     public function receiveSync()
     {
-        $headers = getallheaders();
-        $auth = $headers['X-Api-Token'] ?? '';
-        if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== $_ENV['SYNC_TOKEN']) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Token inválido' . ' | Recebido: ' . $auth . ' | Esperado: Bearer ' . $_ENV['SYNC_TOKEN']]);
-            exit;
-        }
+        if (!$this->authenticateSync()) return;
 
         $input = file_get_contents('php://input');
         $payload = json_decode($input, true);
@@ -357,43 +351,52 @@ class SyncController extends BaseController
         }
     }
 
-    /**
-     * Envia alterações pendentes do web para o local (PULL: web → local)
-     * GET /api/sync?last_sync=2026-01-01%2012:00:00
-     */
+    private function authenticateSync(): bool
+    {
+        $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+        $auth = $headers['x-api-token'] ?? '';
+        $token = defined('SYNC_TOKEN') ? SYNC_TOKEN : ($_ENV['SYNC_TOKEN'] ?? '');
+        if (!$token || !preg_match('/^Bearer\s+(.+)$/i', $auth, $matches) || !hash_equals($token, $matches[1])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Token inválido']);
+            return false;
+        }
+        return true;
+    }
+
+    public function acknowledgeSync()
+    {
+        if (!$this->authenticateSync()) return;
+        try {
+            $payload = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($payload['recebimentos'] ?? null)) throw new \RuntimeException('Recibos ausentes.');
+            $service = new \Services\SyncPullService($this->db->getConnection());
+            $ids = $service->confirmarNoServidor($payload['recebimentos']);
+            echo json_encode(['success' => true, 'confirmed' => $ids]);
+        } catch (\Throwable $e) {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Não foi possível confirmar os recibos.']);
+        }
+    }
+
+    /** Protocolo 2: pendências sem cursor de data; confirmação somente por ACK. */
     public function sendSync()
     {
-        $headers = getallheaders();
-        $auth = $headers['X-Api-Token'] ?? '';
-        if (!preg_match('/Bearer\s+(.+)/', $auth, $matches) || $matches[1] !== $_ENV['SYNC_TOKEN']) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Token inválido'  . ' | Recebido: ' . $auth]);
-            exit;
+        if (!$this->authenticateSync()) return;
+        if (($_GET['protocol'] ?? '') !== '2') {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Atualize sync2.php para o protocolo 2.']);
+            return;
         }
-
-        $last_sync = $_GET['last_sync'] ?? '2000-01-01 00:00:00';
-
-        $query = "
-            SELECT 
-                id, tabela, registro_id, acao, dados, criado_em
-            FROM sincronizacao
-            WHERE sincronizado = FALSE
-              AND criado_em > :last_sync
-              AND tabela NOT IN ('sincronizacao', 'auditoria', 'sessoes', 'alertas_estoque', 'usuarios', 'perfis', 'configuracoes')
-            ORDER BY criado_em ASC
-            LIMIT 30
-        ";
-
-        $pendentes = $this->db->query($query, [':last_sync' => $last_sync]);
-
-        $count = count($pendentes);
-
-        http_response_code(200);
-        echo json_encode([
-            'success' => true,
-            'data'    => $pendentes,
-            'message' => $count === 0 ? 'Nenhuma pendência para sincronizar' : "$count pendências enviadas",
-            'count'   => $count
-        ], JSON_UNESCAPED_UNICODE);
+        try {
+            $service = new \Services\SyncPullService($this->db->getConnection());
+            $pendentes = $service->listarPendentes();
+            echo json_encode(['success' => true, 'protocol' => 2, 'data' => $pendentes,
+                'message' => count($pendentes) . ' pendências disponíveis para recebimento',
+                'count' => count($pendentes)], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Falha ao consultar pendências.']);
+        }
     }
 }

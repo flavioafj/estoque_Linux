@@ -16,6 +16,10 @@ use Models\TipoMovimentacao;
 
 $db = Database::getInstance();
 //Funções auxiliares
+function atualizarTotalRecebido(int $movId, float $total, $numero = null): void {
+    global $db;
+    $db->getConnection()->prepare('UPDATE movimentacoes SET valor_total = ?, documento_numero = ? WHERE id = ?')->execute([$total, $numero, $movId]);
+}
 
 function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTotalEst, $observacao = '') {
         $quantidade = abs(floatval($quantidade ?? 0));
@@ -32,8 +36,9 @@ function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTot
         $val = $ValorFIFOEst;
         $vlrtotal = $ValorTotalEst;
 
+        if (!$movId) throw new \RuntimeException('Falha ao criar saída.');
         if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
-            $mov->atualizarValorTotal($movId, $vlrtotal);
+            atualizarTotalRecebido($movId, $vlrtotal);
             return true;
         } else {
             throw new \Exception('Estoque insuficiente');
@@ -46,6 +51,7 @@ function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '')
             $tipoSaidaId = 5; // Venda
             $movId = $mov->criar($tipoSaidaId, $UserID, $observacao);
 
+            if (!$movId || empty($Itens)) throw new \RuntimeException('Falha ao criar saída ou saída sem itens.');
             foreach ($Itens as $produtoId => $quantidade){
                 $quantidade = abs(floatval($quantidade ?? 0));
                 if ($quantidade <= 0) {
@@ -56,7 +62,7 @@ function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '')
             $item = new MovimentacaoItem();
 
             if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
-                $mov->atualizarValorTotal($movId, $vlrtotal);
+                atualizarTotalRecebido($movId, $vlrtotal);
                 return true;
             } else {
                 throw new \Exception('Estoque insuficiente');
@@ -190,10 +196,10 @@ function registrarEntradaNfe(array $dados)
             throw new \Exception('erro ao adicionar itens');
         }
 
-        $mov->atualizarValorTotal($movId, floatval($dados['total']), $dados['numero']);
+        atualizarTotalRecebido($movId, floatval($dados['total']), $dados['numero']);
 
         // insere nota fiscal
-        $db->insert('notas_fiscais', [
+        if (!$db->insert('notas_fiscais', [
             'movimentacao_id' => $movId,
             'numero_nota'     => $dados['numero'],
             'chave_acesso'    => $dados['chave_acesso'],
@@ -202,125 +208,111 @@ function registrarEntradaNfe(array $dados)
             'valor_total'     => floatval($dados['total']),
             'processado'      => true,
             'usuario_id'      => $dados['user_id']
-        ]);
+        ])) throw new \RuntimeException('Falha ao registrar nota fiscal recebida.');
         
     }
 
-// Configurações de sincronização (usa constantes definidas pelo sistema ou variáveis de ambiente)
-$sync_url = defined('SYNC_URL') ? SYNC_URL : ($_SERVER['SYNC_URL'] ?? $_ENV['SYNC_URL'] ?? getenv('SYNC_URL') ?: '');
-$sync_token = defined('SYNC_TOKEN') ? SYNC_TOKEN : ($_SERVER['SYNC_TOKEN'] ?? $_ENV['SYNC_TOKEN'] ?? getenv('SYNC_TOKEN') ?: '');
+// O novo protocolo exige recibo local persistente e confirmação explícita do PULL.
+$sync_url = SYNC_URL;
+$client = new \Services\SyncHttpClient($sync_url, SYNC_TOKEN);
+$pdo = $db->getConnection();
+$pull = new \Services\SyncPullService($pdo);
+$falhas = 0;
+$enviados = $aplicados = $repetidos = $confirmados = 0;
 
-// PUSH Local → Web
-$pendentes = $db->query(
-    "SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY criado_em ASC LIMIT 20",
-    []  // Sem params
-);
+function confirmarRecebimentos($client, $pull, string $origem): int
+{
+    $total = 0;
+    while ($recibos = $pull->pendentesConfirmacao($origem)) {
+        $resposta = $client->request('POST', ['ack' => 1], ['recebimentos' => $recibos]);
+        $esperados = array_map('intval', array_column($recibos, 'id'));
+        $retornados = $resposta['confirmed'] ?? null;
+        if (!is_array($retornados)) throw new \RuntimeException('API não retornou os identificadores confirmados.');
+        $retornados = array_map('intval', $retornados);
+        sort($esperados); sort($retornados);
+        if ($esperados !== $retornados) throw new \RuntimeException('API não confirmou todos os recibos enviados.');
+        $pull->marcarConfirmados($origem, $recibos);
+        $total += count($recibos);
+    }
+    return $total;
+}
 
-if (!empty($pendentes)) {  // Usa retorno array de query()
-    foreach ($pendentes as $item) {
-        $payload = [
-            'tabela' => $item['tabela'],
-            'registro_id' => $item['registro_id'],
-            'acao' => $item['acao'],
-            'dados' => json_decode($item['dados'], true)
-        ];
+try {
+    $pull->prepararRecibos();
+    // Verifica o protocolo antes de enviar/aplicar qualquer movimentação.
+    $lote = $client->request('GET', ['protocol' => 2]);
+    if (($lote['protocol'] ?? null) !== 2 || !is_array($lote['data'] ?? null)) {
+        throw new \RuntimeException('Atualize a API do servidor: protocolo de confirmação não disponível.');
+    }
+    $confirmados += confirmarRecebimentos($client, $pull, $sync_url);
+} catch (\Throwable $e) {
+    fwrite(STDERR, 'Sincronização interrompida: ' . $e->getMessage() . PHP_EOL);
+    exit(1);
+}
 
-        // Ponto de parada para depuração (Xdebug)
-        if (function_exists('xdebug_break')) {
-            xdebug_break();
-        }
-
-        $ch = curl_init($sync_url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Api-Token: Bearer ' . $sync_token],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 30  // Para RPi redes lentas
-        ]);
-
-        // Montando o comando cURL para o Postman
-        $headers = [
-            'Content-Type: application/json',
-            'X-Api-Token: Bearer ' . $sync_token
-        ];
-
-        $curlCommand = "curl --location --request POST '" . $sync_url . "' \\\n";
-        foreach ($headers as $header) {
-            $curlCommand .= "--header '" . $header . "' \\\n";
-        }
-        $curlCommand .= "--data-raw '" . json_encode($payload, JSON_PRETTY_PRINT) . "'";
-
-        // Imprime na tela de forma legível
-       /*  echo "<pre>Copiável para o Postman:\n\n";
-        echo $curlCommand;
-        echo "</pre>"; */
-        // Montando o comando cURL para o Postman FIM
-
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($http_code === 200) {
-            $db->update('sincronizacao', ['sincronizado' => 1, 'sincronizado_em' => date('Y-m-d H:i:s')], "id = :id", ['id' => $item['id']]);
-        } else {
-            $db->update('sincronizacao', ['tentativas' => $item['tentativas'] + 1, 'erro_mensagem' => $response], "id = :id", ['id' => $item['id']]);
-            error_log("Push erro: HTTP $http_code - $response", 3, LOG_PATH . '/sync_error.log');
-        }
+// PUSH: HTTP 200, sozinho, não comprova que a API aplicou o evento.
+$pendentes = $pdo->query('SELECT * FROM sincronizacao WHERE sincronizado = 0 AND tentativas < 5 ORDER BY id LIMIT 20')->fetchAll(\PDO::FETCH_ASSOC);
+foreach ($pendentes as $item) {
+    try {
+        $client->request('POST', [], ['tabela' => $item['tabela'], 'registro_id' => $item['registro_id'],
+            'acao' => $item['acao'], 'dados' => json_decode($item['dados'], true, 512, JSON_THROW_ON_ERROR)]);
+        $pdo->prepare('UPDATE sincronizacao SET sincronizado = 1, sincronizado_em = CURRENT_TIMESTAMP, erro_mensagem = NULL WHERE id = ?')->execute([$item['id']]);
+        $enviados++;
+    } catch (\Throwable $e) {
+        $falhas++;
+        $pdo->prepare('UPDATE sincronizacao SET tentativas = tentativas + 1, erro_mensagem = ? WHERE id = ?')->execute([$e->getMessage(), $item['id']]);
+        fwrite(STDERR, 'PUSH evento ' . $item['id'] . ': ' . $e->getMessage() . PHP_EOL);
     }
 }
 
-// PULL Web → Local
-$last_sync = $db->query("SELECT MAX(sincronizado_em) FROM sincronizacao")[0]['MAX(sincronizado_em)'] ?? '2000-01-01';
-$ch = curl_init($sync_url . '?last_sync=' . urlencode($last_sync));
-curl_setopt_array($ch, [
-    CURLOPT_HTTPHEADER => ['X-Api-Token: Bearer ' . $sync_token],
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 30
-]);
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 200) {
-    $data = json_decode($response, true);
-    if (isset($data['success']) && !empty($data['data'])) {
-        $db->beginTransaction();
-        try {
-            foreach ($data['data'] as $item) {
-                $dados = json_decode($item['dados'], true);
-                switch ($item['acao']) {
-                    case 'INSERT': $db->insert($item['tabela'], $dados); break;
-                    case 'UPDATE': $db->update($item['tabela'], $dados, "id = :id", ['id' => $item['registro_id']]); break;
-                    case 'DELETE': $db->delete($item['tabela'], "id = :id", ['id' => $item['registro_id']]); break;
-                    case 'SAIDA_DIRETA':
-                        saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
-                        break;
-                    case 'SAIDA_DIRETA_ADM':
-                        saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
-                        break;
-
-                    case 'ENTRADA_MANUAL':
-                        if ($item['tabela'] !== 'movimentacoes') {
-                            throw new \RuntimeException('Tabela inválida para entrada manual.');
-                        }
-                        (new \Services\EntradaManualService())->receber($dados);
-                        break;
-
-                    case 'ENTRADA_NFE':
-                        registrarEntradaNfe($dados);
-                        break;
-                }
+// Cada evento possui commit próprio. Apenas os commits concluídos recebem ACK.
+foreach ($lote['data'] as $item) {
+    try {
+        $novo = $pull->aplicar($sync_url, $item, function (array $evento, array $dados) use ($db) {
+            switch ($evento['acao']) {
+                case 'INSERT':
+                case 'UPDATE':
+                    foreach (array_keys($dados) as $coluna) {
+                        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/D', (string) $coluna)) throw new \RuntimeException('Coluna inválida no evento.');
+                    }
+                    if (!$dados) throw new \RuntimeException('Evento sem campos.');
+                    $ok = $evento['acao'] === 'INSERT'
+                        ? $db->insert($evento['tabela'], $dados)
+                        : $db->update($evento['tabela'], $dados, 'id = :id', ['id' => $evento['registro_id']]);
+                    if (!$ok) throw new \RuntimeException('Falha ao gravar alteração recebida.');
+                    break;
+                case 'DELETE':
+                    if (!$db->delete($evento['tabela'], 'id = :id', ['id' => $evento['registro_id']])) throw new \RuntimeException('Falha ao excluir registro recebido.');
+                    break;
+                case 'SAIDA_DIRETA':
+                    saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
+                    break;
+                case 'SAIDA_DIRETA_ADM':
+                    saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                    break;
+                case 'ENTRADA_MANUAL':
+                    (new \Services\EntradaManualService())->receber($dados);
+                    break;
+                case 'ENTRADA_NFE':
+                    registrarEntradaNfe($dados);
+                    break;
+                default:
+                    throw new \RuntimeException('Ação de sincronização não suportada.');
             }
-            if ($db->inTransaction()) {
-                $db->commit();
-            }
-        } catch (\Throwable $e) {
-            if ($db->inTransaction()) {
-                $db->rollback();
-            }
-            error_log("Pull erro: " . $e->getMessage(), 3, LOG_PATH . '/sync_error.log');
-        }
+        });
+        if ($novo) $aplicados++; else $repetidos++;
+    } catch (\Throwable $e) {
+        $falhas++;
+        $id = is_array($item) ? ($item['id'] ?? '?') : '?';
+        fwrite(STDERR, 'PULL evento ' . $id . ': ' . $e->getMessage() . PHP_EOL);
+        error_log('PULL evento ' . $id . ': ' . $e->getMessage() . PHP_EOL, 3, LOG_PATH . '/sync_error.log');
     }
-    echo $data['message'];
 }
+try {
+    $confirmados += confirmarRecebimentos($client, $pull, $sync_url);
+} catch (\Throwable $e) {
+    $falhas++;
+    fwrite(STDERR, 'Confirmação pendente (a próxima execução tentará novamente): ' . $e->getMessage() . PHP_EOL);
+}
+echo "PUSH: {$enviados} enviados. PULL: {$aplicados} aplicados, {$repetidos} já recebidos, {$confirmados} confirmados. Falhas: {$falhas}." . PHP_EOL;
+if ($falhas) exit(1);

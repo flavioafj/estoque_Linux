@@ -14,7 +14,11 @@ header('Content-Type: application/json');
 $controller = new SyncController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $controller->receiveSync();
+    if (($_GET['ack'] ?? '') === '1') {
+        $controller->acknowledgeSync();
+    } else {
+        $controller->receiveSync();
+    }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $controller->sendSync();
 } else {

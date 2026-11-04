@@ -13,7 +13,8 @@ primeira linha de tipo ENTRADA com `FOR UPDATE` até o commit; a busca do recibo
 também usa uma leitura com bloqueio. Não remova eventos/recibos de entrada manual
 enquanto houver possibilidade de reenvio, pois eles são a evidência de deduplicação.
 
-Não há alteração de esquema. Atualize os arquivos tanto no servidor web quanto
+O protocolo de confirmação do PULL cria a tabela local `sync_recebimentos`,
+conforme `README_SYNC_PULL.md`. Atualize os arquivos tanto no servidor web quanto
 na instalação local antes de gerar eventos novos. O fluxo considerado é o de
 `sync2.php`. Entradas antigas não são reenfileiradas automaticamente; devem ser
 reconciliadas antes de qualquer reenvio para evitar duplicar estoque no destino.
