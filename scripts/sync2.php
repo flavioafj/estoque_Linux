@@ -39,7 +39,7 @@ function saidaDireta2($produtoId, $quantidade, $UserID, $ValorFIFOEst, $ValorTot
         if (!$movId) throw new \RuntimeException('Falha ao criar saída.');
         if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
             atualizarTotalRecebido($movId, $vlrtotal);
-            return true;
+            return $movId;
         } else {
             throw new \Exception('Estoque insuficiente');
         }
@@ -63,7 +63,7 @@ function saidaDiretaADM($Itens, $ItensVal, $vlrtotal, $UserID, $observacao = '')
 
             if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
                 atualizarTotalRecebido($movId, $vlrtotal);
-                return true;
+                return $movId;
             } else {
                 throw new \Exception('Estoque insuficiente');
             }
@@ -298,10 +298,13 @@ foreach ($lote['data'] as $item) {
                     if (!$db->delete($evento['tabela'], 'id = :id', ['id' => $evento['registro_id']])) throw new \RuntimeException('Falha ao excluir registro recebido.');
                     break;
                 case 'SAIDA_DIRETA':
-                    saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
+                    $destinoId = saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
                     break;
                 case 'SAIDA_DIRETA_ADM':
-                    saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                    $destinoId = saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                    break;
+                case 'CORRECAO_SAIDA':
+                    (new \Services\CorrecaoSaidaService())->receber($dados);
                     break;
                 case 'ENTRADA_MANUAL':
                     (new \Services\EntradaManualService())->receber($dados);
@@ -311,6 +314,10 @@ foreach ($lote['data'] as $item) {
                     break;
                 default:
                     throw new \RuntimeException('Ação de sincronização não suportada.');
+            }
+            if (isset($destinoId)) {
+                $dados['_movimento_destino_id'] = $destinoId;
+                $db->getConnection()->prepare('INSERT INTO sincronizacao (tabela, registro_id, acao, dados, sincronizado, tentativas, criado_em) VALUES (?, ?, ?, ?, 1, 0, NOW())')->execute(['movimentacoes', $evento['registro_id'], $evento['acao'], json_encode($dados, JSON_THROW_ON_ERROR)]);
             }
         });
         if ($novo) $aplicados++; else $repetidos++;

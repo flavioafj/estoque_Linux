@@ -52,12 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['corrigir'])) {
     }
 
     if (!empty($ajustes)) {
-        $movModel->criarAjusteCompensatorio($movId, $ajustes, Session::getUserId());
+        if (!$movModel->criarAjusteCompensatorio($movId, $ajustes, Session::getUserId())) {
+            $erroCorrecao = 'Não foi possível aplicar a correção. Nenhuma alteração foi confirmada. Tente novamente.';
+        } else {
         Session::setFlash('success', 'Correção aplicada com sucesso.');
             // Libera o bloqueio caso nenhuma ação seja executada
         Session::set('is_processing', false);
         header("Location: /logout.php");
         exit;
+        }
     }
 }
 
@@ -67,6 +70,9 @@ require_once '../templates/navigation.php';
 ?>
 <main class="container mt-4">
     <h1>Saída Registrada – Verifique os Itens</h1>
+    <?php if (isset($erroCorrecao)): ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($erroCorrecao) ?></div>
+    <?php endif; ?>
     <p class="text-muted">
         Você retirou os itens abaixo. Caso precise corrigir a quantidade, altere o campo e clique em
         <strong>Confirmar Correção</strong>.

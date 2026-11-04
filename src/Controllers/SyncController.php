@@ -60,7 +60,7 @@ class SyncController extends BaseController
 
             if ($item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val])) {
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-                return true;
+                return $movId;
             } else {
                 throw new \Exception('Estoque insuficiente');
             }
@@ -83,7 +83,7 @@ class SyncController extends BaseController
 
             if ($item->adicionarItens($movId, $Itens, $ItensVal)) {
                 $mov->atualizarValorTotal($movId, $vlrtotal);
-                return true;
+                return $movId;
             } else {
                 throw new \Exception('Estoque insuficiente');
             }
@@ -286,11 +286,16 @@ class SyncController extends BaseController
                     break;
 
                 case 'SAIDA_DIRETA':
-                    $this->saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
+                    $destinoId = $this->saidaDireta2($dados['produtoId'], $dados['quantidade'], $dados['UserID'], $dados['ValorFIFOEst'], $dados['ValorTotalEst'], $dados['observacao'] ?? '');
                     break;
 
                 case 'SAIDA_DIRETA_ADM':
-                    $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                    $destinoId = $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
+                    break;
+
+                case 'CORRECAO_SAIDA':
+                    if ($tabela !== 'movimentacoes') throw new \RuntimeException('Tabela inválida para correção.');
+                    (new \Services\CorrecaoSaidaService())->receber($dados);
                     break;
 
                 case 'ENTRADA_MANUAL':
@@ -309,7 +314,8 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            if ($acao !== 'ENTRADA_MANUAL') {
+            if (!in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA'], true)) {
+                if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
                 $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,
                     'registro_id'     => $registro_id,

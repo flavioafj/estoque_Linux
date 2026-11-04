@@ -8,7 +8,7 @@ use Throwable;
 /** Recibo local e efeitos do evento pertencem à mesma transação. */
 final class SyncPullService
 {
-    public const ACTIONS = ['INSERT', 'UPDATE', 'DELETE', 'SAIDA_DIRETA', 'SAIDA_DIRETA_ADM', 'ENTRADA_NFE', 'ENTRADA_MANUAL'];
+    public const ACTIONS = ['INSERT', 'UPDATE', 'DELETE', 'SAIDA_DIRETA', 'SAIDA_DIRETA_ADM', 'ENTRADA_NFE', 'ENTRADA_MANUAL', 'CORRECAO_SAIDA'];
     public const TABLES = ['produtos', 'categorias', 'fornecedores', 'unidades_medida', 'movimentacoes', 'movimentacao_itens', 'estoques', 'notas_fiscais', 'itens_nota'];
     private PDO $pdo;
 
@@ -39,7 +39,7 @@ final class SyncPullService
         if (!in_array($evento['acao'], self::ACTIONS, true) || !in_array($evento['tabela'], self::TABLES, true)) {
             throw new RuntimeException('Ação ou tabela de sincronização não suportada.');
         }
-        if (in_array($evento['acao'], ['SAIDA_DIRETA', 'SAIDA_DIRETA_ADM', 'ENTRADA_MANUAL'], true) && $evento['tabela'] !== 'movimentacoes') {
+        if (in_array($evento['acao'], ['SAIDA_DIRETA', 'SAIDA_DIRETA_ADM', 'ENTRADA_MANUAL', 'CORRECAO_SAIDA'], true) && $evento['tabela'] !== 'movimentacoes') {
             throw new RuntimeException('Tabela incompatível com o evento de movimentação.');
         }
         $dados = json_decode($evento['dados'], true, 512, JSON_THROW_ON_ERROR);

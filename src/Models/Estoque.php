@@ -56,12 +56,12 @@ class Estoque extends BaseModel
         return (int) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
     }
 
-    public function getValorFIFO(int $produtoId): int
+    public function getValorFIFO(int $produtoId): float
     {
         $sql =  "SELECT valor_unitario FROM estoques WHERE produto_id = ? ORDER BY data_entrada ASC LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$produtoId]);
-        return (int) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
+        return (float) $stmt->fetch(PDO::FETCH_ASSOC)['valor_unitario'];
     }
 
     // Note que mudei o nome do argumento para $id para simplificar
