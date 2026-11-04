@@ -213,8 +213,21 @@ function registrarEntradaNfe(array $dados)
     }
 
 // O novo protocolo exige recibo local persistente e confirmação explícita do PULL.
-$sync_url = SYNC_URL;
-$client = new \Services\SyncHttpClient($sync_url, SYNC_TOKEN);
+$sync_url = defined('SYNC_URL')
+    ? SYNC_URL
+    : ($_SERVER['SYNC_URL'] ?? $_ENV['SYNC_URL'] ?? getenv('SYNC_URL'));
+
+$sync_token = defined('SYNC_TOKEN')
+    ? SYNC_TOKEN
+    : ($_SERVER['SYNC_TOKEN'] ?? $_ENV['SYNC_TOKEN'] ?? getenv('SYNC_TOKEN'));
+
+if (!is_string($sync_url) || trim($sync_url) === '' ||
+    !is_string($sync_token) || trim($sync_token) === '') {
+    fwrite(STDERR, "SYNC_URL ou SYNC_TOKEN ausente na configuração.\n");
+    exit(1);
+}
+
+$client = new \Services\SyncHttpClient($sync_url, $sync_token);	
 $pdo = $db->getConnection();
 $pull = new \Services\SyncPullService($pdo);
 $falhas = 0;
