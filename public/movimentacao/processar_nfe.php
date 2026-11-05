@@ -101,7 +101,7 @@ include __DIR__ . '/../../templates/header.php';
     <h2>Verificar e Associar Produtos da NF-e</h2>
     <p>Confirme os dados da nota fiscal, associe o fornecedor e os produtos aos registros do sistema.</p>
     
-    <form action="registrar_entrada_nfe.php" method="POST">
+    <form id="form-processar-nfe" action="registrar_entrada_nfe.php" method="POST">
         <input type="hidden" name="fornecedor_cnpj" value="<?= htmlspecialchars($nfeData['fornecedor']['cnpj']) ?>">
         <input type="hidden" name="fornecedor_razao_social" value="<?= htmlspecialchars($nfeData['fornecedor']['razao_social']) ?>">
         <input type="hidden" name="nota_chave_acesso" value="<?= htmlspecialchars($nfeData['nota_fiscal']['chave_acesso']) ?>">
@@ -231,9 +231,83 @@ include __DIR__ . '/../../templates/header.php';
 <!-- JavaScript para manipulação do modal -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    //modal
+    const form = document.getElementById('form-processar-nfe');
+    const notaChaveAcesso = form.querySelector('input[name="nota_chave_acesso"]').value;
+    const storageKey = `nfe-associacoes:${notaChaveAcesso}`;
+    const fornecedorSelect = document.getElementById('id_fornecedor_sistema');
+    const produtoSelects = form.querySelectorAll('select[name$="[id_produto_sistema]"]');
+
+    function salvarAssociacoes() {
+        const associacoes = {
+            fornecedor: fornecedorSelect ? fornecedorSelect.value : '',
+            produtos: {}
+        };
+
+        produtoSelects.forEach(function (select) {
+            associacoes.produtos[select.name] = select.value;
+        });
+
+        try {
+            sessionStorage.setItem(storageKey, JSON.stringify(associacoes));
+        } catch (error) {
+            console.warn('Não foi possível salvar as associações temporárias da NF-e.', error);
+        }
+    }
+
+    function restaurarAssociacoes() {
+        let associacoes;
+
+        try {
+            associacoes = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+        } catch (error) {
+            console.warn('Não foi possível recuperar as associações temporárias da NF-e.', error);
+            return;
+        }
+
+        if (!associacoes) {
+            return;
+        }
+
+        if (fornecedorSelect && Array.from(fornecedorSelect.options).some(function (option) {
+            return option.value === associacoes.fornecedor;
+        })) {
+            fornecedorSelect.value = associacoes.fornecedor;
+        }
+
+        produtoSelects.forEach(function (select) {
+            const produtoId = associacoes.produtos ? associacoes.produtos[select.name] : null;
+
+            if (produtoId !== null && Array.from(select.options).some(function (option) {
+                return option.value === produtoId;
+            })) {
+                select.value = produtoId;
+            }
+        });
+    }
+
+    restaurarAssociacoes();
+
+    if (fornecedorSelect) {
+        fornecedorSelect.addEventListener('change', salvarAssociacoes);
+    }
+
+    produtoSelects.forEach(function (select) {
+        select.addEventListener('change', salvarAssociacoes);
+    });
+
+    form.addEventListener('submit', function () {
+        try {
+            sessionStorage.removeItem(storageKey);
+        } catch (error) {
+            console.warn('Não foi possível limpar as associações temporárias da NF-e.', error);
+        }
+    });
+
+    // Modal de cadastro de produto
     const productModal = document.getElementById('productModal');
     productModal.addEventListener('show.bs.modal', function (event) {
+        salvarAssociacoes();
+
         const button = event.relatedTarget; // Botão que disparou o modal
         const productName = button.getAttribute('data-product-name');
         const iframe = document.getElementById('productFormIframe');
@@ -244,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     productModal.addEventListener('hidden.bs.modal', function () {
         // Recarrega a página para atualizar a lista de produtos após o cadastro
+        salvarAssociacoes();
         window.location.reload();
     });
 
