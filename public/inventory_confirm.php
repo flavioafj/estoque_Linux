@@ -2,54 +2,24 @@
 require_once '../config/config.php';  
 use Middleware\Auth;  
 use Helpers\Session;  
-use Models\Product;  
-use Models\Movimentacao;  
+use Services\InventoryService;
 
-Auth::check();  
-Auth::checkProfile(3);  
+Auth::check();
+Auth::checkProfile(3);
 
-$productModel = new Product();  
-$movimentacaoModel = new Movimentacao();  
-$usuarioId = Session::getUserId();  
-$db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET, DB_USER, DB_PASS, PDO_OPTIONS);  
-
-$ajustes = []; // Para resumo de confirmação  
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantidade'])) {  
-    // Criar registro de inventário
-    $stmt = $db->prepare("INSERT INTO inventarios (usuario_id, data_inicio, data_conclusao, status) VALUES (?, NOW(), NOW(), 'CONCLUIDO')");  
-    $stmt->execute([$usuarioId]);  
-    $inventarioId = $db->lastInsertId();  
-
-    foreach ($_POST['quantidade'] as $produtoId => $quantidadeInformada) {  
-        if ($quantidadeInformada == "") continue; // Ignora inválidos  
-
-        $quantidadeInformada = floatval($quantidadeInformada);  
-        if ($quantidadeInformada < 0) continue; // Ignora inválidos  
-
-        $produto = $productModel->getById(intval($produtoId));  
-        if (!$produto) continue;  
-
-        $estoqueAtual = floatval($produto['estoque_atual']);  
-        $diferenca = abs($estoqueAtual - $quantidadeInformada);  
-
-        if ($diferenca == 0) continue; // Sem ajuste necessário  
-
-        if ($estoqueAtual > $quantidadeInformada) {  
-            // Saída: Ajuste (-)  
-            if ($movimentacaoModel->registrarAjusteSaida($produtoId, $diferenca, $usuarioId, "Ajuste de Inventário (-)", $inventarioId)) {  
-                $ajustes[] = "Produto {$produto['nome']}: Saída de {$diferenca} (estoque ajustado para {$quantidadeInformada})";  
-            }  
-        } elseif ($estoqueAtual < $quantidadeInformada) {  
-            // Entrada: Ajuste (+)  
-            if ($movimentacaoModel->registrarAjusteEntrada($produtoId, $diferenca, $usuarioId, "Ajuste de Inventário (+)", $inventarioId)) {  
-                $ajustes[] = "Produto {$produto['nome']}: Entrada de {$diferenca} (estoque ajustado para {$quantidadeInformada})";  
-            }  
-        }  
-    }  
-    // Limpar quantidades temporárias (se usar Abordagem 1 - LocalStorage)
-    Session::set('inventory_quantities', []);  
-}  
+$ajustes = [];
+$erro = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantidade'])) {
+    try {
+        if (!is_array($_POST['quantidade'])) throw new RuntimeException('Contagens de inventário inválidas.');
+        $resultado = (new InventoryService())->registrar($_POST['quantidade'], (int) Session::getUserId());
+        $ajustes = $resultado['ajustes'];
+        Session::set('inventory_quantities', []);
+    } catch (Throwable $e) {
+        error_log('Falha ao confirmar inventário: ' . $e->getMessage());
+        $erro = 'Não foi possível concluir o inventário. Nenhum ajuste foi confirmado. Verifique as contagens e tente novamente.';
+    }
+}
 
 require_once '../templates/header.php';  
 require_once '../templates/navigation.php';  
@@ -57,7 +27,9 @@ require_once '../templates/navigation.php';
 
 <main class="container mt-4">  
     <h1>Confirmação de Inventário</h1>  
-    <?php if (!empty($ajustes)): ?>  
+    <?php if ($erro !== null): ?>
+        <p class="alert alert-danger"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></p>
+    <?php elseif (!empty($ajustes)): ?>
         <p>Inventário processado com sucesso. Ajustes realizados:</p>  
         <ul>  
             <?php foreach ($ajustes as $ajuste): ?>  

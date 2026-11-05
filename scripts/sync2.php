@@ -308,6 +308,10 @@ foreach ($lote['data'] as $item) {
                 case 'SAIDA_DIRETA_ADM':
                     $destinoId = saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
                     break;
+                case 'AJUSTE_INVENTARIO':
+                    if ($evento['tabela'] !== 'movimentacoes') throw new \RuntimeException('Tabela inválida para inventário.');
+                    (new \Services\InventoryService())->receber($dados);
+                    break;
                 case 'CORRECAO_SAIDA':
                     (new \Services\CorrecaoSaidaService())->receber($dados);
                     break;

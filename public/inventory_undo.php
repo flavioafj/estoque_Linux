@@ -2,80 +2,27 @@
 require_once '../config/config.php';  
 use Middleware\Auth;  
 use Helpers\Session;  
-use Models\Movimentacao;
-use Models\MovimentacaoItem ;
-use Models\Estoque;
-use Models\Product;  
+use Models\Database;
+use Services\InventoryService;
 
-Auth::check();  
-Auth::checkProfile2([1, 3]); // Apenas admin e inventariante podem desfazer  
+Auth::check();
+Auth::checkProfile2([1, 3]);
 
-
-
-$db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET, DB_USER, DB_PASS, PDO_OPTIONS);  
-$movimentacaoModel = new Movimentacao();  
-$usuarioId = Session::getUserId();  
-
-// Processar desfazimento
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inventario_id'])) {  
-    $inventarioId = intval($_POST['inventario_id']);  
-    $stmt = $db->prepare("SELECT status, data_conclusao FROM inventarios WHERE id = ?");  
-    $stmt->execute([$inventarioId]);  
-    $inventario = $stmt->fetch(); 
-    
-    if (strtotime($inventario['data_conclusao']) < strtotime('-24 hours')) {
-        Session::setFlash('error', 'Inventário não pode ser desfeito após 24 horas.');
-        header('Location: /inventory_undo.php');
-        exit;
+$db = Database::getInstance()->getConnection();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inventario_id'])) {
+    try {
+        $id = filter_var($_POST['inventario_id'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if (!$id) throw new RuntimeException('Inventário inválido.');
+        (new InventoryService())->desfazer($id, (int) Session::getUserId());
+        Session::setFlash('success', 'Inventário desfeito com sucesso.');
+    } catch (Throwable $e) {
+        error_log('Falha ao desfazer inventário: ' . $e->getMessage());
+        $message = $e instanceof PDOException ? 'Não foi possível desfazer o inventário. Tente novamente.' : $e->getMessage();
+        Session::setFlash('error', $message);
     }
-
-    if ($inventario && $inventario['status'] === 'CONCLUIDO') {  
-        // Buscar movimentações do inventário
-        $stmt = $db->prepare("
-            SELECT m.id, m.tipo_movimentacao_id, mi.produto_id, mi.quantidade 
-            FROM movimentacoes m 
-            JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id 
-            WHERE m.inventario_id = ?
-        ");  
-        $stmt->execute([$inventarioId]);  
-        $movimentacoes = $stmt->fetchAll();  
-
-        $success = true;  
-        foreach ($movimentacoes as $mov) {  
-            $tipoOriginal = $mov['tipo_movimentacao_id'];  
-            $produtoId = $mov['produto_id'];  
-            $quantidade = $mov['quantidade'];  
-
-            // Inverter: entrada (3) vira saída (7), saída (7) vira entrada (3)
-            $tipoInverso = $tipoOriginal === 3 ? 7 : 3;  
-            $observacao = $tipoInverso === 3 ? "Desfazer Inventário: Entrada (+)" : "Desfazer Inventário: Saída (-)";  
-            $qtdEst = new Estoque();
-            $val = $qtdEst->getValorUltimo($produtoId);
-            // Criar movimentação inversa
-            $movId = $movimentacaoModel->criar($tipoInverso, $usuarioId, $observacao, null, $inventarioId);  
-            if ($movId) {  
-                $item = new MovimentacaoItem();  
-                if (!$item->adicionarItens($movId, [$produtoId => $quantidade], [$produtoId => $val], 1)) {  
-                    $success = false;  
-                }  
-                $movimentacaoModel->atualizarValorTotal($movId, 0);  
-            } else {  
-                $success = false;  
-            }  
-        }  
-
-        if ($success) {  
-            // Marcar inventário como cancelado
-            $stmt = $db->prepare("UPDATE inventarios SET status = 'CANCELADO', atualizado_em = NOW() WHERE id = ?");  
-            $stmt->execute([$inventarioId]);  
-            Session::setFlash('success', 'Inventário desfeito com sucesso.');  
-        } else {  
-            Session::setFlash('error', 'Erro ao desfazer inventário.');  
-        }  
-    } else {  
-        Session::setFlash('error', 'Inventário inválido ou já cancelado.');  
-    }  
-}  
+    header('Location: /inventory_undo.php');
+    exit;
+}
 
 // Listar inventários concluídos
 $stmt = $db->prepare("
@@ -97,7 +44,7 @@ require_once '../templates/navigation.php';
     <?php if (Session::hasFlash('success')): ?>  
         <div class="alert alert-success"><?php echo Session::getFlash('success'); ?></div>  
     <?php elseif (Session::hasFlash('error')): ?>  
-        <div class="alert alert-danger"><?php echo Session::getFlash('error'); ?></div>  
+        <div class="alert alert-danger"><?php echo htmlspecialchars(Session::getFlash('error'), ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>  
 
     <?php if (!empty($inventarios)): ?>  

@@ -295,6 +295,11 @@ class SyncController extends BaseController
                     $destinoId = $this->saidaDiretaADM($dados['Itens'], $dados['ItensVal'], $dados['totalGeral'], $dados['UserID'], $dados['observacao'] ?? '');
                     break;
 
+                case 'AJUSTE_INVENTARIO':
+                    if ($tabela !== 'movimentacoes') throw new \RuntimeException('Tabela inválida para inventário.');
+                    (new \Services\InventoryService())->receber($dados);
+                    break;
+
                 case 'CORRECAO_SAIDA':
                     if ($tabela !== 'movimentacoes') throw new \RuntimeException('Tabela inválida para correção.');
                     (new \Services\CorrecaoSaidaService())->receber($dados);
@@ -316,7 +321,7 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            if (!in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA'], true)) {
+            if (!in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
                 if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
                 $receiptId = $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,
