@@ -28,15 +28,53 @@ class Product extends BaseModel {
 
     public function create($data) {
         $data['criado_por'] = $_SESSION['user_id'] ?? null;
-        return parent::create($data);
+        return $this->withSyncTransaction(function () use ($data) {
+            $id = parent::create($data);
+            if (!$id) throw new \RuntimeException('Falha ao cadastrar produto.');
+            $product = $this->find($id);
+            if (!$product) throw new \RuntimeException('Produto cadastrado não encontrado.');
+            \Helpers\SyncQueueHelper::queueInsert('produtos', (int) $id,
+                ['id' => (int) $id] + $this->filterFillable($product) +
+                array_intersect_key($product, array_flip(['criado_em', 'atualizado_em'])));
+            return $id;
+        });
     }
 
     public function update($id, $data) {
-        return parent::update($id, $data);
+        return $this->withSyncTransaction(function () use ($id, $data) {
+            if (!$this->find($id)) throw new \RuntimeException('Produto não encontrado.');
+            $fields = $this->filterFillable($data);
+            if (!parent::update($id, $fields)) throw new \RuntimeException('Falha ao atualizar produto.');
+            $product = $this->find($id);
+            if (!$product) throw new \RuntimeException('Produto atualizado não encontrado.');
+            $payload = array_intersect_key($product, $fields + ['atualizado_em' => true]);
+            \Helpers\SyncQueueHelper::queueUpdate('produtos', (int) $id, $payload);
+            return true;
+        });
     }
 
     public function delete($id) {
-        return parent::softDelete($id);
+        // Preserva referências de estoque e histórico: exclusão lógica.
+        return $this->update($id, ['ativo' => 0]);
+    }
+
+    private function withSyncTransaction(callable $operation) {
+        $pdo = $this->db->getConnection();
+        $nested = $pdo->inTransaction();
+        if ($nested) $pdo->exec('SAVEPOINT product_sync');
+        else $pdo->beginTransaction();
+        try {
+            $result = $operation();
+            if ($nested) $pdo->exec('RELEASE SAVEPOINT product_sync');
+            else $pdo->commit();
+            return $result;
+        } catch (\Throwable $e) {
+            if ($nested) {
+                $pdo->exec('ROLLBACK TO SAVEPOINT product_sync');
+                $pdo->exec('RELEASE SAVEPOINT product_sync');
+            } elseif ($pdo->inTransaction()) $pdo->rollBack();
+            throw $e;
+        }
     }
 
     public function getAll() {

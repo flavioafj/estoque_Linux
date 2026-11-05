@@ -272,7 +272,9 @@ class SyncController extends BaseController
         try {
             $this->db->beginTransaction();
 
-            switch ($acao) {
+            if ($tabela === 'produtos') {
+                (new \Services\ProductSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
+            } else switch ($acao) {
                 case 'INSERT':
                     $this->db->insert($tabela, $dados);
                     break;
@@ -316,7 +318,7 @@ class SyncController extends BaseController
             // Registra a sincronização recebida (compatível com o schema)
             if (!in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA'], true)) {
                 if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
-                $this->db->insert('sincronizacao', [
+                $receiptId = $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,
                     'registro_id'     => $registro_id,
                     'acao'            => $acao,
@@ -327,6 +329,7 @@ class SyncController extends BaseController
                     'sincronizado_em' => date('Y-m-d H:i:s')
                     // criado_em é preenchido automaticamente pelo DEFAULT CURRENT_TIMESTAMP
                 ]);
+                if (!$receiptId) throw new \RuntimeException('Falha ao registrar recebimento.');
             }
 
             if ($this->db->inTransaction()) {

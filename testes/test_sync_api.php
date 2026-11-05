@@ -7,12 +7,14 @@ mkdir($dir);
 $pdo = new PDO('sqlite:' . $dir . '/db.sqlite', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $pdo->exec('CREATE TABLE sincronizacao (id INTEGER PRIMARY KEY, tabela TEXT, registro_id INTEGER, acao TEXT, dados TEXT, criado_em TEXT, sincronizado INTEGER DEFAULT 0, tentativas INTEGER DEFAULT 0, sincronizado_em TEXT, erro_mensagem TEXT)');
 $pdo->exec("INSERT INTO sincronizacao (id,tabela,registro_id,acao,dados,criado_em) VALUES (388,'movimentacoes',231,'SAIDA_DIRETA_ADM','{}','2000-01-01')");
+$pdo->exec('CREATE TABLE produtos (id INTEGER PRIMARY KEY, nome TEXT, categoria_id INTEGER, unidade_medida_id INTEGER, ativo INTEGER DEFAULT 1)');
 $event = $pdo->query('SELECT * FROM sincronizacao')->fetch(PDO::FETCH_ASSOC);
 $hash = Services\SyncPullService::hashEvento($event);
 $router = <<<'ROUTER'
 <?php
 $root = __ROOT__;
 define('SYNC_TOKEN', 'token-local-de-teste');
+define('LOG_PATH', __DIR__);
 spl_autoload_register(function ($class) use ($root) {
  $path = $root . '/src/' . str_replace('\\', '/', $class) . '.php';
  if (is_file($path)) require_once $path;
@@ -62,6 +64,27 @@ try {
  }
  [$status,$body]=request($url.'?protocol=2');
  check($status===200 && $body['data']===[],'Evento confirmado retornou pela API.');
+ $product = ['tabela' => 'produtos', 'registro_id' => 42, 'acao' => 'INSERT',
+  'dados' => ['id' => 42, 'nome' => 'Produto API', 'categoria_id' => 1, 'unidade_medida_id' => 1, 'ativo' => 1]];
+ for ($i = 0; $i < 2; $i++) {
+  [$status, $body] = request($url, 'POST', $product);
+  check($status === 200 && $body['success'] === true, 'PUSH de produto ou repetição falhou.');
+ }
+ check((int) $pdo->query('SELECT COUNT(*) FROM produtos')->fetchColumn() === 1, 'PUSH duplicou produto.');
+ $product['acao'] = 'UPDATE';
+ $product['dados'] = ['ativo' => 0];
+ [$status, $body] = request($url, 'POST', $product);
+ check($status === 200 && $pdo->query('SELECT ativo FROM produtos WHERE id = 42')->fetchColumn() == 0, 'Inativação via API falhou.');
+ $product['dados'] = ['ativo' => 1];
+ [$status, $body] = request($url, 'POST', $product);
+ check($status === 200 && $pdo->query('SELECT ativo FROM produtos WHERE id = 42')->fetchColumn() == 1, 'Reativação via API falhou.');
+ $product['acao'] = 'DELETE';
+ $product['dados'] = [];
+ [$status, $body] = request($url, 'POST', $product);
+ check($status === 200 && $pdo->query('SELECT ativo FROM produtos WHERE id = 42')->fetchColumn() == 0, 'DELETE via API falhou.');
+ [$status, $body] = request($url . '?protocol=2');
+ check($body['data'] === [], 'Produto recebido gerou eco.');
+ echo "OK API: produtos, repetição de cadastro, inativação, reativação e exclusão lógica.\n";
  echo "OK API: rota real, autenticação, protocolo, hash, confirmação persistente e repetição de ACK.\n";
 } finally {
  proc_terminate($proc); fclose($pipes[0]); proc_close($proc);
