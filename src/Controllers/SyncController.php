@@ -23,6 +23,7 @@ class SyncController extends BaseController
 
     // Tabelas que podem ser sincronizadas (segurança)
     private $allowedTables = [
+        'produto_fornecedores',
         'usuarios',
         'produtos',
         'categorias',
@@ -205,6 +206,8 @@ class SyncController extends BaseController
 
         }
 
+        \Services\ProductSupplierService::verifyNfe($this->db->getConnection(), $dados);
+
         // cria movimentação de entrada usando primeiro tipo disponível
         $tipoModel = new TipoMovimentacao();
         $tiposEntrada = $tipoModel->findByTipo('ENTRADA');
@@ -278,7 +281,9 @@ class SyncController extends BaseController
         try {
             $this->db->beginTransaction();
 
-            if ($tabela === 'fornecedores' && isset($dados['evento_id'])) {
+            if ($tabela === 'produto_fornecedores') {
+                (new \Services\ProductSupplierService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
+            } elseif ($tabela === 'fornecedores' && isset($dados['evento_id'])) {
                 (new \Services\SupplierSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
             } elseif ($tabela === 'usuarios') {
                 (new \Services\UserSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
@@ -331,7 +336,7 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            if (!($tabela === 'fornecedores' && isset($dados['evento_id'])) && $tabela !== 'usuarios' && !in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
+            if (!($tabela === 'fornecedores' && isset($dados['evento_id'])) && !in_array($tabela, ['usuarios', 'produto_fornecedores'], true) && !in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
                 if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
                 $receiptId = $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,

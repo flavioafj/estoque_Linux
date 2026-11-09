@@ -25,6 +25,9 @@ class AdminFornecedor extends Fornecedor {
             $created = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->audit($pdo, 'INSERT', $id, $actorId, null, $created);
             SyncQueueHelper::queueInsert('fornecedores', $id, ['evento_id' => bin2hex(random_bytes(16))] + $created);
+            foreach (\Services\ProductSupplierService::ids($input['produtos'] ?? []) as $productId) {
+                (new \Services\ProductSupplierService($pdo))->set($productId, $id, true, $actorId);
+            }
             $pdo->commit();
             return $id;
         } catch (Throwable $e) {

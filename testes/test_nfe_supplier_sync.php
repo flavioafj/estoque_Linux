@@ -129,6 +129,8 @@ function installSuppliers(PDO $pdo): void {
     $columns = [];
     foreach (Services\SupplierData::LIMITS as $name => $limit) $columns[] = $name . ' TEXT' . (in_array($name, ['cnpj', 'cpf'], true) ? ' UNIQUE' : '');
     $pdo->exec('CREATE TABLE fornecedores (id INTEGER PRIMARY KEY AUTOINCREMENT, ' . implode(', ', $columns) . ", tipo TEXT NOT NULL DEFAULT 'PJ', observacoes TEXT, ativo INTEGER DEFAULT 1, criado_por INTEGER REFERENCES usuarios(id), criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP)");
+    $pdo->exec('CREATE TABLE IF NOT EXISTS produtos (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, codigo TEXT, ativo INTEGER DEFAULT 1, fornecedor_principal_id INTEGER REFERENCES fornecedores(id), estoque_atual NUMERIC DEFAULT 0, categoria_id INTEGER, unidade_medida_id INTEGER, criado_por INTEGER, criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP)');
+    $pdo->exec('CREATE TABLE produto_fornecedores (id INTEGER PRIMARY KEY AUTOINCREMENT, produto_id INTEGER REFERENCES produtos(id), fornecedor_id INTEGER REFERENCES fornecedores(id), ativo INTEGER NOT NULL DEFAULT 1, criado_por INTEGER REFERENCES usuarios(id), criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP, UNIQUE(produto_id, fornecedor_id))');
     $pdo->exec('CREATE TABLE notas_teste (fornecedor_id INTEGER REFERENCES fornecedores(id))');
 }
 function model(PDO $pdo): Models\AdminFornecedor { bindDatabase($pdo); return new Models\AdminFornecedor(); }
@@ -142,7 +144,7 @@ function pageRequest(string $base, string $method = 'GET', array $body = [], int
 function installNfe(PDO $pdo): void {
     $pdo->exec(<<<'SQL'
 CREATE TABLE tipos_movimentacao (id INTEGER PRIMARY KEY, tipo TEXT); INSERT INTO tipos_movimentacao VALUES (1, 'ENTRADA');
-CREATE TABLE produtos (id INTEGER PRIMARY KEY, nome TEXT, estoque_atual NUMERIC DEFAULT 0); INSERT INTO produtos VALUES (1, 'Produto teste', 0);
+INSERT INTO produtos (id, nome, estoque_atual) VALUES (1, 'Produto teste', 0);
 CREATE VIEW vw_produtos_estoque_critico AS SELECT * FROM produtos WHERE 0;
 CREATE TABLE movimentacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, tipo_movimentacao_id INTEGER, data_movimentacao TEXT, usuario_id INTEGER REFERENCES usuarios(id), fornecedor_id INTEGER REFERENCES fornecedores(id), observacoes TEXT, status TEXT, inventario_id INTEGER, valor_total NUMERIC, documento_numero TEXT);
 CREATE TABLE movimentacao_itens (id INTEGER PRIMARY KEY AUTOINCREMENT, movimentacao_id INTEGER REFERENCES movimentacoes(id), produto_id INTEGER REFERENCES produtos(id), quantidade NUMERIC, valor_unitario NUMERIC, valor_total NUMERIC);
@@ -185,11 +187,11 @@ try {
     formNfe('registrar_entrada_nfe.php', $post);
     check((int) scalar($web, 'SELECT COUNT(*) FROM notas_fiscais') === 1, 'Entrada da nota falhou.');
     $events = $web->query('SELECT * FROM sincronizacao ORDER BY id')->fetchAll();
-    check(array_column($events, 'acao') === ['INSERT', 'UPDATE', 'ENTRADA_NFE'], 'Ordem fornecedor/atualização/nota incorreta.');
+    check(array_column($events, 'acao') === ['INSERT', 'UPDATE', 'UPDATE', 'ENTRADA_NFE'], 'Ordem fornecedor/atualização/nota incorreta.');
     $changes = json_decode($events[1]['dados'], true);
     check($changes['alteracoes']['razao_social'] === 'Emitente atualizado' && $changes['alteracoes']['cidade'] === 'Campinas', 'Atualização não enfileirada.');
     check(!isset($changes['alteracoes']['email']), 'XML vazio apagaria e-mail.');
-    $note = json_decode($events[2]['dados'], true);
+    $note = json_decode($events[3]['dados'], true);
     check($note['fornecedor'] === 1 && $note['fornecedor_evento_id'] === $changes['evento_id'], 'NF-e sem dependência do fornecedor.');
     runSync();
     check((int) scalar($local, 'SELECT COUNT(*) FROM fornecedores') === 1, 'Fornecedor duplicado pela NF-e no PULL.');
@@ -206,6 +208,7 @@ try {
     $supplier = (new Services\NfeSupplierService($local))->save(['cnpj' => '98765432000199', 'razao_social' => 'Fornecedor local'], 1);
     $update = (new Services\NfeSupplierService($local))->save(['cnpj' => '98765432000199', 'razao_social' => 'Local atualizado', 'telefone' => '11999999999'], 1, $supplier['id']);
     $localNote = array_replace($note, ['fornecedor' => $supplier['id'], 'fornecedor_evento_id' => $update['evento_id'], 'cnpj' => '98765432000199', 'razao_social' => 'Local atualizado', 'numero' => '200', 'chave_acesso' => str_repeat('2', 44)]);
+    $localNote['produto_fornecedor_eventos'] = [1 => (new Services\ProductSupplierService($local))->set(1, (int) $supplier['id'], true, 1)];
     Helpers\SyncQueueHelper::queueChange('notas_fiscais', 2, 'ENTRADA_NFE', $localNote);
     runSync();
     check((int) scalar($web, 'SELECT COUNT(*) FROM fornecedores') === 2 && scalar($web, 'SELECT razao_social FROM fornecedores WHERE id = 2') === 'Local atualizado', 'Cadastro/atualização PUSH falhou.');
@@ -225,7 +228,7 @@ try {
 
     // Falha ao enfileirar a nota desfaz inclusive o novo fornecedor e seu evento.
     $counts = [];
-    foreach (['fornecedores', 'sincronizacao', 'notas_fiscais', 'movimentacoes', 'movimentacao_itens', 'estoques', 'auditoria', 'itens_nota'] as $table) $counts[$table] = scalar($web, "SELECT COUNT(*) FROM $table");
+    foreach (['produto_fornecedores', 'fornecedores', 'sincronizacao', 'notas_fiscais', 'movimentacoes', 'movimentacao_itens', 'estoques', 'auditoria', 'itens_nota'] as $table) $counts[$table] = scalar($web, "SELECT COUNT(*) FROM $table");
     $stock = scalar($web, 'SELECT estoque_atual FROM produtos');
     $web->exec("CREATE TRIGGER fail_nfe_queue BEFORE INSERT ON sincronizacao WHEN NEW.acao = 'ENTRADA_NFE' BEGIN SELECT RAISE(ABORT, 'fila nota indisponível'); END");
     $failingPost = array_replace($post, ['fornecedor_cnpj' => '11111111000111', 'fornecedor_razao_social' => 'Rollback fornecedor', 'id_fornecedor_sistema' => 'cadastrar_novo', 'nota_numero' => '400', 'nota_chave_acesso' => str_repeat('4', 44)]);
@@ -244,7 +247,7 @@ try {
     formNfe('registrar_entrada_nfe.php', $failingPost);
     check((int) scalar($web, 'SELECT COUNT(*) FROM fornecedores') === 3 && (int) scalar($web, 'SELECT COUNT(*) FROM notas_fiscais') === 3, 'Cadastro direto pela entrada não persistiu.');
     $last = $web->query('SELECT acao FROM sincronizacao ORDER BY id DESC LIMIT 2')->fetchAll(PDO::FETCH_COLUMN);
-    check($last === ['ENTRADA_NFE', 'INSERT'], 'Cadastro direto não antecedeu a nota na fila.');
+    check($last === ['ENTRADA_NFE', 'UPDATE'], 'Cadastro direto não antecedeu a nota na fila.');
     runSync();
     check((int) scalar($local, 'SELECT COUNT(*) FROM fornecedores') === 3 && (int) scalar($local, "SELECT fornecedor_id FROM notas_fiscais WHERE numero_nota = '400'") === 3, 'Cadastro direto da nota não sincronizou.');
     // AJAX também atualiza dados existentes e enfileira somente os campos alterados.
@@ -291,6 +294,15 @@ try {
     formNfe('registrar_entrada_nfe.php', $reactivatePost);
     check((int) scalar($web, 'SELECT ativo FROM fornecedores WHERE id = 1') === 0 && scalar($web, 'SELECT COUNT(*) FROM sincronizacao') === $queueBefore, 'Falha na nota deixou reativação parcial.');
     $web->exec('DROP TRIGGER fail_reactivation');
+    // Uma nova NF-e reativa também um vínculo anteriormente removido.
+    bindDatabase($web);
+    (new Services\ProductSupplierService($web))->set(1, 1, false, 1);
+    runSync();
+    check((int) scalar($local, 'SELECT ativo FROM produto_fornecedores WHERE produto_id = 1 AND fornecedor_id = 1') === 0, 'Remoção prévia não sincronizou.');
+    formNfe('registrar_entrada_nfe.php', $reactivatePost);
+    runSync();
+    check((int) scalar($local, 'SELECT ativo FROM produto_fornecedores WHERE produto_id = 1 AND fornecedor_id = 1') === 1, 'NF-e não reativou o vínculo.');
+    check((int) scalar($local, "SELECT fornecedor_id FROM notas_fiscais WHERE numero_nota = '501'") === 1, 'NF-e perdeu o fornecedor ao reativar vínculo.');
     // Nome/contato conflitante no destino não pode ser sobrescrito em silêncio.
     bindDatabase($local);
     $newUpdate = (new Services\NfeSupplierService($local))->save(['cnpj' => '98765432000199', 'razao_social' => 'Novo nome local'], 1, 2);

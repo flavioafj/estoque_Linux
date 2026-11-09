@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = $_POST['csrf_token'] ?? '';
         if (!is_string($token) || !Session::validateCSRFToken($token)) throw new InvalidArgumentException('Formulário expirado. Atualize a página e tente novamente.');
         if (($_POST['action'] ?? '') === 'create') {
-            $model->addSupplier($values, (int) Session::getUserId());
+            $model->addSupplier($values + ['produtos' => $_POST['produtos'] ?? []], (int) Session::getUserId());
             Session::setFlash('success', 'Fornecedor cadastrado e incluído na fila de sincronização.');
         } elseif (($_POST['action'] ?? '') === 'edit') {
             if ($editId === null) throw new InvalidArgumentException('Fornecedor inválido.');
@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 $suppliers = $model->all('ativo = 1', [], 'razao_social, id');
+$productChoices = $model->rawQuery('SELECT id, nome FROM produtos WHERE ativo = 1 ORDER BY nome');
 $csrf = Session::getCSRFToken();
 $escape = static function ($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); };
 $title = 'Gerenciar Fornecedores';
@@ -95,6 +96,13 @@ require __DIR__ . '/../../templates/navigation.php';
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
+                <?php if ($editId === null): ?>
+                <div class="col-12"><label for="supplier-products" class="form-label">Produtos fornecidos (opcional)</label>
+                    <select id="supplier-products" name="produtos[]" multiple class="form-select" aria-describedby="supplier-products-help">
+                    <?php foreach ($productChoices as $choice): ?><option value="<?= (int) $choice['id'] ?>" <?= in_array((string) $choice['id'], array_map('strval', is_array($_POST['produtos'] ?? null) ? $_POST['produtos'] : []), true) ? 'selected' : '' ?>><?= $escape($choice['nome']) ?></option><?php endforeach; ?>
+                    </select><small id="supplier-products-help">Seleção múltipla opcional. Também é possível associar produtos depois pelo botão Produtos.</small>
+                </div>
+                <?php endif; ?>
                 <div class="col-12"><button type="submit" class="btn btn-primary"><?= $editId !== null ? 'Salvar alterações' : 'Incluir fornecedor' ?></button>
                     <?php if ($editId !== null): ?><a href="/admin/suppliers.php" class="btn btn-outline-secondary">Cancelar</a><?php endif; ?>
                 </div>
@@ -123,7 +131,8 @@ require __DIR__ . '/../../templates/navigation.php';
                         <dt>Criado em</dt><dd><?= $escape($supplier['criado_em']) ?></dd>
                         <dt>Atualizado em</dt><dd><?= $escape($supplier['atualizado_em']) ?></dd>
                     </dl></details></td>
-                    <td><a class="btn btn-outline-primary btn-sm mb-2" href="/admin/suppliers.php?edit=<?= (int) $supplier['id'] ?>#novo-fornecedor" aria-label="Editar fornecedor <?= $escape($supplier['razao_social']) ?>">Editar</a>
+                    <td><button type="button" class="btn btn-outline-secondary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#supplierProductsModal" data-supplier-id="<?= (int) $supplier['id'] ?>" data-supplier-name="<?= $escape($supplier['razao_social']) ?>">Produtos</button>
+                    <a class="btn btn-outline-primary btn-sm mb-2" href="/admin/suppliers.php?edit=<?= (int) $supplier['id'] ?>#novo-fornecedor" aria-label="Editar fornecedor <?= $escape($supplier['razao_social']) ?>">Editar</a>
                     <form method="post" action="/admin/suppliers.php" onsubmit="return confirm('Excluir este fornecedor? Ele será desativado e o histórico preservado.');">
                         <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                         <input type="hidden" name="action" value="delete">
@@ -137,4 +146,11 @@ require __DIR__ . '/../../templates/navigation.php';
         </table>
     </div>
 </main>
+<div class="modal fade" id="supplierProductsModal" tabindex="-1" aria-labelledby="supplierProductsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header"><h2 class="modal-title fs-5" id="supplierProductsTitle">Produtos fornecidos</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+        <div class="modal-body" data-supplier-products data-csrf="<?= $escape($csrf) ?>"></div>
+    </div></div>
+</div>
+<script src="/assets/js/product_suppliers.js" defer></script>
 <?php require __DIR__ . '/../../templates/footer.php'; ?>

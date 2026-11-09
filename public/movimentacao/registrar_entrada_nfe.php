@@ -151,7 +151,11 @@ try {
     }
 
     $notaFiscalId = (int) $db->lastInsertId();
+    $linkEvents = [];
+    $relations = new \Services\ProductSupplierService($db->getConnection());
+    foreach (array_keys($itensValidos) as $productId) $linkEvents[(int) $productId] = $relations->set((int) $productId, (int) $fornecedorId, true, (int) $usuarioId);
     $syncPayload = [
+        'produto_fornecedor_eventos' => $linkEvents,
         'fornecedor' => $fornecedorId,
         'fornecedor_evento_id' => $supplierResult['evento_id'],
         'cnpj' => $cnpj,

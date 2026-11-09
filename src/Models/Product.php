@@ -36,6 +36,11 @@ class Product extends BaseModel {
             \Helpers\SyncQueueHelper::queueInsert('produtos', (int) $id,
                 ['id' => (int) $id] + $this->filterFillable($product) +
                 array_intersect_key($product, array_flip(['criado_em', 'atualizado_em'])));
+            $relations = new \Services\ProductSupplierService($this->db->getConnection());
+            foreach (\Services\ProductSupplierService::ids($data['fornecedores'] ?? []) as $supplierId) {
+                $relations->set((int) $id, $supplierId, true, $_SESSION['user_id'] ?? null);
+            }
+            if (!empty($data['fornecedor_principal_id'])) $relations->set((int) $id, (int) $data['fornecedor_principal_id'], true, $_SESSION['user_id'] ?? null, true);
             return $id;
         });
     }
@@ -49,6 +54,9 @@ class Product extends BaseModel {
             if (!$product) throw new \RuntimeException('Produto atualizado não encontrado.');
             $payload = array_intersect_key($product, $fields + ['atualizado_em' => true]);
             \Helpers\SyncQueueHelper::queueUpdate('produtos', (int) $id, $payload);
+            if (!empty($product['fornecedor_principal_id']) && (int) $product['ativo'] === 1 && (array_key_exists('fornecedor_principal_id', $fields) || array_key_exists('ativo', $fields))) {
+                (new \Services\ProductSupplierService($this->db->getConnection()))->set((int) $id, (int) $product['fornecedor_principal_id'], true, $_SESSION['user_id'] ?? null, true);
+            }
             return true;
         });
     }

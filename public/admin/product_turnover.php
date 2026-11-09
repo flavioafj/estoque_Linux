@@ -32,6 +32,11 @@ require_once __DIR__ . '/../../templates/navigation.php';
     <h1>Giro de Estoque do Produto ID: <?php echo htmlspecialchars($product_id); ?></h1>
     <h2>Produto: <?php echo htmlspecialchars($product['nome'] ?? 'Desconhecido'); ?></h2>
     
+    <section class="card my-4" aria-labelledby="productSuppliersTitle">
+        <div class="card-header"><h3 class="h5" id="productSuppliersTitle">Fornecedores deste produto</h3></div>
+        <div class="card-body" data-product-suppliers data-produto-id="<?= (int) $product_id ?>" data-csrf="<?= htmlspecialchars(Session::getCSRFToken(), ENT_QUOTES, 'UTF-8') ?>"></div>
+    </section>
+    <script src="/assets/js/product_suppliers.js" defer></script>
     <!-- Formulário para selecionar período -->
     <form id="period-form">
         <div class="row">

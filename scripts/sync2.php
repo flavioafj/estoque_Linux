@@ -177,6 +177,8 @@ function registrarEntradaNfe(array $dados)
 
         }
 
+        \Services\ProductSupplierService::verifyNfe($db->getConnection(), $dados);
+
         // cria movimentação de entrada usando primeiro tipo disponível
         $tipoModel = new TipoMovimentacao();
         $tiposEntrada = $tipoModel->findByTipo('ENTRADA');
@@ -287,6 +289,10 @@ foreach ($pendentes as $item) {
 foreach ($lote['data'] as $item) {
     try {
         $novo = $pull->aplicar($sync_url, $item, function (array $evento, array $dados) use ($db) {
+            if ($evento['tabela'] === 'produto_fornecedores') {
+                (new \Services\ProductSupplierService($db->getConnection()))->receber($evento['acao'], (int) $evento['registro_id'], $dados);
+                return;
+            }
             if ($evento['tabela'] === 'fornecedores' && isset($dados['evento_id'])) {
                 (new \Services\SupplierSyncService($db->getConnection()))->receber(
                     $evento['acao'], (int) $evento['registro_id'], $dados);
