@@ -139,6 +139,9 @@ function registrarEntradaNfe(array $dados)
             }
         }
 
+        if (!empty($dados['fornecedor_evento_id'])) {
+            $fornecedorId = \Services\NfeSupplierService::receivedSupplier($db->getConnection(), $dados);
+        } else {
         // fornecedor novo ou existente
         $fornecedorModel = new \Models\Fornecedor();
         if ($dados['fornecedor'] === 'cadastrar_novo') {
@@ -170,6 +173,8 @@ function registrarEntradaNfe(array $dados)
             if ($cnpj !== '' && $cnpjDb !== $cnpj) {
                 throw new \Exception('CNPJ do fornecedor não bate com a nota');
             }
+        }
+
         }
 
         // cria movimentação de entrada usando primeiro tipo disponível
@@ -282,6 +287,11 @@ foreach ($pendentes as $item) {
 foreach ($lote['data'] as $item) {
     try {
         $novo = $pull->aplicar($sync_url, $item, function (array $evento, array $dados) use ($db) {
+            if ($evento['tabela'] === 'fornecedores' && isset($dados['evento_id'])) {
+                (new \Services\SupplierSyncService($db->getConnection()))->receber(
+                    $evento['acao'], (int) $evento['registro_id'], $dados);
+                return;
+            }
             if ($evento['tabela'] === 'usuarios') {
                 (new \Services\UserSyncService($db->getConnection()))->receber(
                     $evento['acao'], (int) $evento['registro_id'], $dados);
