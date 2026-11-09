@@ -17,7 +17,7 @@ final class SupplierSyncService {
         }
         $editing = $action === 'UPDATE' && array_key_exists('alteracoes', $data);
         $allowed = $action === 'INSERT' ? array_merge(array_keys(SupplierData::LIMITS), ['tipo', 'observacoes', 'ativo', 'criado_por', 'criado_em', 'atualizado_em', 'evento_id', 'id'])
-            : ($editing ? ['evento_id', 'id', 'cnpj', 'cpf', 'tipo', 'antes', 'alteracoes'] : ['evento_id', 'id', 'razao_social', 'tipo', 'cnpj', 'cpf', 'ativo']);
+            : ($editing ? ['evento_id', 'id', 'cnpj', 'cpf', 'tipo', 'razao_social', 'antes', 'alteracoes'] : ['evento_id', 'id', 'razao_social', 'tipo', 'cnpj', 'cpf', 'ativo']);
         if (array_diff(array_keys($data), $allowed)) throw new RuntimeException('Campo de fornecedor não permitido.');
         if ($action === 'INSERT') {
             $normalized = SupplierData::normalize($data);
@@ -28,9 +28,9 @@ final class SupplierSyncService {
             if (($data['criado_por'] ?? null) !== null && !filter_var($data['criado_por'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) throw new RuntimeException('Autor de fornecedor inválido.');
         } elseif ($editing) {
             if (!is_array($data['antes'] ?? null) || !is_array($data['alteracoes']) || !$data['alteracoes'] ||
-                array_diff(array_keys($data['alteracoes']), array_merge(array_diff(array_keys(SupplierData::LIMITS), ['cnpj', 'cpf']), ['observacoes', 'ativo'])) ||
+                array_diff(array_keys($data['alteracoes']), array_merge(array_keys(SupplierData::LIMITS), ['tipo', 'observacoes', 'ativo'])) ||
                 array_diff_key($data['antes'], $data['alteracoes']) || array_diff_key($data['alteracoes'], $data['antes']) ||
-                ($data['tipo'] ?? null) !== 'PJ' || !is_string($data['cnpj'] ?? null) || !array_key_exists('cpf', $data)) {
+                !in_array($data['tipo'] ?? null, ['PJ', 'PF'], true) || !array_key_exists('cnpj', $data) || !array_key_exists('cpf', $data)) {
                 throw new RuntimeException('Atualização de fornecedor inválida.');
             }
             $validated = SupplierData::normalize($data['alteracoes'] + ['razao_social' => 'Validação']);
@@ -63,9 +63,20 @@ final class SupplierSyncService {
         $stmt->execute([$id]);
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($existing) {
-            if ($existing['tipo'] !== $data['tipo'] || SupplierData::documentKey($existing['cnpj']) !== SupplierData::documentKey($data['cnpj']) ||
-                SupplierData::documentKey($existing['cpf']) !== SupplierData::documentKey($data['cpf']) ||
-                (!$editing && $existing['cnpj'] === null && $existing['cpf'] === null && $existing['razao_social'] !== $data['razao_social'])) {
+            foreach (['tipo', 'cnpj', 'cpf'] as $field) {
+                $current = $existing[$field];
+                $identity = $data[$field];
+                $next = $editing && array_key_exists($field, $data['alteracoes']) ? $data['alteracoes'][$field] : $identity;
+                if ($field !== 'tipo') {
+                    $current = SupplierData::documentKey($current);
+                    $identity = SupplierData::documentKey($identity);
+                    $next = SupplierData::documentKey($next);
+                }
+                if ($current !== $identity && $current !== $next) throw new RuntimeException('Conflito no ID do fornecedor; reconciliação necessária.');
+            }
+            if ($existing['cnpj'] === null && $existing['cpf'] === null && isset($data['razao_social']) &&
+                $existing['razao_social'] !== $data['razao_social'] &&
+                (!$editing || $existing['razao_social'] !== ($data['alteracoes']['razao_social'] ?? null))) {
                 throw new RuntimeException('Conflito no ID do fornecedor; reconciliação necessária.');
             }
         }
@@ -87,6 +98,8 @@ final class SupplierSyncService {
                 $current = $field === 'ativo' && $existing[$field] !== null ? (int) $existing[$field] : $existing[$field];
                 if ($current !== $data['antes'][$field] && $current !== $value) throw new RuntimeException('Fornecedor alterado no destino; reconciliação necessária.');
             }
+            $merged = SupplierData::normalize(array_replace($existing, $data['alteracoes']));
+            SupplierData::assertUnique($this->pdo, $merged, $id);
             $sql = implode(', ', array_map(fn($field) => $field . ' = ?', array_keys($data['alteracoes'])));
             $this->pdo->prepare('UPDATE fornecedores SET ' . $sql . ', atualizado_em = CURRENT_TIMESTAMP WHERE id = ?')->execute(array_merge(array_values($data['alteracoes']), [$id]));
         } else {

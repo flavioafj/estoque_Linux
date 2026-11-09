@@ -130,10 +130,10 @@ function installSuppliers(PDO $pdo): void {
     $pdo->exec('CREATE TABLE notas_teste (fornecedor_id INTEGER REFERENCES fornecedores(id))');
 }
 function model(PDO $pdo): Models\AdminFornecedor { bindDatabase($pdo); return new Models\AdminFornecedor(); }
-function pageRequest(string $base, string $method = 'GET', array $body = [], int $profile = 1): array {
+function pageRequest(string $base, string $method = 'GET', array $body = [], int $profile = 1, ?int $editId = null): array {
     $context = stream_context_create(['http' => ['method' => $method, 'header' => "Content-Type: application/x-www-form-urlencoded\r\nX-Test-Profile: $profile\r\n",
         'content' => $method === 'POST' ? http_build_query($body) : '', 'ignore_errors' => true, 'follow_location' => 0, 'timeout' => 5]]);
-    $raw = file_get_contents($base . '/admin/suppliers.php', false, $context);
+    $raw = file_get_contents($base . '/admin/suppliers.php' . ($editId === null ? '' : '?edit=' . $editId), false, $context);
     preg_match('/HTTP\/\S+ (\d+)/', $http_response_header[0], $m);
     return [(int) $m[1], $raw];
 }
@@ -228,11 +228,41 @@ try {
     [$status] = httpRequest($url, $payload); check($status === 500, 'Colisão de ID aceita.');
     $payload['dados']['campo_inesperado'] = 'teste';
     [$status] = httpRequest($url, $payload); check($status === 500, 'Campo inesperado aceito.');
+    // Edição pela página, preservando ID/histórico e sincronizando todos os campos.
+    [$status, $html] = pageRequest($base, 'GET', [], 1, 3);
+    check($status === 200 && str_contains($html, 'Editar fornecedor') && str_contains($html, 'value="Pessoa física"'), 'Formulário de edição não pré-preenchido.');
+    $editPost = ['action' => 'edit', 'csrf_token' => 'csrf-teste', 'id' => 3, 'razao_social' => 'Fornecedor editado', 'tipo' => 'PJ',
+        'cnpj' => '66778899000122', 'email' => 'editado@example.com', 'telefone' => '1133334444', 'observacoes' => 'Dados editados'];
+    pageRequest($base, 'POST', array_replace($editPost, ['csrf_token' => 'errado']));
+    check(scalar($web, 'SELECT razao_social FROM fornecedores WHERE id = 3') === 'Pessoa física', 'Edição sem CSRF aceita.');
+    pageRequest($base, 'POST', $editPost, 2);
+    check(scalar($web, 'SELECT razao_social FROM fornecedores WHERE id = 3') === 'Pessoa física', 'Operador editou fornecedor.');
+    [$status] = pageRequest($base, 'POST', $editPost);
+    check($status === 302 && scalar($web, 'SELECT razao_social FROM fornecedores WHERE id = 3') === 'Fornecedor editado', 'Edição pela página falhou.');
+    $editEvent = $web->query("SELECT * FROM sincronizacao WHERE tabela = 'fornecedores' ORDER BY id DESC LIMIT 1")->fetch();
+    check($editEvent['acao'] === 'UPDATE' && json_decode($editEvent['dados'], true)['alteracoes']['tipo'] === 'PJ', 'Edição não enfileirada.');
+    runSync();
+    check(scalar($local, 'SELECT cnpj FROM fornecedores WHERE id = 3') === '66778899000122' && scalar($local, 'SELECT email FROM fornecedores WHERE id = 3') === 'editado@example.com', 'PULL não aplicou edição de documentos/contatos.');
+    $localValues = $local->query('SELECT * FROM fornecedores WHERE id = 3')->fetch();
+    $localValues['tipo'] = 'PF'; $localValues['cnpj'] = ''; $localValues['cpf'] = '99988877766'; $localValues['email'] = '';
+    model($local)->editSupplier(3, $localValues, 1);
+    runSync();
+    check(scalar($web, 'SELECT tipo FROM fornecedores WHERE id = 3') === 'PF' && scalar($web, 'SELECT cpf FROM fornecedores WHERE id = 3') === '99988877766' && scalar($web, 'SELECT cnpj FROM fornecedores WHERE id = 3') === null && scalar($web, 'SELECT email FROM fornecedores WHERE id = 3') === null, 'PUSH não aplicou tipo/documentos/limpeza de opcionais.');
+    $unchanged = $web->query('SELECT * FROM fornecedores WHERE id = 3')->fetch();
+    $queueCount = scalar($web, 'SELECT COUNT(*) FROM sincronizacao');
+    model($web)->editSupplier(3, $unchanged, 1);
+    check(scalar($web, 'SELECT COUNT(*) FROM sincronizacao') === $queueCount, 'Salvar sem mudanças gerou evento.');
+    fails(fn() => model($web)->editSupplier(3, array_replace($unchanged, ['cnpj' => '12345678000190']), 1), 'Documento duplicado em outro fornecedor aceito na edição.');
+    fails(fn() => model($web)->editSupplier(3, array_replace($unchanged, ['razao_social' => '']), 1), 'Edição sem razão social aceita.');
+    fails(fn() => model($web)->editSupplier(9999, $unchanged, 1), 'Fornecedor inexistente editado.');
+    check((int) scalar($web, 'SELECT COUNT(*) FROM fornecedores') === 4 && (int) scalar($web, 'SELECT criado_por FROM fornecedores WHERE id = 3') === 1, 'Edição alterou identidade/autor.');
     $isolated = connect(':memory:'); install($isolated); installSuppliers($isolated);
     $admin = model($isolated); $admin->addSupplier(['razao_social' => 'Existente'], 1);
     $isolated->exec("CREATE TRIGGER fail_queue BEFORE INSERT ON sincronizacao BEGIN SELECT RAISE(ABORT, 'fila indisponível'); END");
     fails(fn() => $admin->addSupplier(['razao_social' => 'Falha'], 1), 'Cadastro sem fila aceito.');
     fails(fn() => $admin->deactivateSupplier(1, 1), 'Exclusão sem fila aceita.');
+    fails(fn() => $admin->editSupplier(1, ['razao_social' => 'Edição parcial'], 1), 'Edição sem fila aceita.');
+    check(scalar($isolated, 'SELECT razao_social FROM fornecedores WHERE id = 1') === 'Existente', 'Rollback da edição falhou.');
     check((int) scalar($isolated, 'SELECT COUNT(*) FROM fornecedores') === 1 && (int) scalar($isolated, 'SELECT ativo FROM fornecedores WHERE id = 1') === 1, 'Rollback da conta falhou.');
     check((int) scalar($isolated, 'SELECT COUNT(*) FROM auditoria') === 1, 'Auditoria parcial.');
     $pull = new Services\SyncPullService($isolated); $pull->prepararRecibos();

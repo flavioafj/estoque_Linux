@@ -36,11 +36,13 @@ final class SupplierData {
         return $document === null ? null : strtoupper(preg_replace('/[.\/\-\s]/u', '', $document));
     }
 
-    public static function assertUnique(\PDO $pdo, array $data): void {
+    public static function assertUnique(\PDO $pdo, array $data, ?int $excludeId = null): void {
         foreach (['cnpj', 'cpf'] as $field) {
             if ($data[$field] === null) continue;
-            $stmt = $pdo->prepare("SELECT id FROM fornecedores WHERE UPPER(REPLACE(REPLACE(REPLACE(REPLACE($field, '.', ''), '/', ''), '-', ''), ' ', '')) = ?");
-            $stmt->execute([self::documentKey($data[$field])]);
+            $stmt = $pdo->prepare("SELECT id FROM fornecedores WHERE UPPER(REPLACE(REPLACE(REPLACE(REPLACE($field, '.', ''), '/', ''), '-', ''), ' ', '')) = ?" . ($excludeId === null ? '' : ' AND id <> ?'));
+            $params = [self::documentKey($data[$field])];
+            if ($excludeId !== null) $params[] = $excludeId;
+            $stmt->execute($params);
             if ($stmt->fetchColumn()) throw new InvalidArgumentException(strtoupper($field) . ' já cadastrado, inclusive entre fornecedores inativos.');
         }
     }
