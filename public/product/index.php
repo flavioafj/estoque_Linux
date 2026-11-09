@@ -73,6 +73,7 @@ if ($requestMethod !== 'POST') {
 if ($requestUri === '/product/store') {
     try {
         $data = [
+            'fornecedores' => $_POST['fornecedores'] ?? [],
             'nome' => $_POST['nome'] ?? null,
             'codigo' => $_POST['codigo'] ?? null,
             'categoria_id' => $_POST['categoria_id'] ?? null,

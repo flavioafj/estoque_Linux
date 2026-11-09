@@ -116,3 +116,6 @@ novo evento. Atualize `AdminFornecedor`, `SupplierData`, `SupplierSyncService` e
 `php testes/test_supplier_sync.php` também cobre a edição via página, permissões,
 CSRF, troca PF/PJ, documentos, limpeza de opcionais, envio nos dois sentidos,
 duplicidades, salvamento sem mudanças e rollback em caso de falha na fila.
+
+Os vínculos com produtos agora podem ser gerenciados pelo botão **Produtos**.
+Veja `testes/README_PRODUCT_SUPPLIERS.md` para migração, carga inicial e testes.

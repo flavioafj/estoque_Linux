@@ -25,6 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 
+\Middleware\Auth::checkAdmin('/dashboard.php');
 $controller = new \Controllers\ProductController();
 
 
@@ -118,6 +119,12 @@ include __DIR__ . '/../../templates/alerts.php'; // Conforme Parte 1
                         <option value="<?= htmlspecialchars($forn['id']) ?>"><?= htmlspecialchars($forn['razao_social']) ?></option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+            <div><label for="product-suppliers">Outros fornecedores (opcional)</label>
+                <select id="product-suppliers" name="fornecedores[]" multiple>
+                    <?php foreach ($fornecedores as $forn): ?><option value="<?= (int) $forn['id'] ?>"><?= htmlspecialchars($forn['razao_social'], ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?>
+                </select>
+                <small>Seleção múltipla; o fornecedor principal também será associado.</small>
             </div>
             <div>
                 <label for="descricao">Descrição</label>

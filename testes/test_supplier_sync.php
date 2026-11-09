@@ -127,6 +127,8 @@ function installSuppliers(PDO $pdo): void {
     $columns = [];
     foreach (Services\SupplierData::LIMITS as $name => $limit) $columns[] = $name . ' TEXT' . (in_array($name, ['cnpj', 'cpf'], true) ? ' UNIQUE' : '');
     $pdo->exec('CREATE TABLE fornecedores (id INTEGER PRIMARY KEY AUTOINCREMENT, ' . implode(', ', $columns) . ", tipo TEXT NOT NULL DEFAULT 'PJ', observacoes TEXT, ativo INTEGER DEFAULT 1, criado_por INTEGER REFERENCES usuarios(id), criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP)");
+    $pdo->exec('CREATE TABLE IF NOT EXISTS produtos (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, codigo TEXT, ativo INTEGER DEFAULT 1, fornecedor_principal_id INTEGER REFERENCES fornecedores(id), estoque_atual NUMERIC DEFAULT 0, categoria_id INTEGER, unidade_medida_id INTEGER, criado_por INTEGER, criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP)');
+    $pdo->exec('CREATE TABLE produto_fornecedores (id INTEGER PRIMARY KEY AUTOINCREMENT, produto_id INTEGER REFERENCES produtos(id), fornecedor_id INTEGER REFERENCES fornecedores(id), ativo INTEGER NOT NULL DEFAULT 1, criado_por INTEGER REFERENCES usuarios(id), criado_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP, UNIQUE(produto_id, fornecedor_id))');
     $pdo->exec('CREATE TABLE notas_teste (fornecedor_id INTEGER REFERENCES fornecedores(id))');
 }
 function model(PDO $pdo): Models\AdminFornecedor { bindDatabase($pdo); return new Models\AdminFornecedor(); }
