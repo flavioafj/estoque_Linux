@@ -104,6 +104,11 @@ include __DIR__ . '/../../templates/header.php';
     <form id="form-processar-nfe" action="registrar_entrada_nfe.php" method="POST">
         <input type="hidden" name="fornecedor_cnpj" value="<?= htmlspecialchars($nfeData['fornecedor']['cnpj']) ?>">
         <input type="hidden" name="fornecedor_razao_social" value="<?= htmlspecialchars($nfeData['fornecedor']['razao_social']) ?>">
+        <?php foreach (['nome_fantasia', 'email', 'telefone', 'endereco', 'cidade', 'estado', 'cep'] as $field): ?>
+            <?php if (!empty($nfeData['fornecedor'][$field])): ?>
+                <input type="hidden" name="fornecedor_dados[<?= $field ?>]" value="<?= htmlspecialchars($nfeData['fornecedor'][$field], ENT_QUOTES, 'UTF-8') ?>">
+            <?php endif; ?>
+        <?php endforeach; ?>
         <input type="hidden" name="nota_chave_acesso" value="<?= htmlspecialchars($nfeData['nota_fiscal']['chave_acesso']) ?>">
         <input type="hidden" name="nota_numero" value="<?= htmlspecialchars($nfeData['nota_fiscal']['numero']) ?>">
         <input type="hidden" name="nota_data_emissao" value="<?= htmlspecialchars($nfeData['nota_fiscal']['data_emissao']) ?>">
@@ -338,6 +343,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData();
             formData.append('cnpj', cnpj);
             formData.append('razao_social', razaoSocial);
+            new FormData(form).forEach((value, key) => {
+                if (key.startsWith('fornecedor_dados[')) formData.append(key, value);
+            });
             
             // Opcional: Desabilitar o botão enquanto processa
             btn.disabled = true;
@@ -351,7 +359,13 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // SUCESSO: Exibe a mensagem "Fornecedor cadastrado"
+                    const supplierId = String(data.fornecedor_id);
+                    if (!Array.from(fornecedorSelect.options).some(option => option.value === supplierId)) {
+                        fornecedorSelect.add(new Option(razaoSocial, supplierId));
+                    }
+                    fornecedorSelect.value = supplierId;
+                    salvarAssociacoes();
+                    // SUCESSO: Exibe a mensagem de cadastro/atualização
                     statusDiv.innerHTML = `<span style="color: green; font-weight: bold;">${data.message}</span>`;
                 } else {
                     // ERRO

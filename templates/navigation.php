@@ -35,6 +35,9 @@ $userName = Session::getUserName() ?: 'Usuário';
                     <a class="nav-link" href="/admin/users.php">Gerenciar Usuários</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/admin/suppliers.php">Gerenciar Fornecedores</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/admin/categories.php">Gerenciar Categorias</a>
                 </li>
                 <li class="nav-item">

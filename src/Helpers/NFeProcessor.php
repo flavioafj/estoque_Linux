@@ -19,7 +19,7 @@ class NFeProcessor {
         // Carrega o XML, tratando os namespaces (essencial para NF-e)
         $xmlContent = file_get_contents($xmlFilePath);
         // Remove quebras de linha e outros caracteres que podem invalidar o XML
-        $xmlContent = preg_replace('/[^\x20-\x7E]/', '', $xmlContent);
+        $xmlContent = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $xmlContent);
         $xml = simplexml_load_string($xmlContent);
 
         if ($xml === false) {
@@ -42,6 +42,18 @@ class NFeProcessor {
             'cnpj' => (string) $emit->CNPJ,
             'razao_social' => (string) $emit->xNome
         ];
+
+        $address = $emit->enderEmit;
+        $optional = [
+            'nome_fantasia' => (string) $emit->xFant,
+            'email' => (string) $emit->email,
+            'telefone' => (string) $address->fone,
+            'endereco' => implode(', ', array_filter([(string) $address->xLgr, (string) $address->nro, (string) $address->xCpl, (string) $address->xBairro])),
+            'cidade' => (string) $address->xMun, 'estado' => (string) $address->UF, 'cep' => (string) $address->CEP
+        ];
+        foreach ($optional as $field => $value) {
+            if (trim($value) !== '') $fornecedor[$field] = trim($value);
+        }
 
         // 2. Extrair dados da Nota Fiscal
         $ide = $infNFe->children($ns)->ide;

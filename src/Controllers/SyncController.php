@@ -158,6 +158,9 @@ class SyncController extends BaseController
             }
         }
 
+        if (!empty($dados['fornecedor_evento_id'])) {
+            $fornecedorId = \Services\NfeSupplierService::receivedSupplier($this->db->getConnection(), $dados);
+        } else {
         // fornecedor novo ou existente
         $fornecedorModel = new \Models\Fornecedor();
         if ($dados['fornecedor'] === 'cadastrar_novo') {
@@ -200,6 +203,8 @@ class SyncController extends BaseController
             }
         }
 
+        }
+
         // cria movimentação de entrada usando primeiro tipo disponível
         $tipoModel = new TipoMovimentacao();
         $tiposEntrada = $tipoModel->findByTipo('ENTRADA');
@@ -224,10 +229,10 @@ class SyncController extends BaseController
             throw new \Exception('erro ao adicionar itens');
         }
 
-        $mov->atualizarValorTotal($movId, floatval($dados['total']), $dados['numero']);
+        $this->db->getConnection()->prepare('UPDATE movimentacoes SET valor_total = ?, documento_numero = ? WHERE id = ?')->execute([floatval($dados['total']), $dados['numero'], $movId]);
 
         // insere nota fiscal
-        $this->db->insert('notas_fiscais', [
+        if (!$this->db->insert('notas_fiscais', [
             'movimentacao_id' => $movId,
             'numero_nota'     => $dados['numero'],
             'chave_acesso'    => $dados['chave_acesso'],
@@ -236,7 +241,7 @@ class SyncController extends BaseController
             'valor_total'     => floatval($dados['total']),
             'processado'      => true,
             'usuario_id'      => $dados['user_id']
-        ]);
+        ])) throw new \RuntimeException('Falha ao registrar nota fiscal recebida.');
     }
 
     /**
@@ -273,7 +278,9 @@ class SyncController extends BaseController
         try {
             $this->db->beginTransaction();
 
-            if ($tabela === 'usuarios') {
+            if ($tabela === 'fornecedores' && isset($dados['evento_id'])) {
+                (new \Services\SupplierSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
+            } elseif ($tabela === 'usuarios') {
                 (new \Services\UserSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
             } elseif ($tabela === 'produtos') {
                 (new \Services\ProductSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
@@ -324,7 +331,7 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            if ($tabela !== 'usuarios' && !in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
+            if (!($tabela === 'fornecedores' && isset($dados['evento_id'])) && $tabela !== 'usuarios' && !in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
                 if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
                 $receiptId = $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,
