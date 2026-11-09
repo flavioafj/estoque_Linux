@@ -9,7 +9,7 @@ use Throwable;
 final class SyncPullService
 {
     public const ACTIONS = ['INSERT', 'UPDATE', 'DELETE', 'SAIDA_DIRETA', 'SAIDA_DIRETA_ADM', 'ENTRADA_NFE', 'ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'];
-    public const TABLES = ['produtos', 'categorias', 'fornecedores', 'unidades_medida', 'movimentacoes', 'movimentacao_itens', 'estoques', 'notas_fiscais', 'itens_nota'];
+    public const TABLES = ['usuarios', 'produtos', 'categorias', 'fornecedores', 'unidades_medida', 'movimentacoes', 'movimentacao_itens', 'estoques', 'notas_fiscais', 'itens_nota'];
     private PDO $pdo;
 
     public function __construct(PDO $pdo) { $this->pdo = $pdo; }

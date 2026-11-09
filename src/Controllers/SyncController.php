@@ -23,6 +23,7 @@ class SyncController extends BaseController
 
     // Tabelas que podem ser sincronizadas (segurança)
     private $allowedTables = [
+        'usuarios',
         'produtos',
         'categorias',
         'fornecedores',
@@ -33,7 +34,7 @@ class SyncController extends BaseController
         'notas_fiscais',
         'itens_nota'
         // Adicione aqui outras tabelas operacionais necessárias
-        // NÃO inclua: sincronizacao, auditoria, sessoes, usuarios, perfis, configuracoes, alertas_estoque
+        // NÃO inclua: sincronizacao, auditoria, sessoes, perfis, configuracoes, alertas_estoque
     ];
 
     public function __construct()
@@ -272,7 +273,9 @@ class SyncController extends BaseController
         try {
             $this->db->beginTransaction();
 
-            if ($tabela === 'produtos') {
+            if ($tabela === 'usuarios') {
+                (new \Services\UserSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
+            } elseif ($tabela === 'produtos') {
                 (new \Services\ProductSyncService($this->db->getConnection()))->receber($acao, $registro_id, $dados);
             } else switch ($acao) {
                 case 'INSERT':
@@ -321,7 +324,7 @@ class SyncController extends BaseController
             }
 
             // Registra a sincronização recebida (compatível com o schema)
-            if (!in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
+            if ($tabela !== 'usuarios' && !in_array($acao, ['ENTRADA_MANUAL', 'CORRECAO_SAIDA', 'AJUSTE_INVENTARIO'], true)) {
                 if (isset($destinoId)) $dados['_movimento_destino_id'] = $destinoId;
                 $receiptId = $this->db->insert('sincronizacao', [
                     'tabela'          => $tabela,

@@ -282,6 +282,11 @@ foreach ($pendentes as $item) {
 foreach ($lote['data'] as $item) {
     try {
         $novo = $pull->aplicar($sync_url, $item, function (array $evento, array $dados) use ($db) {
+            if ($evento['tabela'] === 'usuarios') {
+                (new \Services\UserSyncService($db->getConnection()))->receber(
+                    $evento['acao'], (int) $evento['registro_id'], $dados);
+                return;
+            }
             if ($evento['tabela'] === 'produtos') {
                 (new \Services\ProductSyncService($db->getConnection()))->receber(
                     $evento['acao'], (int) $evento['registro_id'], $dados);

@@ -25,6 +25,15 @@ class Auth {
             exit();
         }
 
+        // Bloqueia sessões já abertas de contas desativadas.
+        $user = (new \Models\User())->find(Session::getUserId());
+        if (!$user || (int) $user['ativo'] !== 1) {
+            Session::logout();
+            Session::setFlash('error', 'Sua conta está inativa.');
+            header('Location: /login.php');
+            exit();
+        }
+
         // Opcional: Verificar timeout da sessão a cada requisição
         if (!Session::checkTimeout()) {
             header('Location: ' . $redirect_url);
