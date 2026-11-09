@@ -14,9 +14,24 @@ $labels = ['razao_social' => 'Razão social / Nome', 'nome_fantasia' => 'Nome fa
 $values = array_fill_keys(array_keys($labels), '');
 $values['tipo'] = 'PJ';
 $error = null;
+$editId = null;
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['edit'])) {
+    $id = filter_var($_GET['edit'], FILTER_VALIDATE_INT);
+    $supplier = $id && $id > 0 ? $model->getById($id) : null;
+    if (!$supplier || (int) $supplier['ativo'] !== 1) {
+        $error = 'Fornecedor ativo não encontrado.';
+    } else {
+        $editId = (int) $supplier['id'];
+        foreach ($values as $field => $value) $values[$field] = $supplier[$field] ?? '';
+    }
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($values as $field => $value) {
         $values[$field] = is_string($_POST[$field] ?? null) ? trim($_POST[$field]) : ($field === 'tipo' ? 'PJ' : '');
+    }
+    if (($_POST['action'] ?? '') === 'edit') {
+        $editId = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$editId || $editId < 1) $editId = null;
     }
     try {
         $token = $_POST['csrf_token'] ?? '';
@@ -24,6 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (($_POST['action'] ?? '') === 'create') {
             $model->addSupplier($values, (int) Session::getUserId());
             Session::setFlash('success', 'Fornecedor cadastrado e incluído na fila de sincronização.');
+        } elseif (($_POST['action'] ?? '') === 'edit') {
+            if ($editId === null) throw new InvalidArgumentException('Fornecedor inválido.');
+            $model->editSupplier($editId, $values, (int) Session::getUserId());
+            Session::setFlash('success', 'Fornecedor atualizado. Alterações incluídas na fila de sincronização.');
         } elseif (($_POST['action'] ?? '') === 'delete') {
             $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
             if (!$id || $id < 1) throw new InvalidArgumentException('Fornecedor inválido.');
@@ -52,11 +71,12 @@ require __DIR__ . '/../../templates/navigation.php';
     <?php if ($error !== null): ?><div class="alert alert-danger" role="alert"><?= $escape($error) ?></div><?php endif; ?>
     <section class="card my-4" aria-labelledby="novo-fornecedor">
         <div class="card-body">
-            <h2 class="h4" id="novo-fornecedor">Incluir fornecedor</h2>
-            <p>Campos com * são obrigatórios. CNPJ e CPF são opcionais. O novo fornecedor será cadastrado como ativo.</p>
+            <h2 class="h4" id="novo-fornecedor"><?= $editId !== null ? 'Editar fornecedor' : 'Incluir fornecedor' ?></h2>
+            <p>Campos com * são obrigatórios. CNPJ e CPF são opcionais. <?= $editId !== null ? 'Altere os dados e salve.' : 'O novo fornecedor será cadastrado como ativo.' ?></p>
             <form method="post" action="/admin/suppliers.php" class="row g-3">
                 <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
-                <input type="hidden" name="action" value="create">
+                <input type="hidden" name="action" value="<?= $editId !== null ? 'edit' : 'create' ?>">
+                <?php if ($editId !== null): ?><input type="hidden" name="id" value="<?= $editId ?>"><?php endif; ?>
                 <div class="col-md-4">
                     <label for="tipo" class="form-label">Tipo *</label>
                     <select id="tipo" name="tipo" class="form-select" required>
@@ -75,7 +95,9 @@ require __DIR__ . '/../../templates/navigation.php';
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <div class="col-12"><button type="submit" class="btn btn-primary">Incluir fornecedor</button></div>
+                <div class="col-12"><button type="submit" class="btn btn-primary"><?= $editId !== null ? 'Salvar alterações' : 'Incluir fornecedor' ?></button>
+                    <?php if ($editId !== null): ?><a href="/admin/suppliers.php" class="btn btn-outline-secondary">Cancelar</a><?php endif; ?>
+                </div>
             </form>
         </div>
     </section>
@@ -101,7 +123,8 @@ require __DIR__ . '/../../templates/navigation.php';
                         <dt>Criado em</dt><dd><?= $escape($supplier['criado_em']) ?></dd>
                         <dt>Atualizado em</dt><dd><?= $escape($supplier['atualizado_em']) ?></dd>
                     </dl></details></td>
-                    <td><form method="post" action="/admin/suppliers.php" onsubmit="return confirm('Excluir este fornecedor? Ele será desativado e o histórico preservado.');">
+                    <td><a class="btn btn-outline-primary btn-sm mb-2" href="/admin/suppliers.php?edit=<?= (int) $supplier['id'] ?>#novo-fornecedor" aria-label="Editar fornecedor <?= $escape($supplier['razao_social']) ?>">Editar</a>
+                    <form method="post" action="/admin/suppliers.php" onsubmit="return confirm('Excluir este fornecedor? Ele será desativado e o histórico preservado.');">
                         <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?= (int) $supplier['id'] ?>">

@@ -34,6 +34,37 @@ class AdminFornecedor extends Fornecedor {
         }
     }
 
+    public function editSupplier(int $id, array $input, int $actorId): void {
+        if ($id <= 0) throw new InvalidArgumentException('Fornecedor inválido.');
+        $data = SupplierData::normalize($input);
+        $pdo = $this->db->getConnection();
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT * FROM fornecedores WHERE id = ? AND ativo = 1' . ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql' ? ' FOR UPDATE' : ''));
+            $stmt->execute([$id]);
+            $old = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$old) throw new InvalidArgumentException('Fornecedor ativo não encontrado.');
+            SupplierData::assertUnique($pdo, $data, $id);
+            $before = $changes = [];
+            foreach ($data as $field => $value) {
+                if ($old[$field] !== $value) { $before[$field] = $old[$field]; $changes[$field] = $value; }
+            }
+            if ($changes) {
+                $sql = implode(', ', array_map(fn($field) => $field . ' = ?', array_keys($changes)));
+                $pdo->prepare('UPDATE fornecedores SET ' . $sql . ', atualizado_em = CURRENT_TIMESTAMP WHERE id = ?')->execute(array_merge(array_values($changes), [$id]));
+                $this->audit($pdo, 'UPDATE', $id, $actorId, $old, $changes);
+                SyncQueueHelper::queueUpdate('fornecedores', $id, ['evento_id' => bin2hex(random_bytes(16)), 'id' => $id,
+                    'cnpj' => $old['cnpj'], 'cpf' => $old['cpf'], 'tipo' => $old['tipo'], 'razao_social' => $old['razao_social'],
+                    'antes' => $before, 'alteracoes' => $changes]);
+            }
+            $pdo->commit();
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            if ($e instanceof \PDOException && $e->getCode() === '23000') throw new InvalidArgumentException('Documento já cadastrado em outro fornecedor.');
+            throw $e;
+        }
+    }
+
     public function deactivateSupplier(int $id, int $actorId): void {
         if ($id <= 0) throw new InvalidArgumentException('Fornecedor inválido.');
         $pdo = $this->db->getConnection();

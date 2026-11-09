@@ -96,3 +96,23 @@ fornecedores, cadastro direto sem AJAX, dependência fornecedor → nota, preser
 de opcionais, reenvios, ausência de eco, conflitos e rollback integral quando a
 fila do fornecedor ou da nota falha. Verifica também a extração de dados/acento do
 XML; este teste requer a extensão SimpleXML, além dos requisitos anteriores.
+
+## Edição de fornecedores
+
+Na lista, clique em **Editar**. O formulário carrega os dados atuais e permite
+alterar todos os campos de cadastro, incluindo tipo, CNPJ e CPF. Campos opcionais
+apagados são gravados como NULL. ID, autor, datas de criação e vínculos com notas
+não são alterados; o status continua sendo controlado por exclusão/reativação.
+A edição exige administrador e token CSRF e valida limites e documentos únicos,
+excluindo a própria conta da verificação de duplicidade.
+
+Salvar mudanças grava fornecedor, auditoria e evento UPDATE na mesma transação.
+O evento contém `antes` e `alteracoes`, inclusive para documentos e tipo. O receptor
+valida os valores anteriores, aplica a alteração sem eco e mantém os recibos de
+reenvio. Conflitos no destino não são sobrescritos. Salvar dados iguais não gera
+novo evento. Atualize `AdminFornecedor`, `SupplierData`, `SupplierSyncService` e
+`public/admin/suppliers.php` nos dois sistemas. Não há nova migração de banco.
+
+`php testes/test_supplier_sync.php` também cobre a edição via página, permissões,
+CSRF, troca PF/PJ, documentos, limpeza de opcionais, envio nos dois sentidos,
+duplicidades, salvamento sem mudanças e rollback em caso de falha na fila.
