@@ -49,6 +49,10 @@ final class NfeSupplierService {
                     if (in_array($field, ['cnpj', 'cpf', 'tipo'], true) || $value === null) continue;
                     if ($old[$field] !== $value) { $before[$field] = $old[$field]; $changes[$field] = $value; }
                 }
+                if ((int) $old['ativo'] !== 1) {
+                    $before['ativo'] = $old['ativo'] === null ? null : (int) $old['ativo'];
+                    $changes['ativo'] = 1;
+                }
                 if ($changes) {
                     $sql = implode(', ', array_map(fn($field) => $field . ' = ?', array_keys($changes)));
                     $this->pdo->prepare('UPDATE fornecedores SET ' . $sql . ', atualizado_em = CURRENT_TIMESTAMP WHERE id = ?')->execute(array_merge(array_values($changes), [$id]));

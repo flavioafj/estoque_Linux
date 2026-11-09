@@ -28,13 +28,17 @@ final class SupplierSyncService {
             if (($data['criado_por'] ?? null) !== null && !filter_var($data['criado_por'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) throw new RuntimeException('Autor de fornecedor inválido.');
         } elseif ($editing) {
             if (!is_array($data['antes'] ?? null) || !is_array($data['alteracoes']) || !$data['alteracoes'] ||
-                array_diff(array_keys($data['alteracoes']), array_merge(array_diff(array_keys(SupplierData::LIMITS), ['cnpj', 'cpf']), ['observacoes'])) ||
+                array_diff(array_keys($data['alteracoes']), array_merge(array_diff(array_keys(SupplierData::LIMITS), ['cnpj', 'cpf']), ['observacoes', 'ativo'])) ||
                 array_diff_key($data['antes'], $data['alteracoes']) || array_diff_key($data['alteracoes'], $data['antes']) ||
                 ($data['tipo'] ?? null) !== 'PJ' || !is_string($data['cnpj'] ?? null) || !array_key_exists('cpf', $data)) {
                 throw new RuntimeException('Atualização de fornecedor inválida.');
             }
             $validated = SupplierData::normalize($data['alteracoes'] + ['razao_social' => 'Validação']);
             foreach ($data['alteracoes'] as $field => $value) {
+                if ($field === 'ativo') {
+                    if ($value !== 1 || !in_array($data['antes'][$field], [0, null], true)) throw new RuntimeException('Reativação de fornecedor inválida.');
+                    continue;
+                }
                 if ($validated[$field] !== $value || (!is_string($data['antes'][$field]) && $data['antes'][$field] !== null)) throw new RuntimeException('Campo inválido na atualização de fornecedor.');
             }
         } else {
@@ -80,7 +84,8 @@ final class SupplierSyncService {
         } elseif ($editing) {
             if (!$existing) throw new RuntimeException('Sincronize o cadastro do fornecedor antes da atualização.');
             foreach ($data['alteracoes'] as $field => $value) {
-                if ($existing[$field] !== $data['antes'][$field] && $existing[$field] !== $value) throw new RuntimeException('Fornecedor alterado no destino; reconciliação necessária.');
+                $current = $field === 'ativo' && $existing[$field] !== null ? (int) $existing[$field] : $existing[$field];
+                if ($current !== $data['antes'][$field] && $current !== $value) throw new RuntimeException('Fornecedor alterado no destino; reconciliação necessária.');
             }
             $sql = implode(', ', array_map(fn($field) => $field . ' = ?', array_keys($data['alteracoes'])));
             $this->pdo->prepare('UPDATE fornecedores SET ' . $sql . ', atualizado_em = CURRENT_TIMESTAMP WHERE id = ?')->execute(array_merge(array_values($data['alteracoes']), [$id]));

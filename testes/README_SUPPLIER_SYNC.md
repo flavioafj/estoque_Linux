@@ -32,7 +32,9 @@ A inclusão de NF-e e o botão AJAX de cadastro usam `NfeSupplierService`: novos
 fornecedores geram `INSERT`; dados diferentes de fornecedores existentes geram
 `UPDATE` com `antes` e `alteracoes`. A NF-e referencia o evento de fornecedor e
 só pode ser recebida depois dele. Dados ausentes/vazios no XML não apagam contatos
-ou endereço já cadastrados, e um recebimento não reativa fornecedores inativos.
+ou endereço já cadastrados. Uma nova inclusão de NF-e (ou seu botão de cadastro)
+reativa o fornecedor encontrado pelo CNPJ, preservando o ID, e enfileira um UPDATE
+explícito com `ativo = 1`. Reenvios de eventos antigos não reativam o fornecedor.
 O fluxo de conclusão da entrada confirma fornecedor, auditoria, mapeamentos de
 produtos, movimentação, estoque, nota e fila na mesma transação. O AJAX confirma
 seu cadastro e evento independentemente da conclusão posterior da nota.

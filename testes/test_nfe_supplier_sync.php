@@ -257,6 +257,40 @@ try {
     check($lastUpdate['alteracoes'] === ['telefone' => '1133334444'], 'AJAX não enfileirou delta de contato.');
     runSync();
     check(scalar($local, 'SELECT telefone FROM fornecedores WHERE id = 1') === '1133334444', 'Atualização AJAX não sincronizou.');
+    // Reativação por NF-e, inclusive sem mudança de nome ou contato.
+    model($web)->deactivateSupplier(1, 1);
+    runSync();
+    check((int) scalar($local, 'SELECT ativo FROM fornecedores WHERE id = 1') === 0, 'Inativação prévia não sincronizou.');
+    $reactivatePost = array_replace($post, ['nota_numero' => '500', 'nota_chave_acesso' => str_repeat('6', 44), 'id_fornecedor_sistema' => 'cadastrar_novo']);
+    formNfe('registrar_entrada_nfe.php', $reactivatePost);
+    check((int) scalar($web, 'SELECT ativo FROM fornecedores WHERE id = 1') === 1 && (int) scalar($web, 'SELECT COUNT(*) FROM fornecedores') === 3, 'NF-e não reativou o mesmo fornecedor.');
+    $activation = $web->query("SELECT * FROM sincronizacao WHERE tabela = 'fornecedores' ORDER BY id DESC LIMIT 1")->fetch();
+    $activationData = json_decode($activation['dados'], true);
+    check($activationData['antes']['ativo'] === 0 && $activationData['alteracoes'] === ['ativo' => 1], 'Reativação não enfileirada sem outros dados alterados.');
+    runSync();
+    check((int) scalar($local, 'SELECT ativo FROM fornecedores WHERE id = 1') === 1, 'PULL não reativou fornecedor.');
+    check((int) scalar($local, "SELECT fornecedor_id FROM notas_fiscais WHERE numero_nota = '500'") === 1, 'Nota perdeu vínculo após reativação.');
+    // Reentrega de reativação antiga não desfaz uma exclusão posterior.
+    model($web)->deactivateSupplier(1, 1);
+    runSync();
+    $pull = new Services\SyncPullService($local);
+    $activation['id'] = 9999;
+    $pull->aplicar('reativacao-atrasada', $activation, fn($e, $d) => (new Services\SupplierSyncService($local))->receber($e['acao'], (int) $e['registro_id'], $d));
+    check((int) scalar($local, 'SELECT ativo FROM fornecedores WHERE id = 1') === 0, 'Reativação antiga desfez exclusão posterior.');
+    // AJAX também reativa e envia o evento no PUSH.
+    bindDatabase($local);
+    $r = (new Services\NfeSupplierService($local))->save(['cnpj' => '12345678000190', 'razao_social' => 'Emitente atualizado'], 1);
+    runSync();
+    check((int) scalar($web, 'SELECT ativo FROM fornecedores WHERE id = 1') === 1, 'PUSH não reativou fornecedor.');
+    // Uma falha na fila da nota deve desfazer a reativação e seu evento.
+    model($web)->deactivateSupplier(1, 1);
+    runSync();
+    $queueBefore = scalar($web, 'SELECT COUNT(*) FROM sincronizacao');
+    $web->exec("CREATE TRIGGER fail_reactivation BEFORE INSERT ON sincronizacao WHEN NEW.acao = 'ENTRADA_NFE' BEGIN SELECT RAISE(ABORT, 'fila indisponível'); END");
+    $reactivatePost['nota_numero'] = '501'; $reactivatePost['nota_chave_acesso'] = str_repeat('7', 44);
+    formNfe('registrar_entrada_nfe.php', $reactivatePost);
+    check((int) scalar($web, 'SELECT ativo FROM fornecedores WHERE id = 1') === 0 && scalar($web, 'SELECT COUNT(*) FROM sincronizacao') === $queueBefore, 'Falha na nota deixou reativação parcial.');
+    $web->exec('DROP TRIGGER fail_reactivation');
     // Nome/contato conflitante no destino não pode ser sobrescrito em silêncio.
     bindDatabase($local);
     $newUpdate = (new Services\NfeSupplierService($local))->save(['cnpj' => '98765432000199', 'razao_social' => 'Novo nome local'], 1, 2);
