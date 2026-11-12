@@ -103,7 +103,8 @@ class DashboardController extends BaseController
                 SELECT 
                     DATE_FORMAT(m.data_movimentacao, '%Y-%m') as periodo,
                     tm.tipo,
-                    SUM(mi.quantidade) as total_quantidade
+                    SUM(mi.quantidade) as total_quantidade,
+                    SUM(COALESCE(mi.valor_total, mi.quantidade * mi.valor_unitario, 0)) as total_valor
                 FROM movimentacoes m
                 JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
                 JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
@@ -116,6 +117,8 @@ class DashboardController extends BaseController
             // Formatar para Chart.js
             $entradas = [];
             $saidas = [];
+            $entradasValor = [];
+            $saidasValor = [];
             $periodos = [];
             foreach ($result as $row) {
                 if (!in_array($row['periodo'], $periodos)) {
@@ -123,14 +126,18 @@ class DashboardController extends BaseController
                 }
                 if ($row['tipo'] == 'ENTRADA') {
                     $entradas[$row['periodo']] = (float)$row['total_quantidade'];
+                    $entradasValor[$row['periodo']] = (float)$row['total_valor'];
                 } else {
                     $saidas[$row['periodo']] = (float)$row['total_quantidade'];
+                    $saidasValor[$row['periodo']] = (float)$row['total_valor'];
                 }
             }
             echo json_encode([
                 'labels' => $periodos,
                 'entradas' => array_values(array_replace(array_fill_keys($periodos, 0), $entradas)),
-                'saidas' => array_values(array_replace(array_fill_keys($periodos, 0), $saidas))
+                'saidas' => array_values(array_replace(array_fill_keys($periodos, 0), $saidas)),
+                'entradas_valor' => array_values(array_replace(array_fill_keys($periodos, 0), $entradasValor)),
+                'saidas_valor' => array_values(array_replace(array_fill_keys($periodos, 0), $saidasValor))
             ]);
         } catch (\Exception $e) {
             error_log("DashboardController::getStockTurnover: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
@@ -171,7 +178,8 @@ class DashboardController extends BaseController
                 SELECT 
                     DATE_FORMAT(m.data_movimentacao, '%Y-%m') as periodo,
                     tm.tipo,
-                    SUM(mi.quantidade) as total_quantidade
+                    SUM(mi.quantidade) as total_quantidade,
+                    SUM(COALESCE(mi.valor_total, mi.quantidade * mi.valor_unitario, 0)) as total_valor
                 FROM movimentacoes m
                 JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
                 JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
@@ -185,6 +193,8 @@ class DashboardController extends BaseController
             
             $entradas = [];
             $saidas = [];
+            $entradasValor = [];
+            $saidasValor = [];
             $periodos = [];
             foreach ($result_graph as $row) {
                 if (!in_array($row['periodo'], $periodos)) {
@@ -192,14 +202,16 @@ class DashboardController extends BaseController
                 }
                 if ($row['tipo'] == 'ENTRADA') {
                     $entradas[$row['periodo']] = (float)$row['total_quantidade'];
+                    $entradasValor[$row['periodo']] = (float)$row['total_valor'];
                 } else {
                     $saidas[$row['periodo']] = (float)$row['total_quantidade'];
+                    $saidasValor[$row['periodo']] = (float)$row['total_valor'];
                 }
             }
 
             // Lista de entradas
             $sql_entradas = "
-                SELECT m.documento_numero, m.data_movimentacao, u.nome_completo as usuario, mi.quantidade
+                SELECT m.documento_numero, m.data_movimentacao, u.nome_completo as usuario, mi.quantidade, mi.valor_unitario
                 FROM movimentacoes m
                 JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
                 JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
@@ -212,7 +224,7 @@ class DashboardController extends BaseController
 
             // Lista de saídas
             $sql_saidas = "
-                SELECT m.documento_numero, m.data_movimentacao, u.nome_completo as usuario, mi.quantidade
+                SELECT m.documento_numero, m.data_movimentacao, u.nome_completo as usuario, mi.quantidade, mi.valor_unitario
                 FROM movimentacoes m
                 JOIN movimentacao_itens mi ON m.id = mi.movimentacao_id
                 JOIN tipos_movimentacao tm ON m.tipo_movimentacao_id = tm.id
@@ -227,6 +239,8 @@ class DashboardController extends BaseController
                 'labels' => $periodos,
                 'entradas' => array_values(array_replace(array_fill_keys($periodos, 0), $entradas)),
                 'saidas' => array_values(array_replace(array_fill_keys($periodos, 0), $saidas)),
+                'entradas_valor' => array_values(array_replace(array_fill_keys($periodos, 0), $entradasValor)),
+                'saidas_valor' => array_values(array_replace(array_fill_keys($periodos, 0), $saidasValor)),
                 'entradas_list' => $entradas_list,
                 'saidas_list' => $saidas_list
             ]);

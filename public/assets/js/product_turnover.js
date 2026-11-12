@@ -2,6 +2,21 @@
 $(document).ready(function() {
     const productId = new URLSearchParams(window.location.search).get('id');
     let chartInstance = null;
+    let turnoverData = null;
+    const priceToggle = document.getElementById('turnover-price-toggle');
+    const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const quantity = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });
+    const formatValue = value => priceToggle.checked ? currency.format(value) : quantity.format(value);
+
+    function updateTurnoverMetric() {
+        if (!chartInstance || !turnoverData) return;
+        const priceMode = priceToggle.checked;
+        chartInstance.data.datasets[0].data = [...(priceMode ? turnoverData.entradas_valor : turnoverData.entradas)];
+        chartInstance.data.datasets[1].data = [...(priceMode ? turnoverData.saidas_valor : turnoverData.saidas)];
+        chartInstance.options.scales.y.title.text = priceMode ? 'Valor total (R$)' : 'Quantidade';
+        chartInstance.update('none');
+    }
+    priceToggle.addEventListener('change', updateTurnoverMetric);
 
     // Carregar dados iniciais (últimos 6 meses)
     loadData();
@@ -22,6 +37,7 @@ $(document).ready(function() {
             method: 'GET',
             dataType: 'json',
             success: function(data) {
+                turnoverData = data;
                 // Renderizar gráfico
                 const ctx = document.getElementById('productTurnoverChart').getContext('2d');
                 if (chartInstance) {
@@ -50,9 +66,17 @@ $(document).ready(function() {
                     },
                     options: {
                         responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: context => `${context.dataset.label}: ${formatValue(context.parsed.y)}`
+                                }
+                            }
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                ticks: { callback: value => formatValue(value) },
                                 title: { display: true, text: 'Quantidade' }
                             },
                             x: {
@@ -61,6 +85,8 @@ $(document).ready(function() {
                         }
                     }
                 });
+
+                updateTurnoverMetric();
 
                 // Popular tabela de entradas
                 let entradasHtml = '';
@@ -71,6 +97,7 @@ $(document).ready(function() {
                             <td>${new Date(item.data_movimentacao).toLocaleDateString('pt-BR')}</td>
                             <td>${item.usuario}</td>
                             <td>${item.quantidade}</td>
+                            <td>${item.valor_unitario == null ? '-' : currency.format(Number(item.valor_unitario))}</td>
                         </tr>`;
                 });
                 $('#entradas-table tbody').html(entradasHtml);
@@ -84,6 +111,7 @@ $(document).ready(function() {
                             <td>${new Date(item.data_movimentacao).toLocaleDateString('pt-BR')}</td>
                             <td>${item.usuario}</td>
                             <td>${item.quantidade}</td>
+                            <td>${item.valor_unitario == null ? '-' : currency.format(Number(item.valor_unitario))}</td>
                         </tr>`;
                 });
                 $('#saidas-table tbody').html(saidasHtml);

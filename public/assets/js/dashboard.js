@@ -80,7 +80,11 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(data) {
             const ctx = document.getElementById('stockTurnoverChart').getContext('2d');
-            new Chart(ctx, {
+            const priceToggle = document.getElementById('turnover-price-toggle');
+            const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+            const quantity = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });
+            const formatValue = value => priceToggle.checked ? currency.format(value) : quantity.format(value);
+            const chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.labels,
@@ -103,9 +107,17 @@ $(document).ready(function() {
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatValue(context.parsed.y)}`
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            ticks: { callback: value => formatValue(value) },
                             title: { display: true, text: 'Quantidade' }
                         },
                         x: {
@@ -114,6 +126,15 @@ $(document).ready(function() {
                     }
                 }
             });
+            function updateTurnoverMetric() {
+                const priceMode = priceToggle.checked;
+                chart.data.datasets[0].data = [...(priceMode ? data.entradas_valor : data.entradas)];
+                chart.data.datasets[1].data = [...(priceMode ? data.saidas_valor : data.saidas)];
+                chart.options.scales.y.title.text = priceMode ? 'Valor total (R$)' : 'Quantidade';
+                chart.update('none');
+            }
+            priceToggle.addEventListener('change', updateTurnoverMetric);
+            updateTurnoverMetric();
         },
         error: function(xhr) {
             console.error('Erro ao carregar gráfico:', xhr.responseJSON ? xhr.responseJSON.error : 'Erro desconhecido');
