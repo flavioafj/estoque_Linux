@@ -110,7 +110,7 @@ class Product extends BaseModel {
      * @param string $tipoMovimentacao 'ENTRADA' ou 'SAIDA'
      * @return bool
      */
-    public function atualizarEstoque(int $produtoId, float $quantidade, string $tipoMovimentacao): bool
+    public function atualizarEstoque(int $produtoId, float $quantidade, string $tipoMovimentacao, bool $verificarAlertas = true): bool
     {
         try {
             // Validação dos parâmetros
@@ -160,12 +160,10 @@ class Product extends BaseModel {
 
             $resultado = $stmt->execute([$quantidade, $produtoId]);
 
-            // Verifica estoque mínimo após atualização
-            $alertModel = new Alert();
-            $alertModel->checkLowStock($produtoId);
-
-
             if ($resultado) {
+                if ($verificarAlertas) {
+                    (new Alert())->checkLowStock($produtoId);
+                }
                 error_log("Estoque atualizado com sucesso. Produto: $produtoId, Quantidade: $quantidade, Tipo: $tipoMovimentacao");
                 return true;
             } else {

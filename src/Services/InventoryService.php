@@ -2,6 +2,7 @@
 namespace Services;
 
 use Helpers\SyncQueueHelper;
+use Models\Alert;
 use Models\Database;
 use Models\Movimentacao;
 use Models\Product;
@@ -171,7 +172,7 @@ final class InventoryService
                     $delete = $this->pdo->prepare('DELETE FROM estoques WHERE id = ?');
                     foreach ($units as $unit) $delete->execute([$unit]);
                 }
-                if (!(new Product())->atualizarEstoque($id, $qty, $delta > 0 ? 'ENTRADA' : 'SAIDA')) throw new RuntimeException('Falha ao ajustar o saldo.');
+                if (!(new Product())->atualizarEstoque($id, $qty, $delta > 0 ? 'ENTRADA' : 'SAIDA', false)) throw new RuntimeException('Falha ao ajustar o saldo.');
                 (new Movimentacao())->logAudit('INSERT', $movementId, null, $item);
             }
             if ($undo) {
@@ -187,6 +188,7 @@ final class InventoryService
                 }
             }
             $this->finish($own);
+            (new Alert())->checkLowStockBatch(array_keys($payload['itens']));
             return ['inventario_id' => $inventoryId, 'ajustes' => $summary];
         } catch (Throwable $e) {
             if ($this->pdo->inTransaction()) {

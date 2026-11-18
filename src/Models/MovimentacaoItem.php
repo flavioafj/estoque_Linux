@@ -141,7 +141,7 @@ class MovimentacaoItem extends BaseModel
                 
   
                 // Atualiza o estoque do produto usando o tipo correto
-                $resultadoEstoque = $productModel->atualizarEstoque($produtoId, $quantidade, $tipoMovimentacao);
+                $resultadoEstoque = $productModel->atualizarEstoque($produtoId, $quantidade, $tipoMovimentacao, false);
                                 
                 
                 if (!$resultadoEstoque) {
@@ -168,6 +168,7 @@ class MovimentacaoItem extends BaseModel
             error_log("Movimentação processada com sucesso: $movimentacaoId");
             $estoqueModel->logAudit($acao, $movimentacaoId, null, $dados);
 
+            (new Alert())->checkLowStockBatch(array_column($dados, 'prodId'));
             return true;
 
         } catch (\Exception $e) {

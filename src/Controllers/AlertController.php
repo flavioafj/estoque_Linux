@@ -41,6 +41,32 @@ class AlertController extends BaseController {
         }
     }
 
+    public function markAllAsRead() {
+        $usuarioId = Session::getUserId();
+        $token = $_POST['csrf_token'] ?? '';
+        if (!Session::isLoggedIn() || !Session::isAdmin() || !$usuarioId
+            || !is_string($token) || !Session::validateCSRFToken($token)) {
+            http_response_code(403);
+            echo 'Permissão negada.';
+            return;
+        }
+
+        try {
+            $updated = $this->alertModel->markAllAsRead((int) $usuarioId);
+        } catch (\PDOException $e) {
+            error_log('AlertController::markAllAsRead: ' . $e->getMessage());
+            $updated = false;
+        }
+
+        if ($updated) {
+            Session::setFlash('success', 'Todos os alertas pendentes foram marcados como lidos.');
+        } else {
+            Session::setFlash('danger', 'Não foi possível marcar todos os alertas como lidos.');
+        }
+
+        header('Location: /alerts', true, 303);
+    }
+
     public function renderAlerts() {
         if (!Session::isLoggedIn()) {
             header('Location: /login');

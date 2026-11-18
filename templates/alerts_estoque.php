@@ -33,6 +33,12 @@ require_once '../templates/navigation.php';
         <?php if (empty($alerts)): ?>
             <p>Nenhum alerta pendente.</p>
         <?php else: ?>
+            <?php if (Session::isAdmin()): ?>
+                <form action="/alerts" method="post" class="mb-3">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Session::getCSRFToken(), ENT_QUOTES, 'UTF-8') ?>">
+                    <button type="submit" class="btn btn-primary">Marcar tudo como lido</button>
+                </form>
+            <?php endif; ?>
             <table class="table table-striped">
                 <thead>
                     <tr>

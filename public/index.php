@@ -57,6 +57,10 @@ if ($requestUri === '/admin/products.php') {
  }elseif ($requestUri === '/alerts') {
     require_once __DIR__ . '/../src/Controllers/AlertController.php';
     $controller = new Controllers\AlertController();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->markAllAsRead();
+        exit;
+    }
     $controller->renderAlerts();
 }
 

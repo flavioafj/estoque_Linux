@@ -13,104 +13,143 @@ class Alert extends BaseModel {
     protected $table = 'alertas_estoque';
 
     public function checkLowStock($produto_id) {
+        $this->checkLowStockBatch([$produto_id]);
+    }
+
+    public function checkLowStockBatch(array $productIds): void {
+        $triggeredIds = [];
+        foreach (array_unique($productIds) as $productId) {
+            if ($this->createPendingAlerts($productId)) {
+                $triggeredIds[$productId] = true;
+            }
+        }
+
+        if ($triggeredIds) {
+            $this->sendLowStockSummary($triggeredIds);
+        }
+    }
+
+    private function createPendingAlerts($produto_id): bool {
         try {
             $stmt = $this->db->prepare("SELECT * FROM vw_produtos_estoque_critico WHERE id = :produto_id");
-            $stmt->bind(':produto_id', $produto_id, \PDO::PARAM_INT);
-            $stmt->execute();
+            if (!$stmt || !$stmt->execute([':produto_id' => $produto_id])) {
+                return false;
+            }
             $result = $stmt->fetch();
 
             if ($result) {
-                // Checa se já existe alerta pendente para evitar duplicatas
-                $checkStmt = $this->db->prepare("SELECT id FROM alertas_estoque WHERE produto_id = :produto_id AND tipo_alerta = 'MINIMO' AND lido = FALSE");
-                $checkStmt->bind(':produto_id', $produto_id, \PDO::PARAM_INT);
-                $checkStmt->execute();
-                if ($checkStmt->fetch()) {
-                    return; // Alerta pendente já existe
+                $adminStmt = $this->db->prepare(
+                    "SELECT u.id FROM usuarios u
+                     WHERE u.perfil_id = 1 AND u.ativo = TRUE
+                     AND NOT EXISTS (
+                         SELECT 1 FROM alertas_estoque a
+                         WHERE a.produto_id = :produto_id AND a.tipo_alerta = 'MINIMO'
+                         AND a.lido = FALSE AND a.usuario_leitura_id = u.id
+                     ) ORDER BY u.id"
+                );
+                if (!$adminStmt || !$adminStmt->execute([':produto_id' => $produto_id])) {
+                    return false;
                 }
-
-                //Cria novo alerta para cada usuário administrador
-                $adminUsers = (new User())->getAdminsID();
-                if (empty($adminUsers)) {
-                    error_log("Alert::checkLowStock: Nenhum usuário administrador encontrado para enviar alerta.", 3, __DIR__ . '/../../logs/error.log');
-                    return;
-                }   
-
+                $adminUsers = $adminStmt->fetchAll();
+                if (!$adminUsers) {
+                    return false;
+                }
 
                 $mensagem = "Produto {$result['nome']} com estoque baixo: {$result['estoque_atual']} <= {$result['estoque_minimo']}.";
                 
+                $created = false;
                 foreach ($adminUsers as $admin) {
-                    // Aqui você pode personalizar a mensagem para cada admin se necessário
                     $insertStmt = $this->db->prepare("INSERT INTO alertas_estoque (produto_id, tipo_alerta, mensagem, lido, usuario_leitura_id, criado_em) VALUES (:produto_id, 'MINIMO', :mensagem, FALSE, :admin_id, CURRENT_TIMESTAMP)");
-                    $insertStmt->bind(':produto_id', $produto_id, \PDO::PARAM_INT);
-                    $insertStmt->bind(':mensagem', $mensagem, \PDO::PARAM_STR);
-                    $insertStmt->bind(':admin_id', $admin['id'], \PDO::PARAM_INT);
-                    $insertStmt->execute();
-                    $alert_id = $this->db->lastInsertId();
+                    if ($insertStmt && $insertStmt->execute([
+                        ':produto_id' => $produto_id,
+                        ':mensagem' => $mensagem,
+                        ':admin_id' => $admin['id'],
+                    ])) {
+                        $created = true;
+                        $alertId = $this->db->lastInsertId();
+                        $this->logAudit('INSERT', $alertId, null, ['produto_id' => $produto_id, 'mensagem' => $mensagem]);
+                    }
                 }
-
-               
-
-                // Registra na auditoria
-                $this->logAudit('INSERT', $alert_id, null, ['produto_id' => $produto_id, 'mensagem' => $mensagem]);
-
-                // Envia alerta
-                $this->sendAlert($alert_id);
+                return $created;
             }
         } catch (PDOException $e) {
             error_log("Alert::checkLowStock: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         }
+        return false;
     }
 
-    public function sendAlert($alert_id) {
-        try {
-            //$stmt = $this->db->prepare("SELECT a.*, p.nome, p.estoque_atual, p.estoque_minimo FROM alertas_estoque a JOIN produtos p ON a.produto_id = p.id WHERE a.id = :alert_id  AND usuario_leitura_id = :usuario_id");
-            $stmt = $this->db->prepare("SELECT a.*, p.nome, p.estoque_atual, p.estoque_minimo FROM alertas_estoque a JOIN produtos p ON a.produto_id = p.id WHERE a.id = :alert_id");
-            $stmt->bind(':alert_id', $alert_id, \PDO::PARAM_INT);
-            //$stmt->bind(':usuario_id', Session::get('user_id'), \PDO::PARAM_INT);
-            $stmt->execute();
-            $alert = $stmt->fetch();
-
-            if ($alert) {
-                // Envio de e-mail
-                $mail = new PHPMailer(true);
-                $mail->isSMTP();
-                $mail->Host = $_ENV['SMTP_HOST'] ?: 'smtp.exemplo.com';
-                $mail->SMTPAuth = true;
-                $mail->Username = $_ENV['SMTP_USER'] ?: 'seu_email@exemplo.com';
-                $mail->Password = $_ENV['SMTP_PASS'] ?: 'sua_senha';
-                $mail->SMTPSecure = 'tls';
-                $mail->Port = $_ENV['SMTP_PORT'] ?: 587;
-
-                $mail->setFrom('no-reply@sorveteria.com', 'Sistema de Estoque');
-                $admins = (new User())->getAdmins();
-                foreach ($admins as $admin) {
-                    $email = trim($admin['email'] ?? '');
-                    if ($email !== '' && PHPMailer::validateAddress($email)) {
-                        $mail->addAddress($email);
-                    }
-                }
-
-                if (!$mail->getToAddresses()) {
-                    error_log("Alert::sendAlert: Nenhum administrador ativo com e-mail válido para o alerta {$alert_id}.", 3, __DIR__ . '/../../logs/error.log');
-                    return;
-                }
-
-                $mail->isHTML(true);
-                $mail->Subject = 'Alerta de Estoque Baixo';
-                $mail->Body = "<p>{$alert['mensagem']}</p><p>Produto: {$alert['nome']}</p><p>Estoque Atual: {$alert['estoque_atual']}</p><p>Estoque Mínimo: {$alert['estoque_minimo']}</p>";
-                // Antes de $mail->send();
-                $mail->SMTPDebug = 2;
-                $mail->Debugoutput = function($str, $level) {
-                    error_log("PHPMailer Debug [$level]: $str </br>", 3, __DIR__ . '/../../logs/error.log');
-                };
-                $mail->send();
-
-                // Local para futura implementação de WhatsApp
-                // $this->sendWhatsApp($alert);
-            }
-        } catch (Exception $e) {
-            error_log("Alert::sendAlert: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
+    private function sendLowStockSummary(array $triggeredIds): void {
+        $stmt = $this->db->prepare(
+            "SELECT id, nome, estoque_atual, estoque_minimo
+             FROM vw_produtos_estoque_critico ORDER BY nome, id"
+        );
+        if (!$stmt || !$stmt->execute()) {
+            return;
         }
+        $products = $stmt->fetchAll();
+        if (!$products) {
+            return;
+        }
+
+        $triggered = [];
+        $otherProducts = [];
+        foreach ($products as $product) {
+            if (isset($triggeredIds[$product['id']])) {
+                $triggered[] = $product;
+            } else {
+                $otherProducts[] = $product;
+            }
+        }
+        $mail = self::createMailer($otherProducts, 'Outros produtos com estoque baixo', $triggered);
+        foreach ((new User())->getAdmins() as $admin) {
+            $email = trim($admin['email'] ?? '');
+            if (!PHPMailer::validateAddress($email)) {
+                continue;
+            }
+
+            try {
+                $mail->addAddress($email);
+                $mail->send();
+            } catch (Exception $e) {
+                error_log("Alert::sendLowStockSummary: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
+            } finally {
+                $mail->clearAddresses();
+            }
+        }
+    }
+
+    public static function createMailer(array $products, string $intro = 'Produtos com estoque baixo', array $triggered = []): PHPMailer {
+        $mail = new PHPMailer(true);
+        $mail->CharSet = PHPMailer::CHARSET_UTF8;
+        $mail->isSMTP();
+        $mail->Host = ($_ENV['SMTP_HOST'] ?? '') ?: 'smtp.exemplo.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = ($_ENV['SMTP_USER'] ?? '') ?: 'seu_email@exemplo.com';
+        $mail->Password = ($_ENV['SMTP_PASS'] ?? '') ?: 'sua_senha';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = ($_ENV['SMTP_PORT'] ?? '') ?: 587;
+
+        $mail->setFrom('no-reply@sorveteria.com', 'Sistema de Estoque');
+        $mail->isHTML(true);
+        $mail->Subject = 'Alerta de Estoque Baixo';
+        $body = '';
+        foreach ($triggered as $product) {
+            $name = htmlspecialchars((string) $product['nome'], ENT_QUOTES, 'UTF-8');
+            $body .= "<p><strong>{$name} está com estoque baixo.</strong></p>";
+        }
+        if (!$products) {
+            $mail->Body = $body;
+            return $mail;
+        }
+        $body .= '<p>' . htmlspecialchars($intro, ENT_QUOTES, 'UTF-8') . '</p><ul>';
+        foreach ($products as $product) {
+            $name = htmlspecialchars((string) $product['nome'], ENT_QUOTES, 'UTF-8');
+            $stock = htmlspecialchars((string) $product['estoque_atual'], ENT_QUOTES, 'UTF-8');
+            $minimum = htmlspecialchars((string) $product['estoque_minimo'], ENT_QUOTES, 'UTF-8');
+            $body .= "<li><strong>{$name}</strong> — Estoque Atual: {$stock} | Estoque Mínimo: {$minimum}</li>";
+        }
+        $mail->Body = $body . '</ul>';
+        return $mail;
     }
 
     public function markAsRead($alert_id, $usuario_id) {
@@ -125,6 +164,15 @@ class Alert extends BaseModel {
         } catch (PDOException $e) {
             error_log("Alert::markAsRead: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         }
+    }
+
+    public function markAllAsRead(int $usuarioId): bool {
+        $stmt = $this->db->prepare(
+            "UPDATE alertas_estoque
+             SET lido = TRUE, data_leitura = CURRENT_TIMESTAMP
+             WHERE usuario_leitura_id = :usuario_id AND lido = FALSE"
+        );
+        return $stmt !== false && $stmt->execute([':usuario_id' => $usuarioId]);
     }
 
     public function getPendingAlerts() {

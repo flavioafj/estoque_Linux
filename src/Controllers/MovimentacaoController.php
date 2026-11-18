@@ -8,7 +8,6 @@ use Models\MovimentacaoItem;
 use Models\Estoque;
 //use Models\Product;  
 use Helpers\Session;
-use Models\Alert;
 use Helpers\SyncQueueHelper;
 
 
@@ -99,16 +98,6 @@ class MovimentacaoController extends BaseController
             if ($itemModel->adicionarItens($movimentacaoId, $itensLimpo, $valoresUnitarios)) {
 
                
-                // Verifica estoque mínimo para cada item
-                $alertModel = new Alert();
-
-                foreach ($itens as $produtoId => $item) {
-                    
-                    
-                    $alertModel->checkLowStock($produtoId);   
-                }
-
-
                 $totalGeral = array_sum($totais);
 
                 $movimentacaoModel->atualizarValorTotal($movimentacaoId, $totalGeral);
