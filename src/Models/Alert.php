@@ -51,7 +51,7 @@ class Alert extends BaseModel {
                
 
                 // Registra na auditoria
-                $this->logAudit('alertas_estoque', $alert_id, 'INSERT', null, ['produto_id' => $produto_id, 'mensagem' => $mensagem]);
+                $this->logAudit('INSERT', $alert_id, null, ['produto_id' => $produto_id, 'mensagem' => $mensagem]);
 
                 // Envia alerta
                 $this->sendAlert($alert_id);
@@ -84,8 +84,17 @@ class Alert extends BaseModel {
                 $mail->setFrom('no-reply@sorveteria.com', 'Sistema de Estoque');
                 $admins = (new User())->getAdmins();
                 foreach ($admins as $admin) {
-                    $mail->addAddress($admin['email']);
+                    $email = trim($admin['email'] ?? '');
+                    if ($email !== '' && PHPMailer::validateAddress($email)) {
+                        $mail->addAddress($email);
+                    }
                 }
+
+                if (!$mail->getToAddresses()) {
+                    error_log("Alert::sendAlert: Nenhum administrador ativo com e-mail válido para o alerta {$alert_id}.", 3, __DIR__ . '/../../logs/error.log');
+                    return;
+                }
+
                 $mail->isHTML(true);
                 $mail->Subject = 'Alerta de Estoque Baixo';
                 $mail->Body = "<p>{$alert['mensagem']}</p><p>Produto: {$alert['nome']}</p><p>Estoque Atual: {$alert['estoque_atual']}</p><p>Estoque Mínimo: {$alert['estoque_minimo']}</p>";
@@ -112,7 +121,7 @@ class Alert extends BaseModel {
             $stmt->execute();
 
             // Registra na auditoria
-            $this->logAudit('alertas_estoque', $alert_id, 'UPDATE', ['lido' => false], ['lido' => true]);
+            $this->logAudit('UPDATE', $alert_id, ['lido' => false], ['lido' => true]);
         } catch (PDOException $e) {
             error_log("Alert::markAsRead: " . $e->getMessage(), 3, __DIR__ . '/../../logs/error.log');
         }
